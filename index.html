@@ -407,71 +407,6 @@ body {
 .filter-btn.apply { background: var(--text-primary); color: white; }
 .filter-btn.apply:hover { opacity: 0.9; }
 
-/* KPI Cards */
-.kpi-row {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.kpi-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.kpi-icon svg { width: 16px; height: 16px; stroke: var(--text-secondary); fill: none; stroke-width: 2; }
-
-.kpi-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-
-.kpi-label {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.kpi-value {
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.kpi-change {
-  font-size: 0.75rem;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.kpi-change.up { color: var(--green); }
-.kpi-change.down { color: var(--red); }
-
-.kpi-card.alert-card { border-color: var(--red); background: #FFFBFB; }
-.kpi-card.alert-card .kpi-value { color: var(--red); font-size: 1.8rem; }
-.kpi-card.alert-card .alert-link {
-  font-size: 0.75rem;
-  color: var(--red);
-  cursor: pointer;
-  font-weight: 500;
-}
-
 /* Cards */
 .card {
   background: var(--surface);
@@ -522,12 +457,6 @@ body {
   grid-template-columns: 1.5fr 1fr;
   gap: 16px;
   margin-bottom: 20px;
-}
-
-.grid-2-bottom {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 16px;
 }
 
 /* Table */
@@ -670,64 +599,6 @@ body {
   margin-right: 6px;
 }
 
-/* Tabs */
-.tabs {
-  display: flex;
-  gap: 0;
-  background: var(--bg);
-  border-radius: var(--radius-sm);
-  padding: 3px;
-}
-
-.tab {
-  padding: 6px 14px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-
-.tab.active { background: var(--surface); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
-.tab:hover:not(.active) { color: var(--text-primary); }
-
-/* Trend table */
-.trend-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-variant-numeric: tabular-nums;
-}
-
-.trend-table th {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-tertiary);
-  padding: 0 8px 10px;
-  text-align: center;
-  border-bottom: 1px solid var(--border);
-}
-
-.trend-table th:first-child,
-.trend-table th:nth-child(2) { text-align: left; }
-
-.trend-table td {
-  padding: 10px 8px;
-  font-size: 0.82rem;
-  text-align: center;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.trend-table td:first-child,
-.trend-table td:nth-child(2) { text-align: left; }
-
-.trend-table tr:last-child td { border-bottom: none; }
-
-.trend-table td:first-child { font-weight: 600; }
-
-.sparkline { display: inline-block; }
-
 /* Alerts */
 .alert-list {
   display: flex;
@@ -820,6 +691,84 @@ body {
 }
 
 .card-footer-link:hover { color: var(--text-primary); }
+
+/* Expandable rows */
+.unit-row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.unit-row:hover { background: var(--bg); }
+
+.unit-row td:first-child { position: relative; padding-left: 28px; }
+
+.row-chevron {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  stroke: var(--text-tertiary);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s;
+}
+
+.unit-row.expanded .row-chevron { transform: translateY(-50%) rotate(90deg); }
+
+.equip-row { display: none; }
+.equip-row.open { display: table-row; }
+
+.equip-row td {
+  padding: 0 12px;
+  border-bottom: none;
+}
+
+.equip-subtable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4px 0 8px 0;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.equip-subtable th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.equip-subtable td {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+}
+
+.equip-subtable tr:last-child td { border-bottom: none; }
+
+.state-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.state-pill.green { background: var(--green-bg); color: #15803D; }
+.state-pill.gray { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+
+/* Full width card spacing */
+.full-width-card { margin-bottom: 20px; }
 </style>
 </head>
 <body>
@@ -836,7 +785,7 @@ body {
   </div>
 
   <nav class="sidebar-nav">
-    <a class="nav-item active" href="#">
+    <a class="nav-item active" href="index.html">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Overview
     </a>
@@ -847,10 +796,10 @@ body {
       <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
     </a>
     <div class="nav-subitems open" id="cycles-sub">
-      <a class="nav-subitem" href="#">All Cycles</a>
-      <a class="nav-subitem" href="#">Units / Skids</a>
-      <a class="nav-subitem" href="#">Mode History</a>
-      <a class="nav-subitem" href="#">Cycle Logs</a>
+      <a class="nav-subitem" href="all-cycles.html">All Cycles</a>
+      <a class="nav-subitem" href="units-skids.html">Units / Skids</a>
+      <a class="nav-subitem" href="mode-history.html">Mode History</a>
+      <a class="nav-subitem" href="cycle-logs.html">Cycle Logs</a>
     </div>
 
     <a class="nav-item" href="#">
@@ -865,9 +814,9 @@ body {
       <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       Reports
     </a>
-    <a class="nav-item" href="#">
+    <a class="nav-item" href="cycle-performance.html">
       <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-      Inventory
+      Cycle Performance
     </a>
     <a class="nav-item" href="#">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -936,7 +885,7 @@ body {
           <div class="dropdown-option" data-date="Last Month">Last Month</div>
           <div class="dropdown-option" data-date="Last 90 days">Last 90 days</div>
           <div class="dropdown-divider"></div>
-          <div class="dropdown-option" data-date="Custom range…">Custom range…</div>
+          <div class="dropdown-option" data-date="Custom range...">Custom range...</div>
         </div>
       </div>
 
@@ -1011,166 +960,223 @@ body {
     </div>
   </div>
 
-  <!-- KPI Row -->
-  <div class="kpi-row">
-    <div class="kpi-card">
-      <div class="kpi-icon">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      </div>
-      <div class="kpi-content">
-        <div class="kpi-label">Total Uptime</div>
-        <div class="kpi-value">82.6%</div>
-        <div class="kpi-change up">↑ 5.4% vs last week</div>
-      </div>
+  <!-- Live Unit Status (Full Width) -->
+  <div class="card full-width-card">
+    <div class="card-header">
+      <div class="card-title">Live Unit Status <span class="badge">8 Units</span></div>
+      <div class="card-link">View all units &rarr;</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-icon">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
-      </div>
-      <div class="kpi-content">
-        <div class="kpi-label">Production</div>
-        <div class="kpi-value">18,450 m³</div>
-        <div class="kpi-change up">↑ 8.7% vs last week</div>
-      </div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-icon">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
-      </div>
-      <div class="kpi-content">
-        <div class="kpi-label">Cleaning Time</div>
-        <div class="kpi-value">12.4%</div>
-        <div class="kpi-change down">↓ 2.1% vs last week</div>
-      </div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-icon">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>
-      </div>
-      <div class="kpi-content">
-        <div class="kpi-label">Standby Time</div>
-        <div class="kpi-value">4.3%</div>
-        <div class="kpi-change down">↓ 1.2% vs last week</div>
-      </div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-icon">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-      <div class="kpi-content">
-        <div class="kpi-label">Production Efficiency</div>
-        <div class="kpi-value">87.2%</div>
-        <div class="kpi-change up">↑ 6.3% vs last week</div>
-      </div>
-    </div>
-    <div class="kpi-card alert-card">
-      <div class="kpi-content">
-        <div class="kpi-label">Active Alerts</div>
-        <div class="kpi-value">3</div>
-        <div class="alert-link">View all alerts →</div>
-      </div>
+    <table class="data-table" id="unitTable">
+      <thead>
+        <tr>
+          <th>Unit / Skid</th>
+          <th>Type</th>
+          <th>Current Mode</th>
+          <th>Duration</th>
+          <th>Key Parameter</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- PSF-1 -->
+        <tr class="unit-row" data-unit="psf1">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot green"></span>PSF-1</td>
+          <td>PSF</td>
+          <td><span class="mode-pill green">Service (Filtration)</span></td>
+          <td>02:14:38</td>
+          <td>Flow: 120 m³/hr</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="psf1">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-101</td><td>Inlet Valve</td><td><span class="state-pill green">Open</span></td><td>02:14:38</td><td>--</td><td>--</td></tr>
+                <tr><td>V-102</td><td>Outlet Valve</td><td><span class="state-pill green">Open</span></td><td>02:14:38</td><td>--</td><td>--</td></tr>
+                <tr><td>V-103</td><td>Drain Valve</td><td><span class="state-pill gray">Closed</span></td><td>02:14:38</td><td>--</td><td>--</td></tr>
+                <tr><td>P-101</td><td>Feed Pump</td><td><span class="state-pill green">Running</span></td><td>02:14:38</td><td>120 m³/hr</td><td>118.5 m³/hr</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- PSF-2 -->
+        <tr class="unit-row" data-unit="psf2">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot blue"></span>PSF-2</td>
+          <td>PSF</td>
+          <td><span class="mode-pill orange">Backwash</span></td>
+          <td>00:03:22</td>
+          <td>BW Progress: 65%</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="psf2">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-111</td><td>Inlet Valve</td><td><span class="state-pill gray">Closed</span></td><td>00:03:22</td><td>--</td><td>--</td></tr>
+                <tr><td>V-112</td><td>Outlet Valve</td><td><span class="state-pill gray">Closed</span></td><td>00:03:22</td><td>--</td><td>--</td></tr>
+                <tr><td>V-114</td><td>BW Valve</td><td><span class="state-pill green">Open</span></td><td>00:03:22</td><td>--</td><td>--</td></tr>
+                <tr><td>P-112</td><td>BW Pump</td><td><span class="state-pill green">Running</span></td><td>00:03:22</td><td>80 m³/hr</td><td>78.2 m³/hr</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- UF-1 -->
+        <tr class="unit-row" data-unit="uf1">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot green"></span>UF-1</td>
+          <td>UF</td>
+          <td><span class="mode-pill blue">Filtration</span></td>
+          <td>01:32:11</td>
+          <td>TMP: 24 kPa</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="uf1">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-201</td><td>Feed Valve</td><td><span class="state-pill green">Open</span></td><td>01:32:11</td><td>--</td><td>--</td></tr>
+                <tr><td>V-202</td><td>Filtrate Valve</td><td><span class="state-pill green">Open</span></td><td>01:32:11</td><td>--</td><td>--</td></tr>
+                <tr><td>V-203</td><td>Drain Valve</td><td><span class="state-pill gray">Closed</span></td><td>01:32:11</td><td>--</td><td>--</td></tr>
+                <tr><td>P-201</td><td>Feed Pump</td><td><span class="state-pill green">Running</span></td><td>01:32:11</td><td>60 m³/hr</td><td>58.7 m³/hr</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- UF-2 -->
+        <tr class="unit-row" data-unit="uf2">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot blue"></span>UF-2</td>
+          <td>UF</td>
+          <td><span class="mode-pill purple">CEB</span></td>
+          <td>00:11:45</td>
+          <td>Chem.: 120 ppm</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="uf2">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-211</td><td>Feed Valve</td><td><span class="state-pill gray">Closed</span></td><td>00:11:45</td><td>--</td><td>--</td></tr>
+                <tr><td>V-214</td><td>CEB Valve</td><td><span class="state-pill green">Open</span></td><td>00:11:45</td><td>--</td><td>--</td></tr>
+                <tr><td>D-201</td><td>NaOCl Dosing</td><td><span class="state-pill green">Running</span></td><td>00:11:45</td><td>120 ppm</td><td>118 ppm</td></tr>
+                <tr><td>P-212</td><td>CEB Pump</td><td><span class="state-pill green">Running</span></td><td>00:11:45</td><td>40 m³/hr</td><td>39.1 m³/hr</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- RO-1 -->
+        <tr class="unit-row" data-unit="ro1">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot green"></span>RO-1</td>
+          <td>RO</td>
+          <td><span class="mode-pill green">Service</span></td>
+          <td>03:05:20</td>
+          <td>Feed P: 14.2 bar</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="ro1">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-301</td><td>Feed Valve</td><td><span class="state-pill green">Open</span></td><td>03:05:20</td><td>--</td><td>--</td></tr>
+                <tr><td>V-302</td><td>Permeate Valve</td><td><span class="state-pill green">Open</span></td><td>03:05:20</td><td>--</td><td>--</td></tr>
+                <tr><td>V-303</td><td>Concentrate Valve</td><td><span class="state-pill green">Open</span></td><td>03:05:20</td><td>--</td><td>--</td></tr>
+                <tr><td>P-301</td><td>HP Pump</td><td><span class="state-pill green">Running</span></td><td>03:05:20</td><td>14.5 bar</td><td>14.2 bar</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- RO-2 -->
+        <tr class="unit-row" data-unit="ro2">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot blue"></span>RO-2</td>
+          <td>RO</td>
+          <td><span class="mode-pill blue">Flush</span></td>
+          <td>00:05:12</td>
+          <td>Flush Progress: 40%</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="ro2">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-311</td><td>Feed Valve</td><td><span class="state-pill green">Open</span></td><td>00:05:12</td><td>--</td><td>--</td></tr>
+                <tr><td>V-312</td><td>Permeate Valve</td><td><span class="state-pill gray">Closed</span></td><td>00:05:12</td><td>--</td><td>--</td></tr>
+                <tr><td>V-314</td><td>Flush Valve</td><td><span class="state-pill green">Open</span></td><td>00:05:12</td><td>--</td><td>--</td></tr>
+                <tr><td>P-311</td><td>Flush Pump</td><td><span class="state-pill green">Running</span></td><td>00:05:12</td><td>20 m³/hr</td><td>19.4 m³/hr</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- MBR-1 -->
+        <tr class="unit-row" data-unit="mbr1">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot green"></span>MBR-1</td>
+          <td>MBR</td>
+          <td><span class="mode-pill blue">Filtration</span></td>
+          <td>02:47:55</td>
+          <td>TMP: 22 kPa</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="mbr1">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-401</td><td>Feed Valve</td><td><span class="state-pill green">Open</span></td><td>02:47:55</td><td>--</td><td>--</td></tr>
+                <tr><td>V-402</td><td>Permeate Valve</td><td><span class="state-pill green">Open</span></td><td>02:47:55</td><td>--</td><td>--</td></tr>
+                <tr><td>B-401</td><td>Aeration Blower</td><td><span class="state-pill green">Running</span></td><td>02:47:55</td><td>50 Hz</td><td>49.2 Hz</td></tr>
+                <tr><td>P-401</td><td>Permeate Pump</td><td><span class="state-pill green">Running</span></td><td>02:47:55</td><td>30 m³/hr</td><td>29.5 m³/hr</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+
+        <!-- MBR-2 -->
+        <tr class="unit-row" data-unit="mbr2">
+          <td><svg class="row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="status-dot amber"></span>MBR-2</td>
+          <td>MBR</td>
+          <td><span class="mode-pill amber">Relaxation</span></td>
+          <td>00:04:30</td>
+          <td>TMP Recovery: Good</td>
+          <td><span class="status-badge">Healthy</span></td>
+        </tr>
+        <tr class="equip-row" data-unit="mbr2">
+          <td colspan="6">
+            <table class="equip-subtable">
+              <thead><tr><th>Equipment ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead>
+              <tbody>
+                <tr><td>V-411</td><td>Feed Valve</td><td><span class="state-pill gray">Closed</span></td><td>00:04:30</td><td>--</td><td>--</td></tr>
+                <tr><td>V-412</td><td>Permeate Valve</td><td><span class="state-pill gray">Closed</span></td><td>00:04:30</td><td>--</td><td>--</td></tr>
+                <tr><td>B-411</td><td>Aeration Blower</td><td><span class="state-pill green">Running</span></td><td>00:04:30</td><td>35 Hz</td><td>34.8 Hz</td></tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <div class="legend-item"><span class="status-dot green"></span> Service (Running)</div>
+      <div class="legend-item"><span class="status-dot blue"></span> Cleaning</div>
+      <div class="legend-item"><span class="status-dot amber"></span> Standby/Relaxation</div>
+      <div class="legend-item"><span class="status-dot red"></span> Trip/Alarm</div>
     </div>
   </div>
 
-  <!-- Middle Row -->
+  <!-- Bottom Row: Mode Distribution + Top Alerts -->
   <div class="grid-2">
-    <!-- Live Unit Status -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Live Unit Status <span class="badge">8 Units</span></div>
-        <div class="card-link">View all units →</div>
-      </div>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Unit / Skid</th>
-            <th>Type</th>
-            <th>Current Mode</th>
-            <th>Duration</th>
-            <th>Key Parameter</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="status-dot green"></span>PSF-1</td>
-            <td>PSF</td>
-            <td><span class="mode-pill green">Service (Filtration)</span></td>
-            <td>02:14:38</td>
-            <td>Flow: 120 m³/hr</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-          <tr>
-            <td><span class="status-dot blue"></span>PSF-2</td>
-            <td>PSF</td>
-            <td><span class="mode-pill orange">Backwash</span></td>
-            <td>00:03:22</td>
-            <td>BW Progress: 65%</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-          <tr>
-            <td><span class="status-dot green"></span>UF-1</td>
-            <td>UF</td>
-            <td><span class="mode-pill blue">Filtration</span></td>
-            <td>01:32:11</td>
-            <td>TMP: 24 kPa</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-          <tr>
-            <td><span class="status-dot blue"></span>UF-2</td>
-            <td>UF</td>
-            <td><span class="mode-pill purple">CEB</span></td>
-            <td>00:11:45</td>
-            <td>Chem.: 120 ppm</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-          <tr>
-            <td><span class="status-dot green"></span>RO-1</td>
-            <td>RO</td>
-            <td><span class="mode-pill green">Service</span></td>
-            <td>03:05:20</td>
-            <td>Feed P: 14.2 bar</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-          <tr>
-            <td><span class="status-dot blue"></span>RO-2</td>
-            <td>RO</td>
-            <td><span class="mode-pill blue">Flush</span></td>
-            <td>00:05:12</td>
-            <td>Flush Progress: 40%</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-          <tr>
-            <td><span class="status-dot green"></span>MBR-1</td>
-            <td>MBR</td>
-            <td><span class="mode-pill blue">Filtration</span></td>
-            <td>02:47:55</td>
-            <td>TMP: 22 kPa</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-          <tr>
-            <td><span class="status-dot amber"></span>MBR-2</td>
-            <td>MBR</td>
-            <td><span class="mode-pill amber">Relaxation</span></td>
-            <td>00:04:30</td>
-            <td>TMP Recovery: Good</td>
-            <td><span class="status-badge">Healthy</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="legend">
-        <div class="legend-item"><span class="status-dot green"></span> Service (Running)</div>
-        <div class="legend-item"><span class="status-dot blue"></span> Cleaning</div>
-        <div class="legend-item"><span class="status-dot amber"></span> Standby/Relaxation</div>
-        <div class="legend-item"><span class="status-dot red"></span> Trip/Alarm</div>
-      </div>
-    </div>
-
     <!-- Mode Distribution -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">Mode Distribution (This Week)</div>
-        <div class="card-link">View full report →</div>
+        <div class="card-link">View full report &rarr;</div>
       </div>
       <div class="donut-container">
         <div class="donut-wrapper">
@@ -1210,107 +1216,12 @@ body {
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Bottom Row -->
-  <div class="grid-2-bottom">
-    <!-- Cycle Performance Trend -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Cycle Performance Trend</div>
-        <div class="tabs">
-          <div class="tab active">UF TMP</div>
-          <div class="tab">RO Differential Pressure</div>
-          <div class="tab">MBR TMP Rise</div>
-        </div>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="trend-table">
-          <thead>
-            <tr>
-              <th>Unit</th>
-              <th>Metric</th>
-              <th>May 12</th>
-              <th>May 13</th>
-              <th>May 14</th>
-              <th>May 15</th>
-              <th>May 17</th>
-              <th>May 18</th>
-              <th>Trend</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>UF-1</td>
-              <td>Avg TMP (kPa)</td>
-              <td>18</td>
-              <td>19</td>
-              <td>21</td>
-              <td>22</td>
-              <td>25</td>
-              <td>24</td>
-              <td>
-                <svg class="sparkline" width="60" height="24" viewBox="0 0 60 24">
-                  <polyline points="2,20 12,18 22,14 32,12 42,4 52,6" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </td>
-            </tr>
-            <tr>
-              <td>UF-2</td>
-              <td>Avg TMP (kPa)</td>
-              <td>16</td>
-              <td>17</td>
-              <td>18</td>
-              <td>19</td>
-              <td>22</td>
-              <td>21</td>
-              <td>
-                <svg class="sparkline" width="60" height="24" viewBox="0 0 60 24">
-                  <polyline points="2,20 12,18 22,16 32,14 42,6 52,8" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </td>
-            </tr>
-            <tr>
-              <td>RO-1</td>
-              <td>Avg Diff. Pressure (bar)</td>
-              <td>0.8</td>
-              <td>0.9</td>
-              <td>1.0</td>
-              <td>1.0</td>
-              <td>1.2</td>
-              <td>1.2</td>
-              <td>
-                <svg class="sparkline" width="60" height="24" viewBox="0 0 60 24">
-                  <polyline points="2,20 12,16 22,12 32,12 42,6 52,6" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </td>
-            </tr>
-            <tr>
-              <td>MBR-1</td>
-              <td>Avg TMP Rise (kPa/cycle)</td>
-              <td>2.1</td>
-              <td>2.2</td>
-              <td>2.4</td>
-              <td>2.6</td>
-              <td>3.0</td>
-              <td>2.9</td>
-              <td>
-                <svg class="sparkline" width="60" height="24" viewBox="0 0 60 24">
-                  <polyline points="2,22 12,20 22,16 32,12 42,4 52,6" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card-footer-link">View detailed cycle analytics →</div>
-    </div>
 
     <!-- Top Alerts -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">Top Alerts</div>
-        <div class="card-link">View all alerts →</div>
+        <div class="card-link">View all alerts &rarr;</div>
       </div>
       <div class="alert-list">
         <div class="alert-item">
@@ -1465,23 +1376,16 @@ document.querySelectorAll('.dropdown-panel, .plant-dropdown').forEach(panel => {
   panel.addEventListener('click', e => e.stopPropagation());
 });
 
-// Tabs
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    tab.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-  });
-});
-
 // Sidebar nav
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', e => {
-    e.preventDefault();
     if (item.classList.contains('has-sub')) {
+      e.preventDefault();
       item.classList.toggle('expanded');
       const sub = document.getElementById(item.dataset.toggle);
       sub.classList.toggle('open');
-    } else {
+    } else if (item.getAttribute('href') === '#') {
+      e.preventDefault();
       document.querySelectorAll('.nav-item').forEach(i => {
         if (!i.classList.contains('has-sub')) i.classList.remove('active');
       });
@@ -1493,12 +1397,22 @@ document.querySelectorAll('.nav-item').forEach(item => {
 
 document.querySelectorAll('.nav-subitem').forEach(item => {
   item.addEventListener('click', e => {
-    e.preventDefault();
+    if (item.getAttribute('href') === '#') e.preventDefault();
     document.querySelectorAll('.nav-item').forEach(i => {
       if (!i.classList.contains('has-sub')) i.classList.remove('active');
     });
     document.querySelectorAll('.nav-subitem').forEach(i => i.classList.remove('active'));
     item.classList.add('active');
+  });
+});
+
+// Expandable unit rows
+document.querySelectorAll('.unit-row').forEach(row => {
+  row.addEventListener('click', () => {
+    const unit = row.dataset.unit;
+    const equipRow = document.querySelector('.equip-row[data-unit="' + unit + '"]');
+    row.classList.toggle('expanded');
+    equipRow.classList.toggle('open');
   });
 });
 </script>

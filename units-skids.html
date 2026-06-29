@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Units / Skids — DigitalPaani</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --border-light: #F0F1F3;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #DCFCE7;
+  --blue: #3B82F6;
+  --blue-bg: #DBEAFE;
+  --amber: #D97706;
+  --amber-bg: #FEF3C7;
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --orange: #EA580C;
+  --orange-bg: #FFEDD5;
+  --purple: #7C3AED;
+  --purple-bg: #EDE9FE;
+  --sidebar-width: 220px;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  display: flex;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo svg { flex-shrink: 0; }
+.sidebar-logo span {
+  font-weight: 700;
+  font-size: 1.07rem;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+}
+
+.nav-item:hover { background: var(--bg); color: var(--text-primary); }
+.nav-item.active { background: var(--bg); color: var(--text-primary); font-weight: 600; }
+
+.nav-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-item .chevron {
+  width: 14px;
+  height: 14px;
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+
+.nav-item.expanded .chevron { transform: rotate(180deg); }
+
+.nav-subitems {
+  display: none;
+  flex-direction: column;
+  gap: 1px;
+  padding-left: 28px;
+}
+
+.nav-subitems.open { display: flex; }
+
+.nav-subitem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-subitem:hover { background: var(--bg); color: var(--text-primary); }
+.nav-subitem.active { color: var(--text-primary); font-weight: 600; }
+
+.nav-subitem::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.nav-subitem.active::before { background: var(--text-primary); }
+
+.sidebar-bottom {
+  border-top: 1px solid var(--border);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plant-selector-wrap { position: relative; }
+
+.plant-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.plant-selector svg { width: 14px; height: 14px; stroke: var(--text-secondary); fill: none; stroke-width: 2; }
+.plant-selector .chevron-down { margin-left: auto; transition: transform 0.2s; }
+.plant-selector-wrap.open .chevron-down { transform: rotate(180deg); }
+
+.plant-dropdown {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  z-index: 20;
+  padding: 4px;
+}
+
+.plant-selector-wrap.open .plant-dropdown { display: block; }
+
+.plant-option {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.plant-option:hover { background: var(--bg); }
+.plant-option.selected { font-weight: 600; background: var(--blue-bg); }
+
+.plant-option .plant-type {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: auto;
+}
+
+.plant-type.wtp { background: var(--blue-bg); color: #1D4ED8; }
+.plant-type.stp { background: var(--green-bg); color: #15803D; }
+.plant-type.etp { background: var(--amber-bg); color: #92400E; }
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.user-details { display: flex; flex-direction: column; }
+.user-name { font-size: 0.85rem; font-weight: 600; }
+.user-email { font-size: 0.75rem; color: var(--text-tertiary); }
+
+/* Main content */
+.main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 24px 28px;
+  min-width: 0;
+}
+
+/* Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.page-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--bg); }
+.btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+/* Dropdown wrapper */
+.dropdown-wrap { position: relative; }
+
+.dropdown-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  z-index: 20;
+  padding: 6px;
+  min-width: 200px;
+}
+
+.dropdown-wrap.open .dropdown-panel { display: block; }
+
+.dropdown-option {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.dropdown-option:hover { background: var(--bg); }
+
+/* Filter bar */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  padding: 14px 0;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-group-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 5px;
+}
+
+.filter-chip {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.filter-chip:hover { border-color: var(--blue); color: var(--blue); }
+.filter-chip.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+.filter-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+}
+
+.group-toggle {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.group-toggle-btn {
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.15s;
+}
+
+.group-toggle-btn.active {
+  background: var(--text-primary);
+  color: white;
+}
+
+.clear-all-btn {
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.clear-all-btn:hover { color: var(--text-primary); }
+
+/* Section headers */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+  margin-top: 8px;
+}
+
+.section-header h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.section-header .count {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+/* Unit cards grid */
+.unit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+/* Card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-unit-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.health-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.health-badge.healthy { background: var(--green-bg); color: #15803D; }
+.health-badge.warning { background: var(--amber-bg); color: #92400E; }
+.health-badge.critical { background: var(--red-bg); color: #991B1B; }
+
+.mode-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.mode-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.mode-pill.green { background: var(--green-bg); color: #15803D; }
+.mode-pill.blue { background: var(--blue-bg); color: #1D4ED8; }
+.mode-pill.amber { background: var(--amber-bg); color: #92400E; }
+.mode-pill.orange { background: var(--orange-bg); color: #9A3412; }
+.mode-pill.purple { background: var(--purple-bg); color: #5B21B6; }
+
+.cycle-duration {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.cycle-duration svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--text-tertiary);
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Stats row */
+.stats-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 10px;
+  border-right: 1px solid var(--border-light);
+}
+
+.stat-item:last-child { border-right: none; }
+.stat-item:first-child { text-align: left; padding-left: 0; }
+
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Equipment mini table */
+.equip-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.equip-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 14px;
+}
+
+.equip-table td {
+  padding: 5px 8px;
+  font-size: 0.8rem;
+  vertical-align: middle;
+}
+
+.equip-table tr:nth-child(even) td { background: var(--bg); }
+
+.equip-table td:first-child {
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.equip-table td:nth-child(2) { font-weight: 500; }
+
+.equip-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.equip-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.equip-status.open { background: var(--green-bg); color: #15803D; }
+.equip-status.closed { background: var(--bg); color: var(--text-tertiary); }
+.equip-status.running { background: var(--green-bg); color: #15803D; }
+
+/* Last 5 cycles */
+.last-cycles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.last-cycles-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.cycle-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: var(--bg);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.cycle-mini .check {
+  color: var(--green);
+  font-size: 0.7rem;
+}
+
+/* Quick action links */
+.quick-actions {
+  display: flex;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+}
+
+.quick-link {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.quick-link:hover { color: var(--text-primary); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="6" fill="#111827"/>
+      <path d="M7 7L14 21L21 7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="10" y1="14" x2="18" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>DigitalPaani</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Overview
+    </a>
+
+    <a class="nav-item has-sub expanded" href="#" data-toggle="cycles-sub">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Cycles
+      <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div class="nav-subitems open" id="cycles-sub">
+      <a class="nav-subitem" href="all-cycles.html">All Cycles</a>
+      <a class="nav-subitem active" href="units-skids.html">Units / Skids</a>
+      <a class="nav-subitem" href="mode-history.html">Mode History</a>
+      <a class="nav-subitem" href="cycle-logs.html">Cycle Logs</a>
+      <a class="nav-subitem" href="cycle-performance.html">Cycle Performance</a>
+    </div>
+
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Alerts
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Reports
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Help
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="plant-selector-wrap" id="plantSelectorWrap">
+      <div class="plant-selector" id="plantSelectorBtn">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <span id="plantSelectorLabel">Green Valley WTP</span>
+        <svg class="chevron-down" viewBox="0 0 24 24" stroke="var(--text-secondary)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="plant-dropdown">
+        <div class="plant-option selected" data-plant="Green Valley WTP">Green Valley WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="Riverside STP">Riverside STP <span class="plant-type stp">STP</span></div>
+        <div class="plant-option" data-plant="Industrial Zone ETP">Industrial Zone ETP <span class="plant-type etp">ETP</span></div>
+        <div class="plant-option" data-plant="Lakeside WTP">Lakeside WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="North District STP">North District STP <span class="plant-type stp">STP</span></div>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">CU</div>
+      <div class="user-details">
+        <div class="user-name">Client User</div>
+        <div class="user-email">client@example.com</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;cursor:pointer"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Units / Skids</h1>
+      <p>Equipment status, cycle history, and health monitoring</p>
+    </div>
+    <div class="header-actions">
+      <div class="dropdown-wrap" id="downloadDropdown">
+        <button class="btn" id="downloadTrigger">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--text-tertiary)"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-panel" style="min-width:180px">
+          <div class="dropdown-option">Export as PDF</div>
+          <div class="dropdown-option">Export as CSV</div>
+          <div class="dropdown-option">Export as Excel</div>
+          <div class="dropdown-option">Export as PNG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-group-label">Unit Type</span>
+      <div class="filter-chips" data-filter="type">
+        <span class="filter-chip active" data-value="all">All</span>
+        <span class="filter-chip" data-value="PSF">PSF</span>
+        <span class="filter-chip" data-value="UF">UF</span>
+        <span class="filter-chip" data-value="RO">RO</span>
+        <span class="filter-chip" data-value="MBR">MBR</span>
+      </div>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-group">
+      <span class="filter-group-label">Status</span>
+      <div class="filter-chips" data-filter="status">
+        <span class="filter-chip active" data-value="all">All</span>
+        <span class="filter-chip" data-value="Running">Running</span>
+        <span class="filter-chip" data-value="Cleaning">Cleaning</span>
+        <span class="filter-chip" data-value="Standby">Standby</span>
+        <span class="filter-chip" data-value="Alarm">Alarm</span>
+      </div>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-group">
+      <span class="filter-group-label">Health</span>
+      <div class="filter-chips" data-filter="health">
+        <span class="filter-chip active" data-value="all">All</span>
+        <span class="filter-chip" data-value="Healthy">Healthy</span>
+        <span class="filter-chip" data-value="Warning">Warning</span>
+        <span class="filter-chip" data-value="Critical">Critical</span>
+      </div>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-group">
+      <span class="filter-group-label">Group By</span>
+      <div class="group-toggle">
+        <button class="group-toggle-btn active" data-group="type">Type</button>
+        <button class="group-toggle-btn" data-group="train">Treatment Train</button>
+      </div>
+    </div>
+    <button class="clear-all-btn">Clear All</button>
+  </div>
+
+  <!-- PSF Group -->
+  <div class="unit-section" data-type="PSF">
+    <div class="section-header">
+      <h2>Pressure Sand Filters (PSF)</h2>
+      <span class="count">2 Units</span>
+    </div>
+    <div class="unit-grid">
+      <!-- PSF-1 -->
+      <div class="card unit-card" data-unit-type="PSF" data-status="Running" data-health="Healthy">
+        <div class="card-top">
+          <span class="card-unit-name">PSF-1</span>
+          <span class="health-badge healthy">Healthy</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill green">Service (Filtration)</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            02:14:38
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">6</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">02:10</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">89.2%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-101</td><td>Inlet Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-102</td><td>Outlet Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-103</td><td>Drain Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>P-101</td><td>Feed Pump</td><td><span class="equip-status running">Running</span></td><td>118.5 / 120 m&sup3;/hr</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">Service 02:10 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:03 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 02:15 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 02:08 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+
+      <!-- PSF-2 -->
+      <div class="card unit-card" data-unit-type="PSF" data-status="Cleaning" data-health="Healthy">
+        <div class="card-top">
+          <span class="card-unit-name">PSF-2</span>
+          <span class="health-badge healthy">Healthy</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill orange">Backwash</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            00:03:22
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">7</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">02:08</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">87.5%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-111</td><td>Inlet Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>V-112</td><td>Outlet Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>V-114</td><td>BW Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>P-112</td><td>BW Pump</td><td><span class="equip-status running">Running</span></td><td>78.2 / 80 m&sup3;/hr</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">Backwash 00:03 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 02:08 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 02:12 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:03 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UF Group -->
+  <div class="unit-section" data-type="UF">
+    <div class="section-header">
+      <h2>Ultrafiltration (UF)</h2>
+      <span class="count">2 Units</span>
+    </div>
+    <div class="unit-grid">
+      <!-- UF-1 -->
+      <div class="card unit-card" data-unit-type="UF" data-status="Running" data-health="Healthy">
+        <div class="card-top">
+          <span class="card-unit-name">UF-1</span>
+          <span class="health-badge healthy">Healthy</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill blue">Filtration</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            01:32:11
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">22</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">00:38</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">84.1%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-201</td><td>Inlet Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-202</td><td>Outlet Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-203</td><td>Drain Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>P-201</td><td>Feed Pump</td><td><span class="equip-status running">Running</span></td><td>58.7 / 60 m&sup3;/hr</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">Filtration 00:38 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 00:36 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 00:40 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+
+      <!-- UF-2 -->
+      <div class="card unit-card" data-unit-type="UF" data-status="Cleaning" data-health="Warning">
+        <div class="card-top">
+          <span class="card-unit-name">UF-2</span>
+          <span class="health-badge warning">Warning</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill purple">CEB</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            00:11:45
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">24</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">00:35</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">81.3%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-211</td><td>Inlet Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>V-214</td><td>CEB Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>D-201</td><td>NaOCl Dosing</td><td><span class="equip-status running">Running</span></td><td>118 / 120 ppm</td></tr>
+          <tr><td>P-212</td><td>CEB Pump</td><td><span class="equip-status running">Running</span></td><td>39.1 / 40 m&sup3;/hr</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">CEB 00:12 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 00:34 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 00:36 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Backwash 00:04 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RO Group -->
+  <div class="unit-section" data-type="RO">
+    <div class="section-header">
+      <h2>Reverse Osmosis (RO)</h2>
+      <span class="count">2 Units</span>
+    </div>
+    <div class="unit-grid">
+      <!-- RO-1 -->
+      <div class="card unit-card" data-unit-type="RO" data-status="Running" data-health="Healthy">
+        <div class="card-top">
+          <span class="card-unit-name">RO-1</span>
+          <span class="health-badge healthy">Healthy</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill green">Service</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            03:05:20
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">2</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">06:20</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">88.7%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-301</td><td>Feed Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-302</td><td>Permeate Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-303</td><td>Concentrate Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>P-301</td><td>HP Pump</td><td><span class="equip-status running">Running</span></td><td>14.2 / 14.5 bar</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">Service 06:18 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Flush 00:05 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 06:22 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Flush 00:05 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 06:20 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+
+      <!-- RO-2 -->
+      <div class="card unit-card" data-unit-type="RO" data-status="Cleaning" data-health="Healthy">
+        <div class="card-top">
+          <span class="card-unit-name">RO-2</span>
+          <span class="health-badge healthy">Healthy</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill blue">Flush</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            00:05:12
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">2</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">05:45</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">85.9%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-311</td><td>Feed Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-312</td><td>Permeate Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>V-314</td><td>Flush Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>P-311</td><td>HP Pump</td><td><span class="equip-status running">Running</span></td><td>19.4 / 20 m&sup3;/hr</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">Flush 00:05 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 05:42 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Flush 00:05 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Service 05:48 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Flush 00:05 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MBR Group -->
+  <div class="unit-section" data-type="MBR">
+    <div class="section-header">
+      <h2>Membrane Bioreactor (MBR)</h2>
+      <span class="count">2 Units</span>
+    </div>
+    <div class="unit-grid">
+      <!-- MBR-1 -->
+      <div class="card unit-card" data-unit-type="MBR" data-status="Running" data-health="Healthy">
+        <div class="card-top">
+          <span class="card-unit-name">MBR-1</span>
+          <span class="health-badge healthy">Healthy</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill blue">Filtration</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            02:47:55
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">14</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">01:12</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">82.4%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-401</td><td>Inlet Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>V-402</td><td>Permeate Valve</td><td><span class="equip-status open">Open</span></td><td></td></tr>
+          <tr><td>B-401</td><td>Blower</td><td><span class="equip-status running">Running</span></td><td>49.2 / 50 Hz</td></tr>
+          <tr><td>P-401</td><td>Permeate Pump</td><td><span class="equip-status running">Running</span></td><td>29.5 / 30 m&sup3;/hr</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">Filtration 01:12 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Relaxation 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 01:10 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Relaxation 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 01:14 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+
+      <!-- MBR-2 -->
+      <div class="card unit-card" data-unit-type="MBR" data-status="Standby" data-health="Healthy">
+        <div class="card-top">
+          <span class="card-unit-name">MBR-2</span>
+          <span class="health-badge healthy">Healthy</span>
+        </div>
+        <div class="mode-row">
+          <span class="mode-pill amber">Relaxation</span>
+          <span class="cycle-duration">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            00:04:30
+          </span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><span class="stat-label">Total Cycles Today</span><span class="stat-value">15</span></div>
+          <div class="stat-item"><span class="stat-label">Avg Duration</span><span class="stat-value">01:08</span></div>
+          <div class="stat-item"><span class="stat-label">Uptime</span><span class="stat-value">79.8%</span></div>
+        </div>
+        <div class="equip-section-title">Active Equipment</div>
+        <table class="equip-table">
+          <tr><td>V-411</td><td>Inlet Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>V-412</td><td>Permeate Valve</td><td><span class="equip-status closed">Closed</span></td><td></td></tr>
+          <tr><td>B-411</td><td>Blower</td><td><span class="equip-status running">Running</span></td><td>34.8 / 35 Hz</td></tr>
+        </table>
+        <div class="last-cycles">
+          <span class="last-cycles-label">Last 5 Cycles</span>
+          <span class="cycle-mini">Relaxation 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 01:08 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Relaxation 00:04 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Filtration 01:10 <span class="check">&#10003;</span></span>
+          <span class="cycle-mini">Relaxation 00:04 <span class="check">&#10003;</span></span>
+        </div>
+        <div class="quick-actions">
+          <a class="quick-link" href="#">View Cycles &rarr;</a>
+          <a class="quick-link" href="#">View Timeline &rarr;</a>
+          <a class="quick-link" href="#">View Logs &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// Dropdown toggle
+function setupDropdown(wrapperId, triggerId) {
+  const wrap = document.getElementById(wrapperId);
+  const trigger = document.getElementById(triggerId);
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => {
+      if (el !== wrap) el.classList.remove('open');
+    });
+    wrap.classList.toggle('open');
+  });
+}
+
+setupDropdown('downloadDropdown', 'downloadTrigger');
+
+// Plant selector
+const plantWrap = document.getElementById('plantSelectorWrap');
+document.getElementById('plantSelectorBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.querySelectorAll('.dropdown-wrap.open').forEach(el => el.classList.remove('open'));
+  plantWrap.classList.toggle('open');
+});
+
+plantWrap.querySelectorAll('.plant-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    plantWrap.querySelectorAll('.plant-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('plantSelectorLabel').textContent = opt.dataset.plant;
+    plantWrap.classList.remove('open');
+  });
+});
+
+// Close dropdowns on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => {
+    el.classList.remove('open');
+  });
+});
+
+document.querySelectorAll('.dropdown-panel, .plant-dropdown').forEach(panel => {
+  panel.addEventListener('click', e => e.stopPropagation());
+});
+
+// Sidebar nav
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', e => {
+    if (item.classList.contains('has-sub')) {
+      e.preventDefault();
+      item.classList.toggle('expanded');
+      const sub = document.getElementById(item.dataset.toggle);
+      sub.classList.toggle('open');
+    }
+  });
+});
+
+// Filter chips
+document.querySelectorAll('.filter-bar .filter-chips').forEach(group => {
+  group.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.dataset.value === 'all') {
+        group.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      } else {
+        group.querySelector('.filter-chip[data-value="all"]').classList.remove('active');
+        chip.classList.toggle('active');
+        if (!group.querySelector('.filter-chip.active')) {
+          group.querySelector('.filter-chip[data-value="all"]').classList.add('active');
+        }
+      }
+      applyFilters();
+    });
+  });
+});
+
+// Group toggle
+document.querySelectorAll('.group-toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.group-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Clear all
+document.querySelector('.clear-all-btn').addEventListener('click', () => {
+  document.querySelectorAll('.filter-bar .filter-chips').forEach(group => {
+    group.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    group.querySelector('.filter-chip[data-value="all"]').classList.add('active');
+  });
+  applyFilters();
+});
+
+// Apply filters
+function applyFilters() {
+  const typeGroup = document.querySelector('.filter-chips[data-filter="type"]');
+  const statusGroup = document.querySelector('.filter-chips[data-filter="status"]');
+  const healthGroup = document.querySelector('.filter-chips[data-filter="health"]');
+
+  const activeTypes = getActiveValues(typeGroup);
+  const activeStatuses = getActiveValues(statusGroup);
+  const activeHealths = getActiveValues(healthGroup);
+
+  // Show/hide sections
+  document.querySelectorAll('.unit-section').forEach(section => {
+    const type = section.dataset.type;
+    const typeMatch = activeTypes.includes('all') || activeTypes.includes(type);
+
+    if (!typeMatch) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = '';
+
+    // Show/hide cards within section
+    let visibleCards = 0;
+    section.querySelectorAll('.unit-card').forEach(card => {
+      const cardStatus = card.dataset.status;
+      const cardHealth = card.dataset.health;
+      const statusMatch = activeStatuses.includes('all') || activeStatuses.includes(cardStatus);
+      const healthMatch = activeHealths.includes('all') || activeHealths.includes(cardHealth);
+
+      if (statusMatch && healthMatch) {
+        card.style.display = '';
+        visibleCards++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (visibleCards === 0) {
+      section.style.display = 'none';
+    }
+  });
+}
+
+function getActiveValues(group) {
+  const active = [];
+  group.querySelectorAll('.filter-chip.active').forEach(c => active.push(c.dataset.value));
+  return active;
+}
+</script>
+</body>
+</html>

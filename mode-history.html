@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mode History — DigitalPaani</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --border-light: #F0F1F3;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #DCFCE7;
+  --blue: #3B82F6;
+  --blue-bg: #DBEAFE;
+  --amber: #D97706;
+  --amber-bg: #FEF3C7;
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --orange: #EA580C;
+  --orange-bg: #FFEDD5;
+  --purple: #7C3AED;
+  --purple-bg: #EDE9FE;
+  --sidebar-width: 220px;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  display: flex;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 10;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo svg { flex-shrink: 0; }
+.sidebar-logo span { font-weight: 700; font-size: 1.07rem; letter-spacing: -0.01em; color: var(--text-primary); }
+
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+}
+.nav-item:hover { background: var(--bg); color: var(--text-primary); }
+.nav-item.active { background: var(--bg); color: var(--text-primary); font-weight: 600; }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav-item .chevron { width: 14px; height: 14px; margin-left: auto; transition: transform 0.2s; }
+.nav-item.expanded .chevron { transform: rotate(180deg); }
+
+.nav-subitems { display: none; flex-direction: column; gap: 1px; padding-left: 28px; }
+.nav-subitems.open { display: flex; }
+
+.nav-subitem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-subitem:hover { background: var(--bg); color: var(--text-primary); }
+.nav-subitem.active { color: var(--text-primary); font-weight: 600; }
+.nav-subitem::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--text-tertiary); flex-shrink: 0; }
+.nav-subitem.active::before { background: var(--text-primary); }
+
+.sidebar-bottom {
+  border-top: 1px solid var(--border);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plant-selector-wrap { position: relative; }
+.plant-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 100%;
+}
+.plant-selector svg { width: 14px; height: 14px; stroke: var(--text-secondary); fill: none; stroke-width: 2; }
+.plant-selector .chevron-down { margin-left: auto; transition: transform 0.2s; }
+.plant-selector-wrap.open .chevron-down { transform: rotate(180deg); }
+
+.plant-dropdown {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  z-index: 20;
+  padding: 4px;
+}
+.plant-selector-wrap.open .plant-dropdown { display: block; }
+
+.plant-option {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+.plant-option:hover { background: var(--bg); }
+.plant-option.selected { font-weight: 600; background: var(--blue-bg); }
+.plant-option .plant-type { font-size: 0.7rem; font-weight: 600; padding: 1px 5px; border-radius: 3px; margin-left: auto; }
+.plant-type.wtp { background: var(--blue-bg); color: #1D4ED8; }
+.plant-type.stp { background: var(--green-bg); color: #15803D; }
+.plant-type.etp { background: var(--amber-bg); color: #92400E; }
+
+.user-info { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+.user-details { display: flex; flex-direction: column; }
+.user-name { font-size: 0.85rem; font-weight: 600; }
+.user-email { font-size: 0.75rem; color: var(--text-tertiary); }
+
+/* Main content */
+.main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 24px 28px;
+  min-width: 0;
+}
+
+/* Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.page-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+.page-header p { color: var(--text-secondary); font-size: 0.9rem; margin-top: 2px; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg); }
+.btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.dropdown-wrap { position: relative; }
+.dropdown-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  z-index: 20;
+  padding: 6px;
+  min-width: 200px;
+}
+.dropdown-wrap.open .dropdown-panel { display: block; }
+.dropdown-option { padding: 8px 10px; font-size: 0.82rem; border-radius: 4px; cursor: pointer; color: var(--text-primary); }
+.dropdown-option:hover { background: var(--bg); }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.card-subtitle { font-size: 0.82rem; color: var(--text-secondary); font-weight: 400; }
+
+/* Filter Bar */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  padding: 12px 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.filter-chip {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.filter-chip:hover { border-color: var(--blue); color: var(--blue); }
+.filter-chip.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+.time-toggle {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.time-btn {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+  border-right: 1px solid var(--border);
+}
+.time-btn:last-child { border-right: none; }
+.time-btn:hover { color: var(--text-primary); background: var(--bg); }
+.time-btn.active { background: var(--text-primary); color: white; }
+
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  cursor: pointer;
+}
+.toggle-switch input { display: none; }
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+.toggle-switch input:checked + .toggle-track { background: var(--blue); }
+.toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.toggle-switch input:checked + .toggle-track::after { transform: translateX(16px); }
+
+.clear-btn {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  white-space: nowrap;
+}
+.clear-btn:hover { color: var(--red); }
+
+.filter-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* Gantt */
+.gantt-wrap { overflow-x: auto; }
+
+.gantt {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  min-width: 700px;
+}
+
+.gantt-labels {
+  display: flex;
+  flex-direction: column;
+}
+
+.gantt-label {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding-right: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.gantt-timeline-area {
+  position: relative;
+}
+
+.gantt-time-axis {
+  display: flex;
+  height: 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.gantt-time-label {
+  position: absolute;
+  top: 4px;
+  font-size: 0.68rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  transform: translateX(-50%);
+  font-variant-numeric: tabular-nums;
+}
+
+.gantt-rows {
+  position: relative;
+}
+
+.gantt-row {
+  height: 36px;
+  position: relative;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+}
+
+.gantt-bar {
+  position: absolute;
+  top: 6px;
+  height: 24px;
+  border-radius: 3px;
+  min-width: 1px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.gantt-bar:hover { opacity: 0.85; z-index: 2; }
+
+.gantt-bar.green { background: var(--green); }
+.gantt-bar.blue { background: var(--blue); }
+.gantt-bar.amber { background: var(--amber); }
+.gantt-bar.red { background: var(--red); }
+.gantt-bar.purple { background: var(--purple); }
+
+/* Tooltip */
+.gantt-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: white;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  z-index: 30;
+  pointer-events: none;
+  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.gantt-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--text-primary);
+}
+.gantt-bar:hover .gantt-tooltip { display: block; }
+
+/* Gridlines */
+.gantt-gridline {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border-light);
+  pointer-events: none;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 4px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-dot.green { background: var(--green); }
+.status-dot.blue { background: var(--blue); }
+.status-dot.amber { background: var(--amber); }
+.status-dot.red { background: var(--red); }
+.status-dot.purple { background: var(--purple); }
+
+/* Summary Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.data-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0 12px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td:first-child { font-weight: 600; }
+
+.anomaly-row { background: var(--amber-bg); }
+.anomaly-note {
+  font-size: 0.75rem;
+  color: var(--amber);
+  font-weight: 500;
+}
+
+.mt-16 { margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="6" fill="#111827"/>
+      <path d="M7 7L14 21L21 7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="10" y1="14" x2="18" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>DigitalPaani</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Overview
+    </a>
+
+    <a class="nav-item has-sub expanded" href="#" data-toggle="cycles-sub">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Cycles
+      <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div class="nav-subitems open" id="cycles-sub">
+      <a class="nav-subitem" href="all-cycles.html">All Cycles</a>
+      <a class="nav-subitem" href="units-skids.html">Units / Skids</a>
+      <a class="nav-subitem active" href="mode-history.html">Mode History</a>
+      <a class="nav-subitem" href="cycle-logs.html">Cycle Logs</a>
+      <a class="nav-subitem" href="cycle-performance.html">Cycle Performance</a>
+    </div>
+
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Alerts
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Reports
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Help
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="plant-selector-wrap" id="plantSelectorWrap">
+      <div class="plant-selector" id="plantSelectorBtn">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <span id="plantSelectorLabel">Green Valley WTP</span>
+        <svg class="chevron-down" viewBox="0 0 24 24" stroke="var(--text-secondary)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="plant-dropdown">
+        <div class="plant-option selected" data-plant="Green Valley WTP">Green Valley WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="Riverside STP">Riverside STP <span class="plant-type stp">STP</span></div>
+        <div class="plant-option" data-plant="Industrial Zone ETP">Industrial Zone ETP <span class="plant-type etp">ETP</span></div>
+        <div class="plant-option" data-plant="Lakeside WTP">Lakeside WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="North District STP">North District STP <span class="plant-type stp">STP</span></div>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">CU</div>
+      <div class="user-details">
+        <div class="user-name">Client User</div>
+        <div class="user-email">client@example.com</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;cursor:pointer"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Mode History</h1>
+      <p>Visual timeline of mode transitions across all units</p>
+    </div>
+    <div class="header-actions">
+      <div class="dropdown-wrap" id="downloadDropdown">
+        <button class="btn" id="downloadTrigger">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--text-tertiary)"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-panel" style="min-width:180px">
+          <div class="dropdown-option">Export as PDF</div>
+          <div class="dropdown-option">Export as CSV</div>
+          <div class="dropdown-option">Export as Excel</div>
+          <div class="dropdown-option">Export as PNG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-section">
+      <span class="filter-section-label">Unit Type</span>
+      <span class="filter-chip active" data-group="unit">All</span>
+      <span class="filter-chip" data-group="unit">PSF</span>
+      <span class="filter-chip" data-group="unit">UF</span>
+      <span class="filter-chip" data-group="unit">RO</span>
+      <span class="filter-chip" data-group="unit">MBR</span>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-section">
+      <span class="filter-section-label">Mode</span>
+      <span class="filter-chip active" data-group="mode">All</span>
+      <span class="filter-chip" data-group="mode">Service</span>
+      <span class="filter-chip" data-group="mode">Filtration</span>
+      <span class="filter-chip" data-group="mode">Backwash</span>
+      <span class="filter-chip" data-group="mode">CEB</span>
+      <span class="filter-chip" data-group="mode">Flush</span>
+      <span class="filter-chip" data-group="mode">Relaxation</span>
+      <span class="filter-chip" data-group="mode">Standby</span>
+      <span class="filter-chip" data-group="mode">Alarm</span>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-section">
+      <span class="filter-section-label">Time Scale</span>
+      <div class="time-toggle">
+        <button class="time-btn">6 hrs</button>
+        <button class="time-btn">12 hrs</button>
+        <button class="time-btn active">24 hrs</button>
+        <button class="time-btn">3 days</button>
+        <button class="time-btn">7 days</button>
+      </div>
+    </div>
+    <div class="filter-sep"></div>
+    <label class="toggle-wrap">
+      <span>Show Anomalies</span>
+      <div class="toggle-switch">
+        <input type="checkbox" id="anomalyToggle">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+    <div class="filter-sep"></div>
+    <button class="clear-btn" id="clearAll">Clear All</button>
+  </div>
+
+  <!-- Gantt Timeline Card -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Mode Timeline</div>
+        <div class="card-subtitle">Last 24 Hours &mdash; May 18, 2025</div>
+      </div>
+    </div>
+
+    <div class="gantt-wrap">
+      <div class="gantt">
+        <!-- Labels -->
+        <div class="gantt-labels">
+          <div style="height:28px"></div>
+          <div class="gantt-label">PSF-1</div>
+          <div class="gantt-label">PSF-2</div>
+          <div class="gantt-label">UF-1</div>
+          <div class="gantt-label">UF-2</div>
+          <div class="gantt-label">RO-1</div>
+          <div class="gantt-label">RO-2</div>
+          <div class="gantt-label">MBR-1</div>
+          <div class="gantt-label">MBR-2</div>
+        </div>
+
+        <!-- Timeline area -->
+        <div class="gantt-timeline-area" id="ganttArea">
+          <!-- Time axis -->
+          <div class="gantt-time-axis" id="timeAxis"></div>
+          <!-- Rows rendered by JS -->
+          <div class="gantt-rows" id="ganttRows"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend" style="margin-top:16px">
+      <div class="legend-item"><span class="status-dot green"></span> Service / Filtration</div>
+      <div class="legend-item"><span class="status-dot blue"></span> Cleaning (Backwash, Flush)</div>
+      <div class="legend-item"><span class="status-dot amber"></span> Standby / Relaxation</div>
+      <div class="legend-item"><span class="status-dot red"></span> Trip / Alarm</div>
+      <div class="legend-item"><span class="status-dot purple"></span> CEB</div>
+    </div>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="card mt-16">
+    <div class="card-header">
+      <div class="card-title">Mode Duration Summary</div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Unit</th>
+          <th>Service (hrs)</th>
+          <th>Cleaning (hrs)</th>
+          <th>Standby (hrs)</th>
+          <th>Trip/Alarm (hrs)</th>
+          <th>Total (hrs)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PSF-1</td>
+          <td>23.76</td>
+          <td>0.24</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>24.00</td>
+        </tr>
+        <tr>
+          <td>PSF-2</td>
+          <td>23.52</td>
+          <td>0.48</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>24.00</td>
+        </tr>
+        <tr>
+          <td>UF-1</td>
+          <td>21.60</td>
+          <td>2.40</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>24.00</td>
+        </tr>
+        <tr>
+          <td>UF-2</td>
+          <td>21.20</td>
+          <td>2.60</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>23.80</td>
+        </tr>
+        <tr>
+          <td>RO-1</td>
+          <td>23.76</td>
+          <td>0.24</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>24.00</td>
+        </tr>
+        <tr>
+          <td>RO-2</td>
+          <td>23.28</td>
+          <td>0.24</td>
+          <td>0.00</td>
+          <td>0.48</td>
+          <td>24.00</td>
+        </tr>
+        <tr>
+          <td>MBR-1</td>
+          <td>21.60</td>
+          <td>0.00</td>
+          <td>2.40</td>
+          <td>0.00</td>
+          <td>24.00</td>
+        </tr>
+        <tr class="anomaly-row">
+          <td>MBR-2 <span class="anomaly-note">-- Relaxation 42% above normal</span></td>
+          <td>20.40</td>
+          <td>0.00</td>
+          <td>3.60</td>
+          <td>0.00</td>
+          <td>24.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+// ---- Gantt timeline data and rendering ----
+const HOURS = 24;
+const timeAxis = document.getElementById('timeAxis');
+const ganttRows = document.getElementById('ganttRows');
+
+// Render time axis labels
+for (let h = 0; h <= 24; h += 2) {
+  const pct = (h / HOURS) * 100;
+  const label = document.createElement('span');
+  label.className = 'gantt-time-label';
+  label.style.left = pct + '%';
+  label.textContent = String(h).padStart(2, '0') + ':00';
+  timeAxis.appendChild(label);
+}
+
+// Helper: bar data -> { start (hr), end (hr), color, mode, unit, equipment, trigger }
+function bar(start, end, color, mode, unit, equipment, trigger) {
+  return { start, end, color, mode, unit, equipment: equipment || 'N/A', trigger: trigger || 'Auto' };
+}
+
+// Generate UF repeating pattern
+function ufPattern(unit, cebAt) {
+  const bars = [];
+  let t = 0;
+  const filtDur = 38/60; // ~0.633 hr
+  const bwDur = 4/60;    // ~0.067 hr
+  while (t < 24) {
+    if (cebAt !== undefined && Math.abs(t - cebAt) < 0.5 && t > 0) {
+      // Insert CEB
+      bars.push(bar(t, t + 0.2, 'purple', 'CEB', unit, 'CEB-P1, UV-1', 'Auto'));
+      t += 0.2;
+    }
+    const fe = Math.min(t + filtDur, 24);
+    bars.push(bar(t, fe, 'green', 'Filtration', unit, 'UF-FP1, UF-FP2', 'Auto'));
+    t = fe;
+    if (t >= 24) break;
+    const be = Math.min(t + bwDur, 24);
+    bars.push(bar(t, be, 'blue', 'Backwash', unit, 'BW-P1', 'Auto'));
+    t = be;
+  }
+  return bars;
+}
+
+// Generate MBR repeating pattern
+function mbrPattern(unit, anomalyAt) {
+  const bars = [];
+  let t = 0;
+  const filtDur = 72/60; // 1.2 hr
+  const relDur = 8/60;   // ~0.133 hr
+  while (t < 24) {
+    const fe = Math.min(t + filtDur, 24);
+    bars.push(bar(t, fe, 'green', 'Filtration', unit, 'MBR-FP1, MBR-BL1', 'Auto'));
+    t = fe;
+    if (t >= 24) break;
+    let rd = relDur;
+    if (anomalyAt !== undefined && Math.abs(t - anomalyAt) < 1) rd = 0.7; // anomaly: long relaxation
+    const re = Math.min(t + rd, 24);
+    bars.push(bar(t, re, 'amber', 'Relaxation', unit, 'N/A', 'Auto'));
+    t = re;
+  }
+  return bars;
+}
+
+const unitData = {
+  'PSF-1': [
+    bar(0, 8, 'green', 'Service', 'PSF-1', 'PSF-FP1, PSF-FP2', 'Auto'),
+    bar(8, 8.1, 'blue', 'Backwash', 'PSF-1', 'BW-P1', 'Auto'),
+    bar(8.1, 16, 'green', 'Service', 'PSF-1', 'PSF-FP1, PSF-FP2', 'Auto'),
+    bar(16, 16.1, 'blue', 'Backwash', 'PSF-1', 'BW-P1', 'Auto'),
+    bar(16.1, 24, 'green', 'Service', 'PSF-1', 'PSF-FP1, PSF-FP2', 'Auto'),
+  ],
+  'PSF-2': [
+    bar(0, 7, 'green', 'Service', 'PSF-2', 'PSF-FP3, PSF-FP4', 'Auto'),
+    bar(7, 7.1, 'blue', 'Backwash', 'PSF-2', 'BW-P2', 'Auto'),
+    bar(7.1, 15, 'green', 'Service', 'PSF-2', 'PSF-FP3, PSF-FP4', 'Auto'),
+    bar(15, 15.1, 'blue', 'Backwash', 'PSF-2', 'BW-P2', 'Auto'),
+    bar(15.1, 23, 'green', 'Service', 'PSF-2', 'PSF-FP3, PSF-FP4', 'Auto'),
+    bar(23, 23.1, 'blue', 'Backwash', 'PSF-2', 'BW-P2', 'Auto'),
+    bar(23.1, 24, 'green', 'Service', 'PSF-2', 'PSF-FP3, PSF-FP4', 'Auto'),
+  ],
+  'UF-1': ufPattern('UF-1'),
+  'UF-2': ufPattern('UF-2', 10),
+  'RO-1': [
+    bar(0, 6, 'green', 'Service', 'RO-1', 'RO-HP1, RO-BP1', 'Auto'),
+    bar(6, 6.1, 'blue', 'Flush', 'RO-1', 'FL-P1', 'Auto'),
+    bar(6.1, 12, 'green', 'Service', 'RO-1', 'RO-HP1, RO-BP1', 'Auto'),
+    bar(12, 12.1, 'blue', 'Flush', 'RO-1', 'FL-P1', 'Auto'),
+    bar(12.1, 24, 'green', 'Service', 'RO-1', 'RO-HP1, RO-BP1', 'Auto'),
+  ],
+  'RO-2': [
+    bar(0, 5, 'green', 'Service', 'RO-2', 'RO-HP2, RO-BP2', 'Auto'),
+    bar(5, 5.1, 'blue', 'Flush', 'RO-2', 'FL-P2', 'Auto'),
+    bar(5.1, 11, 'green', 'Service', 'RO-2', 'RO-HP2, RO-BP2', 'Auto'),
+    bar(11, 11.1, 'blue', 'Flush', 'RO-2', 'FL-P2', 'Auto'),
+    bar(11.1, 18, 'green', 'Service', 'RO-2', 'RO-HP2, RO-BP2', 'Auto'),
+    bar(18, 18.5, 'red', 'Alarm', 'RO-2', 'RO-HP2', 'Manual'),
+    bar(18.5, 24, 'green', 'Service', 'RO-2', 'RO-HP2, RO-BP2', 'Auto'),
+  ],
+  'MBR-1': mbrPattern('MBR-1'),
+  'MBR-2': mbrPattern('MBR-2', 14),
+};
+
+const unitOrder = ['PSF-1','PSF-2','UF-1','UF-2','RO-1','RO-2','MBR-1','MBR-2'];
+
+function fmtTime(hr) {
+  const h = Math.floor(hr);
+  const m = Math.round((hr - h) * 60);
+  return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+}
+
+function fmtDuration(hrs) {
+  const h = Math.floor(hrs);
+  const m = Math.round((hrs - h) * 60);
+  if (h > 0) return h + 'h ' + m + 'm';
+  return m + 'm';
+}
+
+// Render gridlines
+function renderGridlines() {
+  for (let h = 0; h <= 24; h += 2) {
+    const line = document.createElement('div');
+    line.className = 'gantt-gridline';
+    line.style.left = ((h / HOURS) * 100) + '%';
+    ganttRows.appendChild(line);
+  }
+}
+
+// Render rows
+function renderGantt() {
+  ganttRows.innerHTML = '';
+  renderGridlines();
+
+  unitOrder.forEach(unit => {
+    const row = document.createElement('div');
+    row.className = 'gantt-row';
+    row.dataset.unit = unit;
+
+    unitData[unit].forEach(b => {
+      const el = document.createElement('div');
+      el.className = 'gantt-bar ' + b.color;
+      const leftPct = (b.start / HOURS) * 100;
+      const widthPct = ((b.end - b.start) / HOURS) * 100;
+      el.style.left = leftPct + '%';
+      el.style.width = Math.max(widthPct, 0.15) + '%';
+
+      // Tooltip
+      const tip = document.createElement('div');
+      tip.className = 'gantt-tooltip';
+      tip.innerHTML =
+        '<strong>' + b.mode + '</strong> &mdash; ' + b.unit + '<br>' +
+        fmtTime(b.start) + ' &ndash; ' + fmtTime(b.end) + ' (' + fmtDuration(b.end - b.start) + ')<br>' +
+        'Equipment: ' + b.equipment + '<br>' +
+        'Trigger: ' + b.trigger;
+      el.appendChild(tip);
+
+      row.appendChild(el);
+    });
+
+    ganttRows.appendChild(row);
+  });
+}
+
+renderGantt();
+
+// ---- Filter chip logic ----
+document.querySelectorAll('.filter-bar .filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const group = chip.dataset.group;
+    const siblings = document.querySelectorAll('.filter-chip[data-group="'+group+'"]');
+    if (chip.textContent.trim() === 'All') {
+      siblings.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    } else {
+      siblings[0].classList.remove('active');
+      chip.classList.toggle('active');
+      if (!document.querySelector('.filter-chip[data-group="'+group+'"].active')) {
+        siblings[0].classList.add('active');
+      }
+    }
+  });
+});
+
+// Time scale toggle
+document.querySelectorAll('.time-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Clear all
+document.getElementById('clearAll').addEventListener('click', () => {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    if (c.textContent.trim() === 'All') c.classList.add('active');
+  });
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.time-btn').forEach(b => {
+    if (b.textContent.trim() === '24 hrs') b.classList.add('active');
+  });
+  document.getElementById('anomalyToggle').checked = false;
+});
+
+// ---- Dropdown logic ----
+function setupDropdown(wrapperId, triggerId) {
+  const wrap = document.getElementById(wrapperId);
+  const trigger = document.getElementById(triggerId);
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => {
+      if (el !== wrap) el.classList.remove('open');
+    });
+    wrap.classList.toggle('open');
+  });
+}
+setupDropdown('downloadDropdown', 'downloadTrigger');
+
+// Plant selector
+const plantWrap = document.getElementById('plantSelectorWrap');
+document.getElementById('plantSelectorBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.querySelectorAll('.dropdown-wrap.open').forEach(el => el.classList.remove('open'));
+  plantWrap.classList.toggle('open');
+});
+plantWrap.querySelectorAll('.plant-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    plantWrap.querySelectorAll('.plant-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('plantSelectorLabel').textContent = opt.dataset.plant;
+    plantWrap.classList.remove('open');
+  });
+});
+
+// Close dropdowns on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => el.classList.remove('open'));
+});
+document.querySelectorAll('.dropdown-panel, .plant-dropdown').forEach(panel => {
+  panel.addEventListener('click', e => e.stopPropagation());
+});
+
+// Sidebar nav
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', e => {
+    if (item.classList.contains('has-sub')) {
+      e.preventDefault();
+      item.classList.toggle('expanded');
+      const sub = document.getElementById(item.dataset.toggle);
+      sub.classList.toggle('open');
+    }
+  });
+});
+</script>
+</body>
+</html>

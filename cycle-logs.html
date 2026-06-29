@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cycle Logs — DigitalPaani</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --border-light: #F0F1F3;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #DCFCE7;
+  --blue: #3B82F6;
+  --blue-bg: #DBEAFE;
+  --amber: #D97706;
+  --amber-bg: #FEF3C7;
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --orange: #EA580C;
+  --orange-bg: #FFEDD5;
+  --purple: #7C3AED;
+  --purple-bg: #EDE9FE;
+  --sidebar-width: 220px;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  display: flex;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo svg { flex-shrink: 0; }
+
+.sidebar-logo span {
+  font-weight: 700;
+  font-size: 1.07rem;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+}
+
+.nav-item:hover { background: var(--bg); color: var(--text-primary); }
+.nav-item.active { background: var(--bg); color: var(--text-primary); font-weight: 600; }
+
+.nav-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-item .chevron {
+  width: 14px;
+  height: 14px;
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+
+.nav-item.expanded .chevron { transform: rotate(180deg); }
+
+.nav-subitems {
+  display: none;
+  flex-direction: column;
+  gap: 1px;
+  padding-left: 28px;
+}
+
+.nav-subitems.open { display: flex; }
+
+.nav-subitem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-subitem:hover { background: var(--bg); color: var(--text-primary); }
+.nav-subitem.active { color: var(--text-primary); font-weight: 600; }
+
+.nav-subitem::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.nav-subitem.active::before { background: var(--text-primary); }
+
+.sidebar-bottom {
+  border-top: 1px solid var(--border);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Plant selector dropdown */
+.plant-selector-wrap { position: relative; }
+
+.plant-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.plant-selector svg { width: 14px; height: 14px; stroke: var(--text-secondary); fill: none; stroke-width: 2; }
+.plant-selector .chevron-down { margin-left: auto; transition: transform 0.2s; }
+.plant-selector-wrap.open .chevron-down { transform: rotate(180deg); }
+
+.plant-dropdown {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  z-index: 20;
+  padding: 4px;
+}
+
+.plant-selector-wrap.open .plant-dropdown { display: block; }
+
+.plant-option {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.plant-option:hover { background: var(--bg); }
+.plant-option.selected { font-weight: 600; background: var(--blue-bg); }
+
+.plant-option .plant-type {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: auto;
+}
+
+.plant-type.wtp { background: var(--blue-bg); color: #1D4ED8; }
+.plant-type.stp { background: var(--green-bg); color: #15803D; }
+.plant-type.etp { background: var(--amber-bg); color: #92400E; }
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.user-details { display: flex; flex-direction: column; }
+.user-name { font-size: 0.85rem; font-weight: 600; }
+.user-email { font-size: 0.75rem; color: var(--text-tertiary); }
+
+/* Main content */
+.main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 24px 28px;
+  min-width: 0;
+}
+
+/* Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.page-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--bg); }
+.btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+/* Dropdown wrapper */
+.dropdown-wrap { position: relative; }
+
+.dropdown-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  z-index: 20;
+  padding: 6px;
+  min-width: 200px;
+}
+
+.dropdown-wrap.open .dropdown-panel { display: block; }
+
+.dropdown-option {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.dropdown-option:hover { background: var(--bg); }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title .badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0 12px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+
+/* Mode pill */
+.mode-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.mode-pill.green { background: var(--green-bg); color: #15803D; }
+.mode-pill.blue { background: var(--blue-bg); color: #1D4ED8; }
+.mode-pill.amber { background: var(--amber-bg); color: #92400E; }
+.mode-pill.red { background: var(--red-bg); color: #991B1B; }
+.mode-pill.orange { background: var(--orange-bg); color: #9A3412; }
+.mode-pill.purple { background: var(--purple-bg); color: #5B21B6; }
+.mode-pill.gray { background: var(--bg); color: var(--text-secondary); }
+
+/* Filter bar */
+.filter-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-bar-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-input-wrap {
+  position: relative;
+  width: 240px;
+  flex-shrink: 0;
+}
+
+.search-input-wrap svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  stroke: var(--text-tertiary);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.search-input {
+  width: 100%;
+  padding: 7px 10px 7px 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.search-input::placeholder { color: var(--text-tertiary); }
+.search-input:focus { border-color: var(--blue); }
+
+.filter-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.filter-group { display: flex; align-items: center; gap: 6px; }
+
+.filter-group-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.filter-chip {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.filter-chip:hover { border-color: var(--blue); color: var(--blue); }
+.filter-chip.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+.clear-all-btn {
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.clear-all-btn:hover { color: var(--red); }
+
+/* Export bar */
+.export-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.export-bar span {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.export-btn:hover { background: var(--bg); }
+
+.export-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Live indicator */
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* Timestamp mono */
+.ts-mono {
+  font-family: "SF Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* Severity styling */
+.severity-info { color: var(--text-tertiary); font-size: 0.82rem; }
+.severity-warning { color: var(--amber); font-size: 0.82rem; font-weight: 500; }
+.severity-critical { color: var(--red); font-size: 0.82rem; font-weight: 600; }
+
+/* Detail column */
+.detail-arrow {
+  color: var(--text-tertiary);
+  margin: 0 4px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--border-light);
+  margin-top: 4px;
+}
+
+.pagination-info {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.pagination-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pagination-btn:hover { background: var(--bg); }
+.pagination-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="6" fill="#111827"/>
+      <path d="M7 7L14 21L21 7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="10" y1="14" x2="18" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>DigitalPaani</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Overview
+    </a>
+
+    <a class="nav-item has-sub expanded" href="#" data-toggle="cycles-sub">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Cycles
+      <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div class="nav-subitems open" id="cycles-sub">
+      <a class="nav-subitem" href="all-cycles.html">All Cycles</a>
+      <a class="nav-subitem" href="units-skids.html">Units / Skids</a>
+      <a class="nav-subitem" href="mode-history.html">Mode History</a>
+      <a class="nav-subitem active" href="cycle-logs.html">Cycle Logs</a>
+      <a class="nav-subitem" href="cycle-performance.html">Cycle Performance</a>
+    </div>
+
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Alerts
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Reports
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Help
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="plant-selector-wrap" id="plantSelectorWrap">
+      <div class="plant-selector" id="plantSelectorBtn">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <span id="plantSelectorLabel">Green Valley WTP</span>
+        <svg class="chevron-down" viewBox="0 0 24 24" stroke="var(--text-secondary)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="plant-dropdown">
+        <div class="plant-option selected" data-plant="Green Valley WTP">Green Valley WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="Riverside STP">Riverside STP <span class="plant-type stp">STP</span></div>
+        <div class="plant-option" data-plant="Industrial Zone ETP">Industrial Zone ETP <span class="plant-type etp">ETP</span></div>
+        <div class="plant-option" data-plant="Lakeside WTP">Lakeside WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="North District STP">North District STP <span class="plant-type stp">STP</span></div>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">CU</div>
+      <div class="user-details">
+        <div class="user-name">Client User</div>
+        <div class="user-email">client@example.com</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;cursor:pointer"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Cycle Logs</h1>
+      <p>Chronological event log for debugging and compliance</p>
+    </div>
+    <div class="header-actions">
+      <div class="dropdown-wrap" id="downloadDropdown">
+        <button class="btn" id="downloadTrigger">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--text-tertiary)"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-panel" style="min-width:180px">
+          <div class="dropdown-option" data-dl="pdf">Export as PDF</div>
+          <div class="dropdown-option" data-dl="csv">Export as CSV</div>
+          <div class="dropdown-option" data-dl="xlsx">Export as Excel</div>
+          <div class="dropdown-option" data-dl="png">Export as PNG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-bar-top">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search logs...">
+      </div>
+      <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+    </div>
+    <div class="filter-groups">
+      <div class="filter-group" data-filter="event-type">
+        <span class="filter-group-label">Event Type</span>
+        <div class="filter-chips">
+          <span class="filter-chip active" data-value="all">All</span>
+          <span class="filter-chip" data-value="Mode Change">Mode Change</span>
+          <span class="filter-chip" data-value="Alarm">Alarm</span>
+          <span class="filter-chip" data-value="Parameter Alert">Parameter Alert</span>
+          <span class="filter-chip" data-value="Manual Override">Manual Override</span>
+        </div>
+      </div>
+      <div class="filter-group" data-filter="trigger">
+        <span class="filter-group-label">Trigger</span>
+        <div class="filter-chips">
+          <span class="filter-chip active" data-value="all">All</span>
+          <span class="filter-chip" data-value="Auto">Auto</span>
+          <span class="filter-chip" data-value="Manual">Manual</span>
+        </div>
+      </div>
+      <div class="filter-group" data-filter="severity">
+        <span class="filter-group-label">Severity</span>
+        <div class="filter-chips">
+          <span class="filter-chip active" data-value="all">All</span>
+          <span class="filter-chip" data-value="Info">Info</span>
+          <span class="filter-chip" data-value="Warning">Warning</span>
+          <span class="filter-chip" data-value="Critical">Critical</span>
+        </div>
+      </div>
+      <div class="filter-group" data-filter="equipment">
+        <span class="filter-group-label">Equipment</span>
+        <div class="filter-chips">
+          <span class="filter-chip active" data-value="all">All</span>
+          <span class="filter-chip" data-value="Valve">Valves</span>
+          <span class="filter-chip" data-value="Blower">Blowers</span>
+          <span class="filter-chip" data-value="Pump">Pumps</span>
+          <span class="filter-chip" data-value="Dosing">Dosing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export bar -->
+  <div class="export-bar">
+    <span>Export filtered results:</span>
+    <button class="export-btn">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      CSV
+    </button>
+    <button class="export-btn">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      PDF
+    </button>
+  </div>
+
+  <!-- Log Table Card -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        Event Log
+        <span class="badge" id="eventCount">2,847 events</span>
+      </div>
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        Live
+      </div>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="data-table" id="logTable">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Unit</th>
+            <th>Event Type</th>
+            <th>Detail</th>
+            <th>Trigger</th>
+            <th>Severity</th>
+            <th>Operator</th>
+          </tr>
+        </thead>
+        <tbody id="logBody">
+          <tr data-event="Mode Change" data-trigger="Auto" data-severity="Info" data-equipment="">
+            <td><span class="ts-mono">10:45:37</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill blue">Mode Change</span></td>
+            <td>Backwash <span class="detail-arrow">&rarr;</span> Filtration</td>
+            <td>Auto (timer)</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Valve" data-trigger="Auto" data-severity="Info" data-equipment="Valve">
+            <td><span class="ts-mono">10:45:37</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Valve</span></td>
+            <td>V-214 (BW Inlet) &mdash; Closed</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Valve" data-trigger="Auto" data-severity="Info" data-equipment="Valve">
+            <td><span class="ts-mono">10:45:37</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Valve</span></td>
+            <td>V-211 (Feed Valve) &mdash; Opened</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Pump" data-trigger="Auto" data-severity="Info" data-equipment="Pump">
+            <td><span class="ts-mono">10:45:36</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Pump</span></td>
+            <td>P-212 (BW Pump) &mdash; Stopped</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Blower" data-trigger="Auto" data-severity="Info" data-equipment="Blower">
+            <td><span class="ts-mono">10:44:15</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Blower</span></td>
+            <td>B-211 (Air Scour) &mdash; Stopped</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Blower" data-trigger="Auto" data-severity="Info" data-equipment="Blower">
+            <td><span class="ts-mono">10:42:18</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Blower</span></td>
+            <td>B-211 (Air Scour) &mdash; Started @ 50 Hz</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Pump" data-trigger="Auto" data-severity="Info" data-equipment="Pump">
+            <td><span class="ts-mono">10:42:16</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Pump</span></td>
+            <td>P-212 (BW Pump) &mdash; Started @ 80 m&sup3;/hr</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Valve" data-trigger="Auto" data-severity="Info" data-equipment="Valve">
+            <td><span class="ts-mono">10:42:15</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Valve</span></td>
+            <td>V-214 (BW Inlet) &mdash; Opened</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Valve" data-trigger="Auto" data-severity="Info" data-equipment="Valve">
+            <td><span class="ts-mono">10:42:15</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill gray">Valve</span></td>
+            <td>V-211 (Feed Valve) &mdash; Closed</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Mode Change" data-trigger="Auto" data-severity="Warning" data-equipment="">
+            <td><span class="ts-mono">10:42:15</span></td>
+            <td>UF-2</td>
+            <td><span class="mode-pill blue">Mode Change</span></td>
+            <td>Filtration <span class="detail-arrow">&rarr;</span> Backwash</td>
+            <td>Auto (TMP 28 kPa)</td>
+            <td><span class="severity-warning">&#9888; Warning</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Mode Change" data-trigger="Auto" data-severity="Info" data-equipment="">
+            <td><span class="ts-mono">10:38:00</span></td>
+            <td>PSF-2</td>
+            <td><span class="mode-pill blue">Mode Change</span></td>
+            <td>Service <span class="detail-arrow">&rarr;</span> Backwash</td>
+            <td>Auto (timer)</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Valve" data-trigger="Auto" data-severity="Info" data-equipment="Valve">
+            <td><span class="ts-mono">10:38:00</span></td>
+            <td>PSF-2</td>
+            <td><span class="mode-pill gray">Valve</span></td>
+            <td>V-114 (BW Valve) &mdash; Opened</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Parameter Alert" data-trigger="Auto" data-severity="Warning" data-equipment="">
+            <td><span class="ts-mono">10:35:22</span></td>
+            <td>RO-2</td>
+            <td><span class="mode-pill amber">Parameter Alert</span></td>
+            <td>Differential pressure at 1.4 bar (threshold: 1.5)</td>
+            <td>Auto</td>
+            <td><span class="severity-warning">&#9888; Warning</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Mode Change" data-trigger="Auto" data-severity="Info" data-equipment="">
+            <td><span class="ts-mono">10:30:00</span></td>
+            <td>MBR-1</td>
+            <td><span class="mode-pill blue">Mode Change</span></td>
+            <td>Relaxation <span class="detail-arrow">&rarr;</span> Filtration</td>
+            <td>Auto (timer)</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Valve" data-trigger="Auto" data-severity="Info" data-equipment="Valve">
+            <td><span class="ts-mono">10:30:00</span></td>
+            <td>MBR-1</td>
+            <td><span class="mode-pill gray">Valve</span></td>
+            <td>V-401 (Feed Valve) &mdash; Opened</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Pump" data-trigger="Auto" data-severity="Info" data-equipment="Pump">
+            <td><span class="ts-mono">10:30:00</span></td>
+            <td>MBR-1</td>
+            <td><span class="mode-pill gray">Pump</span></td>
+            <td>P-401 (Permeate Pump) &mdash; Started @ 30 m&sup3;/hr</td>
+            <td>Auto</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Mode Change" data-trigger="Auto" data-severity="Info" data-equipment="">
+            <td><span class="ts-mono">10:18:00</span></td>
+            <td>MBR-1</td>
+            <td><span class="mode-pill blue">Mode Change</span></td>
+            <td>Filtration <span class="detail-arrow">&rarr;</span> Relaxation</td>
+            <td>Auto (timer)</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Parameter Alert" data-trigger="Auto" data-severity="Warning" data-equipment="">
+            <td><span class="ts-mono">10:15:33</span></td>
+            <td>UF-1</td>
+            <td><span class="mode-pill amber">Parameter Alert</span></td>
+            <td>TMP rising: 24 kPa (normal: 18-22)</td>
+            <td>Auto</td>
+            <td><span class="severity-warning">&#9888; Warning</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Mode Change" data-trigger="Auto" data-severity="Info" data-equipment="">
+            <td><span class="ts-mono">10:05:00</span></td>
+            <td>RO-1</td>
+            <td><span class="mode-pill blue">Mode Change</span></td>
+            <td>Flush <span class="detail-arrow">&rarr;</span> Service</td>
+            <td>Auto (timer)</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr data-event="Manual Override" data-trigger="Manual" data-severity="Info" data-equipment="">
+            <td><span class="ts-mono">09:55:00</span></td>
+            <td>MBR-2</td>
+            <td><span class="mode-pill purple">Manual Override</span></td>
+            <td>Relaxation extended by operator</td>
+            <td>Manual</td>
+            <td><span class="severity-info">Info</span></td>
+            <td>R. Kumar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <div class="pagination-info" id="paginationInfo">Showing 1-20 of 2,847</div>
+      <div class="pagination-btns">
+        <button class="pagination-btn" id="prevBtn" disabled>Previous</button>
+        <button class="pagination-btn" id="nextBtn">Next</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// Dropdown toggle
+function setupDropdown(wrapperId, triggerId) {
+  const wrap = document.getElementById(wrapperId);
+  const trigger = document.getElementById(triggerId);
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => {
+      if (el !== wrap) el.classList.remove('open');
+    });
+    wrap.classList.toggle('open');
+  });
+}
+
+setupDropdown('downloadDropdown', 'downloadTrigger');
+
+// Plant selector
+const plantWrap = document.getElementById('plantSelectorWrap');
+document.getElementById('plantSelectorBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.querySelectorAll('.dropdown-wrap.open').forEach(el => el.classList.remove('open'));
+  plantWrap.classList.toggle('open');
+});
+
+plantWrap.querySelectorAll('.plant-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    plantWrap.querySelectorAll('.plant-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('plantSelectorLabel').textContent = opt.dataset.plant;
+    plantWrap.classList.remove('open');
+  });
+});
+
+// Download dropdown
+document.querySelectorAll('#downloadDropdown .dropdown-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.getElementById('downloadDropdown').classList.remove('open');
+  });
+});
+
+// Close all dropdowns on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => {
+    el.classList.remove('open');
+  });
+});
+
+document.querySelectorAll('.dropdown-panel, .plant-dropdown').forEach(panel => {
+  panel.addEventListener('click', e => e.stopPropagation());
+});
+
+// Sidebar nav
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', e => {
+    if (item.classList.contains('has-sub')) {
+      e.preventDefault();
+      item.classList.toggle('expanded');
+      const sub = document.getElementById(item.dataset.toggle);
+      sub.classList.toggle('open');
+    }
+  });
+});
+
+// ---- Filter Logic ----
+const rows = Array.from(document.querySelectorAll('#logBody tr'));
+
+function getActiveFilters() {
+  const filters = {};
+  document.querySelectorAll('.filter-group').forEach(group => {
+    const key = group.dataset.filter;
+    const activeChips = group.querySelectorAll('.filter-chip.active');
+    const values = Array.from(activeChips).map(c => c.dataset.value);
+    filters[key] = values.includes('all') ? null : values;
+  });
+  return filters;
+}
+
+function applyFilters() {
+  const filters = getActiveFilters();
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  let visible = 0;
+
+  rows.forEach(row => {
+    let show = true;
+
+    // Event type filter
+    if (filters['event-type']) {
+      const evt = row.dataset.event;
+      if (!filters['event-type'].includes(evt)) show = false;
+    }
+
+    // Trigger filter
+    if (filters['trigger']) {
+      const trig = row.dataset.trigger;
+      if (!filters['trigger'].includes(trig)) show = false;
+    }
+
+    // Severity filter
+    if (filters['severity']) {
+      const sev = row.dataset.severity;
+      if (!filters['severity'].includes(sev)) show = false;
+    }
+
+    // Equipment filter
+    if (filters['equipment']) {
+      const eq = row.dataset.equipment;
+      if (!eq || !filters['equipment'].includes(eq)) show = false;
+    }
+
+    // Search filter
+    if (search && show) {
+      const text = row.textContent.toLowerCase();
+      if (!text.includes(search)) show = false;
+    }
+
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+
+  document.getElementById('paginationInfo').textContent =
+    'Showing 1-' + visible + ' of 2,847';
+}
+
+// Filter chip toggle
+document.querySelectorAll('.filter-group .filter-chips').forEach(group => {
+  group.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.dataset.value === 'all') {
+        group.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      } else {
+        group.querySelector('.filter-chip[data-value="all"]').classList.remove('active');
+        chip.classList.toggle('active');
+        if (!group.querySelector('.filter-chip.active')) {
+          group.querySelector('.filter-chip[data-value="all"]').classList.add('active');
+        }
+      }
+      applyFilters();
+    });
+  });
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+// Clear All
+document.getElementById('clearAllBtn').addEventListener('click', () => {
+  document.querySelectorAll('.filter-group .filter-chips').forEach(group => {
+    group.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    group.querySelector('.filter-chip[data-value="all"]').classList.add('active');
+  });
+  document.getElementById('searchInput').value = '';
+  applyFilters();
+});
+</script>
+</body>
+</html>
