@@ -99,18 +99,35 @@ body {
 .date-dropdown { min-width: 240px; }
 .date-dropdown .dropdown-section-title { font-size: 0.7rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 10px 4px; }
 .date-dropdown .dropdown-divider { height: 1px; background: var(--border-light); margin: 4px 0; }
-.filter-dropdown { min-width: 280px; padding: 12px; }
-.filter-group { margin-bottom: 12px; }
-.filter-group:last-child { margin-bottom: 0; }
-.filter-group-title { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-.filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.filter-chip { padding: 4px 10px; font-size: 0.78rem; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; background: var(--surface); color: var(--text-secondary); transition: all 0.15s; }
-.filter-chip:hover { border-color: var(--blue); color: var(--blue); }
-.filter-chip.active { background: var(--blue); border-color: var(--blue); color: white; }
-.filter-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-light); }
-.filter-btn { padding: 6px 14px; font-size: 0.8rem; font-weight: 500; border: none; border-radius: 4px; cursor: pointer; }
-.filter-btn.clear { background: none; color: var(--text-secondary); }
-.filter-btn.apply { background: var(--text-primary); color: white; }
+
+/* ── Inline Filter Bar ── */
+.filter-bar {
+  display: flex; align-items: center;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 16px;
+  margin-bottom: 20px; gap: 0; overflow-x: auto;
+}
+.fb-group { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.fb-label { font-size: 0.7rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+.fb-chips { display: flex; gap: 4px; }
+.fb-chip {
+  padding: 4px 11px; font-size: 0.78rem; border: 1px solid var(--border);
+  border-radius: 20px; cursor: pointer; background: var(--surface);
+  color: var(--text-secondary); transition: all 0.15s; font-weight: 500; white-space: nowrap;
+}
+.fb-chip:hover { border-color: var(--blue); color: var(--blue); }
+.fb-chip.active { background: var(--text-primary); border-color: var(--text-primary); color: white; }
+.fb-sep { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; margin: 0 14px; }
+.fb-alerts {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-left: auto; flex-shrink: 0; padding: 5px 13px;
+  background: var(--red-bg); border: 1px solid #FECACA;
+  border-radius: 20px; cursor: pointer; transition: opacity 0.15s;
+}
+.fb-alerts:hover { opacity: 0.8; }
+.fb-alert-icon { width: 14px; height: 14px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.fb-alert-count { font-size: 0.82rem; font-weight: 700; color: var(--red); }
+.fb-alert-label { font-size: 0.78rem; font-weight: 500; color: #991B1B; }
 
 /* ── Cards ── */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
@@ -468,18 +485,42 @@ body {
           <div class="dropdown-option" data-date="This Month">This Month</div>
         </div>
       </div>
-      <div class="dropdown-wrap" id="filterDropdown">
-        <button class="btn" id="filterTrigger"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filters</button>
-        <div class="dropdown-panel filter-dropdown">
-          <div class="filter-group"><div class="filter-group-title">Unit Type</div><div class="filter-chips"><span class="filter-chip active">All</span><span class="filter-chip">PSF</span><span class="filter-chip">UF</span><span class="filter-chip">RO</span><span class="filter-chip">MBR</span></div></div>
-          <div class="filter-group"><div class="filter-group-title">Current Mode</div><div class="filter-chips"><span class="filter-chip active">All</span><span class="filter-chip">Service</span><span class="filter-chip">Backwash</span><span class="filter-chip">CEB</span><span class="filter-chip">Flush</span><span class="filter-chip">Relaxation</span></div></div>
-          <div class="filter-actions"><button class="filter-btn clear">Clear All</button><button class="filter-btn apply">Apply</button></div>
-        </div>
-      </div>
       <div class="dropdown-wrap" id="downloadDropdown">
         <button class="btn" id="downloadTrigger"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
         <div class="dropdown-panel" style="min-width:160px"><div class="dropdown-option">PDF</div><div class="dropdown-option">CSV</div><div class="dropdown-option">Excel</div></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Inline Filter Bar -->
+  <div class="filter-bar" id="filterBar">
+    <div class="fb-group">
+      <span class="fb-label">Unit Type</span>
+      <div class="fb-chips" id="fbUnitChips">
+        <span class="fb-chip active" data-ft-unit="all">All</span>
+        <span class="fb-chip" data-ft-unit="psf">PSF</span>
+        <span class="fb-chip" data-ft-unit="uf">UF</span>
+        <span class="fb-chip" data-ft-unit="ro">RO</span>
+        <span class="fb-chip" data-ft-unit="mbr">MBR</span>
+      </div>
+    </div>
+    <div class="fb-sep"></div>
+    <div class="fb-group">
+      <span class="fb-label">Mode</span>
+      <div class="fb-chips" id="fbModeChips">
+        <span class="fb-chip active" data-ft-mode="all">All</span>
+        <span class="fb-chip" data-ft-mode="service">Service</span>
+        <span class="fb-chip" data-ft-mode="backwash">Backwash</span>
+        <span class="fb-chip" data-ft-mode="ceb">CEB</span>
+        <span class="fb-chip" data-ft-mode="flush">Flush</span>
+        <span class="fb-chip" data-ft-mode="relaxation">Relaxation</span>
+      </div>
+    </div>
+    <div class="fb-sep"></div>
+    <div class="fb-alerts" id="fbAlertsBtn">
+      <svg class="fb-alert-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="fb-alert-count">7</span>
+      <span class="fb-alert-label">Alerts</span>
     </div>
   </div>
 
@@ -694,15 +735,13 @@ const sparkData = {
   ]
 };
 
-const barData = [
-  {day:'Mon',count:38},
-  {day:'Tue',count:42},
-  {day:'Wed',count:35},
-  {day:'Thu',count:45},
-  {day:'Fri',count:41},
-  {day:'Sat',count:32},
-  {day:'Sun',count:28},
-];
+const barDataByType = {
+  all: [{day:'Mon',count:38},{day:'Tue',count:42},{day:'Wed',count:35},{day:'Thu',count:45},{day:'Fri',count:41},{day:'Sat',count:32},{day:'Sun',count:28}],
+  psf: [{day:'Mon',count:12},{day:'Tue',count:14},{day:'Wed',count:11},{day:'Thu',count:15},{day:'Fri',count:13},{day:'Sat',count:10},{day:'Sun',count:9}],
+  uf:  [{day:'Mon',count:16},{day:'Tue',count:17},{day:'Wed',count:14},{day:'Thu',count:18},{day:'Fri',count:16},{day:'Sat',count:13},{day:'Sun',count:11}],
+  ro:  [{day:'Mon',count:4},{day:'Tue',count:5},{day:'Wed',count:4},{day:'Thu',count:6},{day:'Fri',count:5},{day:'Sat',count:3},{day:'Sun',count:3}],
+  mbr: [{day:'Mon',count:18},{day:'Tue',count:19},{day:'Wed',count:16},{day:'Thu',count:20},{day:'Fri',count:18},{day:'Sat',count:14},{day:'Sun',count:12}],
+};
 
 // ── HELPERS ──
 function mkSparkSVG(dataStr, color, w, h) {
@@ -754,10 +793,13 @@ function renderSparklines() {
 // ── RENDER BAR CHART ──
 function renderBarChart() {
   const el = document.getElementById('barChart');
-  const max = Math.max(...barData.map(d=>d.count));
-  el.innerHTML = barData.map(d => {
+  const activeUnit = document.querySelector('.fb-chip[data-ft-unit].active');
+  const ut = activeUnit ? activeUnit.dataset.ftUnit : 'all';
+  const data = barDataByType[ut] || barDataByType.all;
+  const max = Math.max(...data.map(d=>d.count));
+  el.innerHTML = data.map(d => {
     const h = (d.count/max)*100;
-    const color = d.count > 40 ? 'var(--blue)' : d.count > 35 ? 'var(--green)' : 'var(--text-tertiary)';
+    const color = h > 80 ? 'var(--blue)' : h > 55 ? 'var(--green)' : 'var(--text-tertiary)';
     return `<div class="bar-group"><div class="bar-value">${d.count}</div><div class="bar-stack"><div class="bar" style="height:${h}%;background:${color}"></div></div><div class="bar-label">${d.day}</div></div>`;
   }).join('');
 }
@@ -876,6 +918,56 @@ document.getElementById('viewAllUnitsBtn').addEventListener('click', () => {
   openModal();
 });
 
+// ── DASHBOARD FILTER BAR ──
+function applyDashboardFilter() {
+  const activeUnit = document.querySelector('.fb-chip[data-ft-unit].active');
+  const activeMode = document.querySelector('.fb-chip[data-ft-mode].active');
+  const ut = activeUnit ? activeUnit.dataset.ftUnit : 'all';
+  const md = activeMode ? activeMode.dataset.ftMode : 'all';
+
+  // unit table rows
+  document.querySelectorAll('#unitTable tbody tr[data-unit]').forEach(row => {
+    const unit = row.dataset.unit; // psf1, uf2, ro1 …
+    const modeCell = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+    const matchUnit = ut === 'all' || unit.startsWith(ut);
+    const matchMode = md === 'all' || modeCell.includes(md);
+    row.style.display = (matchUnit && matchMode) ? '' : 'none';
+  });
+
+  // perf table rows
+  document.querySelectorAll('#perfTable tbody tr[data-unit]').forEach(row => {
+    const unit = row.dataset.unit;
+    const matchUnit = ut === 'all' || unit.startsWith(ut);
+    row.style.display = matchUnit ? '' : 'none';
+  });
+
+  renderBarChart();
+}
+
+document.querySelectorAll('.fb-chip[data-ft-unit]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.fb-chip[data-ft-unit]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    // sync analytics unit filter
+    const ut = chip.dataset.ftUnit;
+    document.querySelectorAll('.af-chip[data-unitf]').forEach(c => c.classList.remove('active'));
+    const matchAf = document.querySelector(`.af-chip[data-unitf="${ut}"]`);
+    if (matchAf) matchAf.classList.add('active');
+    applyDashboardFilter();
+    renderSparklines();
+  });
+});
+
+document.querySelectorAll('.fb-chip[data-ft-mode]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.fb-chip[data-ft-mode]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    applyDashboardFilter();
+  });
+});
+
+document.getElementById('fbAlertsBtn').addEventListener('click', showAllAlertsModal);
+
 // Analytics filter chips
 document.querySelectorAll('.af-chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -891,15 +983,12 @@ document.querySelectorAll('.af-chip').forEach(chip => {
 
 // Dropdown logic
 function setupDD(wid, tid) { const w=document.getElementById(wid),t=document.getElementById(tid); if(!w||!t)return; t.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.dropdown-wrap.open,.plant-selector-wrap.open').forEach(el=>{if(el!==w)el.classList.remove('open')});w.classList.toggle('open');}); }
-setupDD('dateDropdown','dateTrigger'); setupDD('filterDropdown','filterTrigger'); setupDD('downloadDropdown','downloadTrigger');
+setupDD('dateDropdown','dateTrigger'); setupDD('downloadDropdown','downloadTrigger');
 
 const pw = document.getElementById('plantSelectorWrap');
 document.getElementById('plantSelectorBtn').addEventListener('click', e => { e.stopPropagation(); document.querySelectorAll('.dropdown-wrap.open').forEach(el=>el.classList.remove('open')); pw.classList.toggle('open'); });
 pw.querySelectorAll('.plant-option').forEach(o => { o.addEventListener('click', ()=>{ pw.querySelectorAll('.plant-option').forEach(x=>x.classList.remove('selected')); o.classList.add('selected'); document.getElementById('plantSelectorLabel').textContent=o.dataset.plant; pw.classList.remove('open'); }); });
 document.querySelectorAll('#dateDropdown .dropdown-option').forEach(o => { o.addEventListener('click', ()=>{ document.querySelectorAll('#dateDropdown .dropdown-option').forEach(x=>x.classList.remove('selected')); o.classList.add('selected'); document.getElementById('dateLabel').textContent=o.dataset.date; document.getElementById('dateDropdown').classList.remove('open'); }); });
-document.querySelectorAll('.filter-chips').forEach(g => { g.querySelectorAll('.filter-chip').forEach(c => { c.addEventListener('click', ()=>{ if(c.textContent==='All'){g.querySelectorAll('.filter-chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');}else{g.querySelector('.filter-chip:first-child').classList.remove('active');c.classList.toggle('active');if(!g.querySelector('.filter-chip.active'))g.querySelector('.filter-chip:first-child').classList.add('active');} }); }); });
-document.querySelector('.filter-btn.clear')?.addEventListener('click',()=>{document.querySelectorAll('.filter-chips').forEach(g=>{g.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));g.querySelector('.filter-chip:first-child').classList.add('active');});});
-document.querySelector('.filter-btn.apply')?.addEventListener('click',()=>document.getElementById('filterDropdown').classList.remove('open'));
 document.addEventListener('click',()=>document.querySelectorAll('.dropdown-wrap.open,.plant-selector-wrap.open').forEach(el=>el.classList.remove('open')));
 document.querySelectorAll('.dropdown-panel,.plant-dropdown').forEach(p=>p.addEventListener('click',e=>e.stopPropagation()));
 
