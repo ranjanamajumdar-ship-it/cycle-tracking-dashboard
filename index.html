@@ -223,7 +223,7 @@ body {
 
 /* ── Bar Chart ── */
 .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 0 4px; }
-.bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; }
 .bar-stack { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 1; }
 .bar { width: 70%; max-width: 40px; border-radius: 4px 4px 0 0; transition: opacity 0.15s; cursor: pointer; position: relative; }
 .bar:hover { opacity: 0.8; }
@@ -545,6 +545,7 @@ body {
       <span class="af-chip" data-metric="flow">Flow</span>
       <span class="af-chip" data-metric="cycles">Cycle Count</span>
       <span class="af-chip" data-metric="recovery">Recovery</span>
+      <span class="af-chip" data-metric="cleanings">Cleanings / Day</span>
       <span class="af-sep"></span>
       <span class="af-label">Period</span>
       <span class="af-chip active" data-period="daily">Daily</span>
@@ -563,37 +564,18 @@ body {
 
   <!-- 4. Bottom: Mode Distribution + Alerts + Bar Chart -->
   <div style="display:grid;grid-template-columns:1.2fr 0.8fr 1fr;gap:16px;margin-bottom:20px">
-    <!-- Mode Distribution -->
+    <!-- Mode Distribution (stacked bar per unit) -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">Mode Distribution</div>
-        <div class="card-link" id="viewModeReportBtn">Full report &rarr;</div>
-      </div>
-      <div class="donut-container">
-        <div class="donut-wrapper">
-          <svg viewBox="0 0 160 160">
-            <circle cx="80" cy="80" r="60" fill="none" stroke="#E5E7EB" stroke-width="24"/>
-            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--green)" stroke-width="24" stroke-dasharray="234 143" stroke-dashoffset="94" transform="rotate(-90 80 80)"/>
-            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--blue)" stroke-width="24" stroke-dasharray="47 330" stroke-dashoffset="-140" transform="rotate(-90 80 80)"/>
-            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--amber)" stroke-width="24" stroke-dasharray="60 317" stroke-dashoffset="-187" transform="rotate(-90 80 80)"/>
-            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--red)" stroke-width="24" stroke-dasharray="9.4 367" stroke-dashoffset="-247" transform="rotate(-90 80 80)"/>
-            <circle cx="80" cy="80" r="60" fill="none" stroke="#9CA3AF" stroke-width="24" stroke-dasharray="27 350" stroke-dashoffset="-256" transform="rotate(-90 80 80)"/>
-          </svg>
-          <div class="donut-center"><div class="label">Total</div><div class="value">168</div><div class="unit">Hours</div></div>
-        </div>
-        <div class="donut-legend">
-          <table>
-            <thead><tr><th>Mode</th><th>%</th></tr></thead>
-            <tbody>
-              <tr><td><span class="legend-dot" style="background:var(--green)"></span>Service</td><td>62%</td></tr>
-              <tr><td><span class="legend-dot" style="background:var(--blue)"></span>Cleaning</td><td>12%</td></tr>
-              <tr><td><span class="legend-dot" style="background:var(--amber)"></span>Standby</td><td>16%</td></tr>
-              <tr><td><span class="legend-dot" style="background:var(--red)"></span>Trip</td><td>3%</td></tr>
-              <tr><td><span class="legend-dot" style="background:#9CA3AF"></span>Other</td><td>7%</td></tr>
-            </tbody>
-          </table>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--text-secondary)"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span>Service</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--text-secondary)"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span>Cleaning</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--text-secondary)"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block"></span>Standby</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--text-secondary)"><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Trip</span>
         </div>
       </div>
+      <div id="modeChart" style="display:flex;flex-direction:column;gap:8px;padding-top:4px"></div>
     </div>
 
     <!-- Alerts -->
@@ -697,6 +679,38 @@ const sparkData = {
   ]
 };
 
+const modeDistData = [
+  {unit:'PSF-1', service:64, cleaning:13, standby:18, trip:5},
+  {unit:'PSF-2', service:58, cleaning:15, standby:20, trip:7},
+  {unit:'UF-1',  service:70, cleaning:12, standby:14, trip:4},
+  {unit:'UF-2',  service:55, cleaning:18, standby:20, trip:7},
+  {unit:'RO-1',  service:72, cleaning: 8, standby:16, trip:4},
+  {unit:'RO-2',  service:68, cleaning:10, standby:17, trip:5},
+  {unit:'MBR-1', service:60, cleaning:16, standby:18, trip:6},
+  {unit:'MBR-2', service:52, cleaning:20, standby:22, trip:6},
+];
+
+function renderModeChart() {
+  const el = document.getElementById('modeChart');
+  if (!el) return;
+  el.innerHTML = modeDistData.map(d => {
+    const segments = [
+      {pct: d.service,  color: 'var(--green)'},
+      {pct: d.cleaning, color: 'var(--blue)'},
+      {pct: d.standby,  color: 'var(--amber)'},
+      {pct: d.trip,     color: 'var(--red)'},
+    ];
+    const bars = segments.map(s =>
+      `<div title="${s.pct}%" style="width:${s.pct}%;background:${s.color};height:100%"></div>`
+    ).join('');
+    return `<div style="display:flex;align-items:center;gap:8px">
+      <div style="width:40px;font-size:0.72rem;color:var(--text-secondary);text-align:right;flex-shrink:0">${d.unit}</div>
+      <div style="flex:1;height:14px;border-radius:6px;overflow:hidden;display:flex;background:var(--border)">${bars}</div>
+      <div style="width:28px;font-size:0.72rem;color:var(--text-tertiary);text-align:right;flex-shrink:0">${d.service}%</div>
+    </div>`;
+  }).join('');
+}
+
 const barDataByType = {
   all: [{day:'Mon',count:38},{day:'Tue',count:42},{day:'Wed',count:35},{day:'Thu',count:45},{day:'Fri',count:41},{day:'Sat',count:32},{day:'Sun',count:28}],
   psf: [{day:'Mon',count:12},{day:'Tue',count:14},{day:'Wed',count:11},{day:'Thu',count:15},{day:'Fri',count:13},{day:'Sat',count:10},{day:'Sun',count:9}],
@@ -732,6 +746,27 @@ function renderSparklines() {
   const unitFilter = document.querySelector('.af-chip[data-unitf].active');
   const uf = unitFilter ? unitFilter.dataset.unitf : 'all';
 
+  if (metric === 'cleanings') {
+    const data = barDataByType[uf] || barDataByType.all;
+    const max = Math.max(...data.map(d => d.count));
+    grid.style.gridTemplateColumns = '1fr';
+    grid.innerHTML = `
+      <div style="padding:12px 4px 0">
+        <div style="display:flex;align-items:flex-end;gap:10px;height:120px">
+          ${data.map(d => {
+            const h = Math.round((d.count / max) * 100);
+            const color = h > 80 ? 'var(--blue)' : h > 55 ? 'var(--green)' : 'var(--text-tertiary)';
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="font-size:0.72rem;font-weight:600;color:var(--text-secondary)">${d.count}</div>
+              <div style="width:100%;border-radius:4px 4px 0 0;background:${color};height:${h}%"></div>
+              <div style="font-size:0.72rem;color:var(--text-tertiary)">${d.day}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    return;
+  }
+
   let data = sparkData[metric] || [];
   if (uf !== 'all') data = data.filter(d => d.unit.toLowerCase().startsWith(uf));
 
@@ -743,7 +778,7 @@ function renderSparklines() {
       <div class="spark-header"><div class="spark-title">${d.unit}</div><div class="spark-meta">${metric.toUpperCase()}</div></div>
       <div class="spark-value-row">
         <div class="spark-value">${d.val}</div><div class="spark-unit">${d.u}</div>
-        <div class="spark-change ${d.dir === 'up' ? (metric==='recovery'?'up':'up') : d.dir === 'down' ? 'down' : 'flat'}">${d.chg}</div>
+        <div class="spark-change ${d.dir === 'up' ? 'up' : d.dir === 'down' ? 'down' : 'flat'}">${d.chg}</div>
       </div>
       ${mkSparkSVG(d.spark, color, 200, 36)}
     </div>
@@ -953,6 +988,7 @@ document.querySelectorAll('.dropdown-panel,.plant-dropdown').forEach(p=>p.addEve
 // Init
 renderSparklines();
 renderBarChart();
+renderModeChart();
 </script>
 </body>
 </html>
