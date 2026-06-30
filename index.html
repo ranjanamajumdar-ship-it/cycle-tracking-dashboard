@@ -960,18 +960,114 @@ function showAllAlertsModal() {
   openModal();
 }
 
-function showModeHistoryModal() {
+function showModeHistoryModal(period) {
+  period = period || 'day';
   modalTitle.textContent = 'Mode Distribution — Full Report';
-  modalSubtitle.textContent = 'Gantt timeline (last 24h)';
+  modalSubtitle.textContent = 'Gantt timeline';
   setModalIcon('green', '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>');
   modalTabs.innerHTML = '';
+
+  const periodConfigs = {
+    day:   { label: 'Last 24h',  ticks: ['00:00','04:00','08:00','12:00','16:00','20:00','24:00'], cols: 6 },
+    week:  { label: 'Last 7 days', ticks: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], cols: 6 },
+    month: { label: 'Last 30 days', ticks: ['W1','W2','W3','W4','W5'], cols: 4 },
+  };
+  const cfg = periodConfigs[period] || periodConfigs.day;
+
   const units = ['PSF-1','PSF-2','UF-1','UF-2','RO-1','RO-2','MBR-1','MBR-2'];
-  const bars = [[{m:'service',l:0,w:55},{m:'backwash',l:55,w:8},{m:'service',l:63,w:37}],[{m:'service',l:0,w:40},{m:'backwash',l:40,w:6},{m:'service',l:46,w:30},{m:'backwash',l:76,w:6},{m:'service',l:82,w:18}],[{m:'filtration',l:0,w:45},{m:'ceb',l:45,w:5},{m:'filtration',l:50,w:50}],[{m:'filtration',l:0,w:35},{m:'backwash',l:35,w:5},{m:'filtration',l:40,w:25},{m:'ceb',l:65,w:8},{m:'filtration',l:73,w:27}],[{m:'service',l:0,w:85},{m:'flush',l:85,w:5},{m:'service',l:90,w:10}],[{m:'service',l:0,w:70},{m:'flush',l:70,w:8},{m:'service',l:78,w:22}],[{m:'filtration',l:0,w:60},{m:'relaxation',l:60,w:8},{m:'filtration',l:68,w:32}],[{m:'filtration',l:0,w:50},{m:'relaxation',l:50,w:10},{m:'filtration',l:60,w:25},{m:'relaxation',l:85,w:10},{m:'standby',l:95,w:5}]];
-  let h = '';
-  units.forEach((u,i) => { h += `<div class="gantt-row"><div class="gantt-label">${u}</div><div class="gantt-track">`; bars[i].forEach(b=>{h+=`<div class="gantt-bar ${b.m}" style="left:${b.l}%;width:${b.w}%"></div>`;}); h += '</div></div>'; });
-  h += '<div class="gantt-time-axis"><span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>24:00</span></div>';
-  h += '<div class="legend" style="border-top:none;padding-top:8px"><div class="legend-item"><span class="status-dot green"></span>Service</div><div class="legend-item"><span class="status-dot blue"></span>Filtration</div><div class="legend-item"><span class="status-dot" style="background:var(--orange)"></span>Backwash</div><div class="legend-item"><span class="status-dot" style="background:var(--purple)"></span>CEB</div><div class="legend-item"><span class="status-dot amber"></span>Relaxation</div></div>';
+  const bars  = [
+    [{m:'service',l:0,w:55},{m:'backwash',l:55,w:8},{m:'service',l:63,w:37}],
+    [{m:'service',l:0,w:40},{m:'backwash',l:40,w:6},{m:'service',l:46,w:30},{m:'backwash',l:76,w:6},{m:'service',l:82,w:18}],
+    [{m:'filtration',l:0,w:45},{m:'ceb',l:45,w:5},{m:'filtration',l:50,w:50}],
+    [{m:'filtration',l:0,w:35},{m:'backwash',l:35,w:5},{m:'filtration',l:40,w:25},{m:'ceb',l:65,w:8},{m:'filtration',l:73,w:27}],
+    [{m:'service',l:0,w:85},{m:'flush',l:85,w:5},{m:'service',l:90,w:10}],
+    [{m:'service',l:0,w:70},{m:'flush',l:70,w:8},{m:'service',l:78,w:22}],
+    [{m:'filtration',l:0,w:60},{m:'relaxation',l:60,w:8},{m:'filtration',l:68,w:32}],
+    [{m:'filtration',l:0,w:50},{m:'relaxation',l:50,w:10},{m:'filtration',l:60,w:25},{m:'relaxation',l:85,w:10},{m:'standby',l:95,w:5}]
+  ];
+
+  // Grid lines positions (as % of track width)
+  const gridPcts = cfg.ticks.map((_,i) => Math.round(i / (cfg.ticks.length - 1) * 100));
+
+  // Period selector dropdown
+  let h = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div style="font-size:0.82rem;color:var(--text-secondary)">${cfg.label}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <select id="ganttPeriodSelect" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-size:0.8rem;color:var(--text-primary);cursor:pointer;outline:none">
+          <option value="day"   ${period==='day'  ?'selected':''}>Per Day (24h)</option>
+          <option value="week"  ${period==='week' ?'selected':''}>Per Week (7 days)</option>
+          <option value="month" ${period==='month'?'selected':''}>Per Month (30 days)</option>
+          <option value="custom"${period==='custom'?'selected':''}>Custom range…</option>
+        </select>
+      </div>
+    </div>`;
+
+  // Custom date/time range picker (shown only when custom selected)
+  h += `<div id="ganttCustomRange" style="display:${period==='custom'?'flex':'none'};align-items:flex-end;gap:12px;flex-wrap:wrap;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+    <div>
+      <div style="font-size:0.72rem;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">From date</div>
+      <input type="date" id="ganttDateFrom" style="padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:0.82rem;color:var(--text-primary);outline:none" value="2025-05-11"/>
+    </div>
+    <div>
+      <div style="font-size:0.72rem;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">Start time</div>
+      <input type="time" id="ganttTimeFrom" style="padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:0.82rem;color:var(--text-primary);outline:none" value="00:00"/>
+    </div>
+    <div style="font-size:0.9rem;color:var(--text-tertiary);padding-bottom:6px">→</div>
+    <div>
+      <div style="font-size:0.72rem;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">To date</div>
+      <input type="date" id="ganttDateTo" style="padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:0.82rem;color:var(--text-primary);outline:none" value="2025-05-18"/>
+    </div>
+    <div>
+      <div style="font-size:0.72rem;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">End time</div>
+      <input type="time" id="ganttTimeTo" style="padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:0.82rem;color:var(--text-primary);outline:none" value="23:59"/>
+    </div>
+    <button onclick="showModeHistoryModal('custom')" style="padding:6px 16px;border-radius:8px;background:var(--text-primary);color:white;border:none;font-size:0.8rem;font-weight:600;cursor:pointer;margin-bottom:1px">Apply</button>
+  </div>`;
+
+  // Gantt chart with grid
+  h += `<div style="position:relative">`;
+
+  // Grid columns (vertical lines behind tracks)
+  const gridLines = gridPcts.slice(1,-1).map(p =>
+    `<div style="position:absolute;left:calc(60px + ${p}% * (100% - 60px) / 100);top:0;bottom:28px;width:1px;background:var(--border-light);z-index:0"></div>`
+  ).join('');
+  h += gridLines;
+
+  // Rows
+  units.forEach((u,i) => {
+    h += `<div class="gantt-row" style="position:relative;z-index:1"><div class="gantt-label">${u}</div><div class="gantt-track">`;
+    bars[i].forEach(b => { h += `<div class="gantt-bar ${b.m}" style="left:${b.l}%;width:${b.w}%" title="${b.m} · ${Math.round(b.w/100*24)}h"></div>`; });
+    h += '</div></div>';
+  });
+
+  // Time axis with ticks
+  h += `<div style="display:flex;justify-content:space-between;padding-left:60px;margin-top:4px;margin-bottom:12px">`;
+  cfg.ticks.forEach(t => { h += `<span style="font-size:0.7rem;color:var(--text-tertiary)">${t}</span>`; });
+  h += `</div></div>`;
+
+  // Legend
+  h += `<div class="legend" style="border-top:1px solid var(--border-light);padding-top:12px;flex-wrap:wrap">
+    <div class="legend-item"><span class="status-dot green"></span>Service</div>
+    <div class="legend-item"><span class="status-dot blue"></span>Filtration</div>
+    <div class="legend-item"><span class="status-dot" style="background:var(--orange)"></span>Backwash</div>
+    <div class="legend-item"><span class="status-dot" style="background:var(--purple)"></span>CEB</div>
+    <div class="legend-item"><span class="status-dot amber"></span>Relaxation</div>
+    <div class="legend-item"><span class="status-dot" style="background:var(--text-tertiary)"></span>Standby</div>
+  </div>`;
+
   modalBody.innerHTML = h;
+
+  // Wire up dropdown
+  document.getElementById('ganttPeriodSelect').addEventListener('change', function() {
+    const val = this.value;
+    if (val === 'custom') {
+      document.getElementById('ganttCustomRange').style.display = 'flex';
+    } else {
+      showModeHistoryModal(val);
+    }
+  });
+
   openModal();
 }
 
