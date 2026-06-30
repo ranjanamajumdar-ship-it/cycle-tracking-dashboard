@@ -484,12 +484,6 @@ body {
         <span class="fb-chip" data-ft-mode="relaxation">Relaxation</span>
       </div>
     </div>
-    <div class="fb-sep"></div>
-    <div class="fb-alerts" id="fbAlertsBtn">
-      <svg class="fb-alert-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-      <span class="fb-alert-count">7</span>
-      <span class="fb-alert-label">Alerts</span>
-    </div>
   </div>
 
   <!-- 1. Live Unit Status -->
@@ -934,7 +928,6 @@ document.querySelectorAll('.fb-chip[data-ft-mode]').forEach(chip => {
   });
 });
 
-document.getElementById('fbAlertsBtn').addEventListener('click', showAllAlertsModal);
 
 // Analytics filter chips
 document.querySelectorAll('.af-chip').forEach(chip => {
