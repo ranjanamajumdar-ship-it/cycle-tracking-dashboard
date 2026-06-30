@@ -13,17 +13,17 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  /* Warm neutral palette */
-  --bg: #edeae4;
+  /* Cool white palette — matches app screenshot */
+  --bg: #F0F4F8;
   --surface: #FFFFFF;
-  --surface-secondary: #f5f4f0;
-  --border: #d8d6ce;
-  --border-light: #eceae2;
-  --text-primary: #1a1916;
-  --text-secondary: #5c5a52;
-  --text-tertiary: #9a9890;
+  --surface-secondary: #F4F6F9;
+  --border: #DDE3EC;
+  --border-light: #EEF1F5;
+  --text-primary: #0E1F36;
+  --text-secondary: #52637A;
+  --text-tertiary: #8A9BB0;
 
-  /* Navy brand scale (single accent family) */
+  /* Navy brand scale */
   --brand-900: #0E1F36;
   --brand-800: #193458;
   --brand-700: #2A4A75;
@@ -34,25 +34,25 @@
   --brand-50:  #EBF0F7;
   --brand-25:  #F5F8FC;
 
-  /* Semantic — kept muted, used sparingly */
-  --green: #2D6A35;
-  --green-bg: #E8F1E9;
-  --green-border: #B7D4BA;
-  --blue: #2A4A75;
-  --blue-bg: #EBF0F7;
-  --blue-border: #A8B6CC;
-  --amber: #6B4E0E;
-  --amber-bg: #FBF3E2;
-  --amber-border: #E8D29A;
-  --red: #7C2F0E;
-  --red-bg: #FBEDE3;
-  --red-border: #E5B7A0;
-  --orange: #7C3A0E;
-  --orange-bg: #FBF0E3;
-  --orange-border: #E5C4A0;
-  --purple: #3D2A6B;
-  --purple-bg: #EDE9F7;
-  --purple-border: #C4B7E5;
+  /* Semantic — match app: clear greens/ambers/reds */
+  --green: #16A34A;
+  --green-bg: #DCFCE7;
+  --green-border: #86EFAC;
+  --blue: #2563EB;
+  --blue-bg: #DBEAFE;
+  --blue-border: #93C5FD;
+  --amber: #D97706;
+  --amber-bg: #FEF3C7;
+  --amber-border: #FCD34D;
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --red-border: #FCA5A5;
+  --orange: #EA580C;
+  --orange-bg: #FFEDD5;
+  --orange-border: #FDBA74;
+  --purple: #7C3AED;
+  --purple-bg: #EDE9FE;
+  --purple-border: #C4B5FD;
 
   --sidebar-width: 220px;
   --radius: 10px;
@@ -69,28 +69,28 @@ body {
   display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
 }
 
-/* ── Sidebar ── */
+/* ── Sidebar — dark navy, matches app header ── */
 .sidebar {
-  width: var(--sidebar-width); background: var(--surface);
-  border-right: 0.5px solid var(--border); display: flex; flex-direction: column;
+  width: var(--sidebar-width); background: var(--brand-900);
+  display: flex; flex-direction: column;
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 10;
 }
-.sidebar-logo { padding: 20px 20px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 0.5px solid var(--border); }
+.sidebar-logo { padding: 20px 20px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
 .sidebar-logo svg { flex-shrink: 0; }
-.sidebar-logo span { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; color: var(--brand-900); }
+.sidebar-logo span { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; color: #fff; }
 .sidebar-nav { flex: 1; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
 .nav-item {
   display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-  border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 0.88rem;
+  border-radius: var(--radius-sm); color: rgba(255,255,255,0.55); font-size: 0.88rem;
   font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; text-decoration: none;
 }
-.nav-item:hover { background: var(--surface-secondary); color: var(--text-primary); }
-.nav-item.active { background: var(--brand-50); color: var(--brand-800); font-weight: 600; border: 0.5px solid var(--brand-100); }
+.nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: rgba(255,255,255,0.12); color: #fff; font-weight: 600; }
 .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.sidebar-bottom { border-top: 0.5px solid var(--border); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.sidebar-bottom { border-top: 0.5px solid rgba(255,255,255,0.1); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 .plant-selector-wrap { position: relative; }
-.plant-selector { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--surface-secondary); border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--text-primary); width: 100%; border: 0.5px solid var(--border); }
-.plant-selector svg { width: 13px; height: 13px; stroke: var(--text-secondary); fill: none; stroke-width: 2; }
+.plant-selector { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(255,255,255,0.08); border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #fff; width: 100%; border: 0.5px solid rgba(255,255,255,0.15); }
+.plant-selector svg { width: 13px; height: 13px; stroke: rgba(255,255,255,0.55); fill: none; stroke-width: 2; }
 .plant-selector .chevron-down { margin-left: auto; transition: transform 0.2s; }
 .plant-selector-wrap.open .chevron-down { transform: rotate(180deg); }
 .plant-dropdown { display: none; position: absolute; bottom: calc(100% + 6px); left: 0; right: 0; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--elev-3); z-index: 20; padding: 4px; }
@@ -103,10 +103,10 @@ body {
 .plant-type.stp { background: var(--green-bg); color: var(--green); border: 0.5px solid var(--green-border); }
 .plant-type.etp { background: var(--amber-bg); color: var(--amber); border: 0.5px solid var(--amber-border); }
 .user-info { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
-.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--brand-100); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: var(--brand-700); }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #fff; }
 .user-details { display: flex; flex-direction: column; }
-.user-name { font-size: 0.82rem; font-weight: 600; }
-.user-email { font-size: 0.72rem; color: var(--text-tertiary); }
+.user-name { font-size: 0.82rem; font-weight: 600; color: #fff; }
+.user-email { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
 
 /* ── Main ── */
 .main { flex: 1; padding: 24px 28px; min-width: 0; max-width: 1400px; margin: 0 auto; width: 100%; }
@@ -775,10 +775,10 @@ function renderModeChart() {
   if (!el) return;
   const totalH = 168;
   const segments = [
-    {key:'service',  label:'Service',  color:'#4A8C57', hex:'#4A8C57'},
-    {key:'cleaning', label:'Cleaning', color:'#4A6890', hex:'#4A6890'},
-    {key:'standby',  label:'Standby',  color:'#9A7B2A', hex:'#9A7B2A'},
-    {key:'trip',     label:'Trip',     color:'#A8402A', hex:'#A8402A'},
+    {key:'service',  label:'Service',  color:'#16A34A', hex:'#16A34A'},
+    {key:'cleaning', label:'Cleaning', color:'#2563EB', hex:'#2563EB'},
+    {key:'standby',  label:'Standby',  color:'#D97706', hex:'#D97706'},
+    {key:'trip',     label:'Trip',     color:'#DC2626', hex:'#DC2626'},
   ];
   const totals = segments.map(s => ({
     ...s,
@@ -947,7 +947,7 @@ function renderBarChart() {
     const x = leftPad + i * step;
     const bh = Math.round((d.count / max) * H);
     const isSpike = d.count > avg * 1.3;
-    const color = isSpike ? '#9A7B2A' : d.count > avg ? '#4A6890' : '#4A8C57';
+    const color = isSpike ? '#D97706' : d.count > avg ? '#2563EB' : '#16A34A';
     bars += `<rect x="${x}" y="${VAL_PAD + H - bh}" width="${barW}" height="${bh}" rx="4" fill="${color}" opacity="0.88"/>`;
     labels += `<text x="${x + barW/2}" y="${VAL_PAD + H + 14}" text-anchor="middle" font-size="9.5" fill="#9ca3af">${d.day}</text>`;
     values += `<text x="${x + barW/2}" y="${VAL_PAD + H - bh - 5}" text-anchor="middle" font-size="9" fill="#374151" font-weight="600">${d.count}</text>`;
@@ -957,7 +957,7 @@ function renderBarChart() {
   const avgLine = `<line x1="${leftPad}" y1="${avgY}" x2="${rightX}" y2="${avgY}" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 3"/>
     <text x="${rightX + 4}" y="${avgY + 4}" font-size="8.5" fill="#9ca3af">avg</text>`;
   const trendPts = data.map((d,i) => `${leftPad + i * step + barW/2},${VAL_PAD + H - Math.round((d.count/max)*H)}`).join(' ');
-  const trendLine = `<polyline points="${trendPts}" fill="none" stroke="#4A6890" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.55"/>`;
+  const trendLine = `<polyline points="${trendPts}" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.55"/>`;
 
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -968,9 +968,9 @@ function renderBarChart() {
       ${avgLine}${bars}${trendLine}${values}${labels}
     </svg>
     <div style="display:flex;gap:12px;margin-top:6px">
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#9A7B2A;display:inline-block"></span>Spike</span>
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#4A6890;display:inline-block"></span>Above avg</span>
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#4A8C57;display:inline-block"></span>Normal</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#D97706;display:inline-block"></span>Spike</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#2563EB;display:inline-block"></span>Above avg</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#16A34A;display:inline-block"></span>Normal</span>
     </div>`;
 }
 
@@ -1177,10 +1177,10 @@ function showModeHistoryModal(period) {
   // ── Legend
   const legendItems = [
     {cls:'service',   label:'Service',   color:'#10b981'},
-    {cls:'filtration',label:'Filtration',color:'#4A6890'},
+    {cls:'filtration',label:'Filtration',color:'#2563EB'},
     {cls:'backwash',  label:'Backwash',  color:'#f97316'},
     {cls:'ceb',       label:'CEB',       color:'#a855f7'},
-    {cls:'relaxation',label:'Relaxation',color:'#9A7B2A'},
+    {cls:'relaxation',label:'Relaxation',color:'#D97706'},
     {cls:'standby',   label:'Standby',   color:'#9ca3af'},
   ];
   h += `<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border-light)">
