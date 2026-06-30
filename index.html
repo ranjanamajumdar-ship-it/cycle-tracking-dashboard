@@ -13,53 +13,60 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  /* Cool white palette — matches app screenshot */
+  /* Page chrome */
   --bg: #F0F4F8;
   --surface: #FFFFFF;
-  --surface-secondary: #F4F6F9;
+  --surface-secondary: #F6F8FB;
   --border: #DDE3EC;
-  --border-light: #EEF1F5;
+  --border-light: #EEF2F7;
   --text-primary: #0E1F36;
   --text-secondary: #52637A;
   --text-tertiary: #8A9BB0;
 
-  /* Navy brand scale */
-  --brand-900: #0E1F36;
-  --brand-800: #193458;
-  --brand-700: #2A4A75;
-  --brand-500: #4A6890;
-  --brand-300: #7B92B3;
-  --brand-200: #A8B6CC;
-  --brand-100: #DCE3EE;
-  --brand-50:  #EBF0F7;
-  --brand-25:  #F5F8FC;
+  /* Brand — DigitalPaani navy */
+  --brand-900: #0E1F36;   /* deep dark for text */
+  --brand-800: #19368E;   /* PRIMARY brand colour */
+  --brand-700: #2347B5;
+  --brand-500: #4A68CC;
+  --brand-300: #8BA4E8;
+  --brand-200: #B4C4F0;
+  --brand-100: #C5D4F5;
+  --brand-50:  #E1F0FE;   /* highlight / accent bg */
+  --brand-25:  #F0F7FF;
 
-  /* Semantic — match app: clear greens/ambers/reds */
-  --green: #16A34A;
-  --green-bg: #DCFCE7;
-  --green-border: #86EFAC;
-  --blue: #2563EB;
-  --blue-bg: #DBEAFE;
-  --blue-border: #93C5FD;
-  --amber: #D97706;
-  --amber-bg: #FEF3C7;
-  --amber-border: #FCD34D;
-  --red: #DC2626;
-  --red-bg: #FEE2E2;
-  --red-border: #FCA5A5;
-  --orange: #EA580C;
-  --orange-bg: #FFEDD5;
-  --orange-border: #FDBA74;
-  --purple: #7C3AED;
-  --purple-bg: #EDE9FE;
-  --purple-border: #C4B5FD;
+  /* Semantic — exact brand colours, pastel backgrounds */
+  --green: #299700;
+  --green-bg: #EDFAE5;
+  --green-border: #9DD67A;
+
+  --blue: #19368E;
+  --blue-bg: #E1F0FE;
+  --blue-border: #8DBFFA;
+
+  --amber: #CC9A00;       /* darkened for WCAG on yellow bg */
+  --amber-solid: #FFD359; /* dot colour */
+  --amber-bg: #FFFAEB;
+  --amber-border: #FFE480;
+
+  --red: #AC0000;
+  --red-bg: #FFEBEB;
+  --red-border: #F5AAAA;
+
+  --orange: #FF6200;
+  --orange-bg: #FFF2E8;
+  --orange-border: #FFBA80;
+
+  /* Teal — replaces purple (CEB, special modes) */
+  --teal: #0A7FAB;
+  --teal-bg: #E0F6FF;
+  --teal-border: #72CDEF;
 
   --sidebar-width: 220px;
   --radius: 10px;
   --radius-sm: 6px;
-  --elev-1: 0 1px 2px rgba(14,31,54,0.04);
-  --elev-2: 0 4px 12px rgba(14,31,54,0.06);
-  --elev-3: 0 8px 24px rgba(14,31,54,0.10);
+  --elev-1: 0 1px 3px rgba(14,31,54,0.05);
+  --elev-2: 0 4px 14px rgba(14,31,54,0.07);
+  --elev-3: 0 8px 28px rgba(14,31,54,0.11);
 }
 
 html { font-size: 13px; }
@@ -69,9 +76,9 @@ body {
   display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
 }
 
-/* ── Sidebar — dark navy, matches app header ── */
+/* ── Sidebar — brand navy ── */
 .sidebar {
-  width: var(--sidebar-width); background: var(--brand-900);
+  width: var(--sidebar-width); background: var(--brand-800);
   display: flex; flex-direction: column;
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 10;
 }
@@ -115,8 +122,15 @@ body {
 .page-header p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 3px; }
 .header-actions { display: flex; align-items: center; gap: 8px; }
 
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: 0.82rem; font-weight: 500; color: var(--brand-800); font-family: var(--font-sans); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.btn:hover { background: var(--brand-50); border-color: var(--brand-200); }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); font-size: 0.82rem; font-weight: 500;
+  color: var(--text-secondary); font-family: var(--font-sans);
+  cursor: pointer; transition: all 0.13s; white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(14,31,54,0.04);
+}
+.btn:hover { background: var(--brand-50); border-color: var(--brand-300); color: var(--brand-800); }
 .btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
 /* ── Dropdowns ── */
@@ -134,30 +148,53 @@ body {
 .filter-bar {
   display: flex; align-items: center;
   background: var(--surface); border: 0.5px solid var(--border);
-  border-radius: var(--radius); padding: 9px 16px;
+  border-radius: var(--radius); padding: 8px 14px;
   margin-bottom: 20px; gap: 0; overflow-x: auto;
+  box-shadow: var(--elev-1);
 }
-.fb-group { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.fb-label { font-size: 0.68rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
-.fb-chips { display: flex; gap: 4px; }
+.fb-group { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+/* Visual hierarchy: label is a small pill showing group name */
+.fb-label {
+  font-size: 0.65rem; font-weight: 700; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap;
+  background: var(--surface-secondary); border: 0.5px solid var(--border-light);
+  padding: 2px 7px; border-radius: 4px;
+}
+.fb-chips { display: flex; gap: 3px; }
+/* Unit type chips — primary tier, slightly heavier */
 .fb-chip {
-  padding: 3px 10px; font-size: 0.75rem; border: 0.5px solid var(--border);
-  border-radius: 20px; cursor: pointer; background: var(--surface);
-  color: var(--text-secondary); transition: all 0.15s; font-weight: 500; white-space: nowrap;
+  padding: 4px 10px; font-size: 0.74rem; border: 1px solid var(--border);
+  border-radius: 6px; cursor: pointer; background: var(--surface);
+  color: var(--text-secondary); transition: all 0.13s; font-weight: 500;
+  white-space: nowrap; letter-spacing: 0.01em;
 }
-.fb-chip:hover { border-color: var(--brand-300); color: var(--brand-800); background: var(--brand-25); }
-.fb-chip.active { background: var(--brand-900); border-color: var(--brand-900); color: white; }
-.fb-sep { width: 0.5px; height: 20px; background: var(--border); flex-shrink: 0; margin: 0 14px; }
+.fb-chip:hover { border-color: var(--brand-800); color: var(--brand-800); background: var(--brand-50); }
+.fb-chip.active {
+  background: var(--brand-800); border-color: var(--brand-800);
+  color: #fff; font-weight: 600; box-shadow: 0 1px 4px rgba(25,54,142,0.25);
+}
+/* Mode chips — secondary tier, smaller / lighter */
+.fb-chips.mode-chips .fb-chip {
+  font-size: 0.71rem; padding: 3px 9px; color: var(--text-tertiary);
+  border-color: var(--border-light);
+}
+.fb-chips.mode-chips .fb-chip:hover { border-color: var(--brand-300); color: var(--brand-800); background: var(--brand-25); }
+.fb-chips.mode-chips .fb-chip.active {
+  background: var(--brand-50); border-color: var(--brand-300);
+  color: var(--brand-800); font-weight: 600; box-shadow: none;
+}
+.fb-sep { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; margin: 0 12px; }
 .fb-alerts {
   display: inline-flex; align-items: center; gap: 6px;
   margin-left: auto; flex-shrink: 0; padding: 4px 12px;
-  background: var(--red-bg); border: 0.5px solid var(--red-border);
-  border-radius: 20px; cursor: pointer; transition: opacity 0.15s;
+  background: var(--red-bg); border: 1px solid var(--red-border);
+  border-radius: 6px; cursor: pointer; transition: all 0.13s;
 }
-.fb-alerts:hover { opacity: 0.8; }
+.fb-alerts:hover { background: var(--red); }
+.fb-alerts:hover * { color: #fff !important; stroke: #fff !important; }
 .fb-alert-icon { width: 13px; height: 13px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .fb-alert-count { font-size: 0.8rem; font-weight: 700; color: var(--red); }
-.fb-alert-label { font-size: 0.75rem; font-weight: 500; color: var(--red); }
+.fb-alert-label { font-size: 0.74rem; font-weight: 600; color: var(--red); }
 
 /* ── Cards ── */
 .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--elev-1); }
@@ -174,26 +211,32 @@ body {
 
 /* ── Table ── */
 .data-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.data-table th { text-align: left; font-size: 0.68rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 12px 10px; border-bottom: 0.5px solid var(--border); }
-.data-table td { padding: 10px 12px; font-size: 0.82rem; border-bottom: 0.5px solid var(--border-light); vertical-align: middle; }
+.data-table thead tr { background: var(--surface-secondary); }
+.data-table th { text-align: left; font-size: 0.66rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.07em; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+.data-table td { padding: 11px 14px; font-size: 0.82rem; border-bottom: 0.5px solid var(--border-light); vertical-align: middle; }
 .data-table tr:last-child td { border-bottom: none; }
 
-.status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+/* Status dots — use brand exact colours */
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; }
 .status-dot.green  { background: var(--green); }
-.status-dot.blue   { background: var(--brand-500); }
-.status-dot.amber  { background: var(--amber); }
+.status-dot.blue   { background: var(--brand-800); }
+.status-dot.amber  { background: var(--amber-solid); }
 .status-dot.red    { background: var(--red); }
 .status-dot.orange { background: var(--orange); }
-.status-dot.purple { background: var(--purple); }
+.status-dot.teal   { background: var(--teal); }
 
-/* Mode pills — muted, monochromatic-leaning */
-.mode-pill { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; border: 0.5px solid; }
-.mode-pill.green  { background: var(--green-bg);  color: var(--green);  border-color: var(--green-border); }
-.mode-pill.blue   { background: var(--brand-50);  color: var(--brand-800); border-color: var(--brand-100); }
-.mode-pill.amber  { background: var(--amber-bg);  color: var(--amber);  border-color: var(--amber-border); }
-.mode-pill.red    { background: var(--red-bg);    color: var(--red);    border-color: var(--red-border); }
-.mode-pill.orange { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-border); }
-.mode-pill.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+/* Mode pills — refined badge style */
+.mode-pill {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 0.71rem; font-weight: 700; white-space: nowrap;
+  border: 1px solid; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.mode-pill.green  { background: var(--green-bg);   color: var(--green);     border-color: var(--green-border); }
+.mode-pill.blue   { background: var(--blue-bg);    color: var(--brand-800); border-color: var(--blue-border); }
+.mode-pill.amber  { background: var(--amber-bg);   color: var(--amber);     border-color: var(--amber-border); }
+.mode-pill.red    { background: var(--red-bg);     color: var(--red);       border-color: var(--red-border); }
+.mode-pill.orange { background: var(--orange-bg);  color: var(--orange);    border-color: var(--orange-border); }
+.mode-pill.teal   { background: var(--teal-bg);    color: var(--teal);      border-color: var(--teal-border); }
 
 .status-badge { font-size: 0.78rem; font-weight: 500; color: var(--green); }
 .status-badge.warning { color: var(--amber); }
@@ -280,12 +323,17 @@ body {
 .spark-svg polyline { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── Analytics Filter Chips ── */
-.analytics-filters { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-.analytics-filters .af-label { font-size: 0.68rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
-.af-chip { padding: 3px 10px; font-size: 0.75rem; border: 0.5px solid var(--border); border-radius: 20px; cursor: pointer; background: var(--surface); color: var(--text-secondary); transition: all 0.15s; font-weight: 500; }
-.af-chip:hover { border-color: var(--brand-300); color: var(--brand-800); background: var(--brand-25); }
-.af-chip.active { background: var(--brand-900); border-color: var(--brand-900); color: white; }
-.af-sep { width: 0.5px; height: 20px; background: var(--border); }
+.analytics-filters { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.analytics-filters .af-label {
+  font-size: 0.65rem; font-weight: 700; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  background: var(--surface-secondary); border: 0.5px solid var(--border-light);
+  padding: 2px 7px; border-radius: 4px;
+}
+.af-chip { padding: 3px 10px; font-size: 0.74rem; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: var(--surface); color: var(--text-secondary); transition: all 0.13s; font-weight: 500; }
+.af-chip:hover { border-color: var(--brand-800); color: var(--brand-800); background: var(--brand-50); }
+.af-chip.active { background: var(--brand-800); border-color: var(--brand-800); color: white; font-weight: 600; box-shadow: 0 1px 4px rgba(25,54,142,0.2); }
+.af-sep { width: 1px; height: 20px; background: var(--border); }
 
 /* ── MODAL ── */
 .modal-backdrop {
@@ -325,8 +373,8 @@ body {
 .modal-icon.amber  svg { stroke: var(--amber); }
 .modal-icon.red    { background: var(--red-bg);    border-color: var(--red-border); }
 .modal-icon.red    svg { stroke: var(--red); }
-.modal-icon.purple { background: var(--purple-bg); border-color: var(--purple-border); }
-.modal-icon.purple svg { stroke: var(--purple); }
+.modal-icon.teal   { background: var(--teal-bg);   border-color: var(--teal-border); }
+.modal-icon.teal   svg { stroke: var(--teal); }
 
 .modal-header h2 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; color: var(--brand-900); }
 .modal-subtitle { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
@@ -449,9 +497,45 @@ body {
 .step-past-stat .sps-label { color: var(--text-tertiary); font-size: 0.72rem; }
 .step-past-stat .sps-value { font-weight: 600; margin-top: 1px; }
 /* Unit table — psychology enhancements */
-.unit-group-hdr td { background: var(--bg); color: var(--text-tertiary); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 14px 4px; border-bottom: 1px solid var(--border-light); }
+.unit-group-hdr td {
+  background: var(--brand-50); color: var(--brand-800);
+  font-size: 0.64rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.09em; padding: 5px 14px 4px;
+  border-bottom: 0.5px solid var(--brand-100);
+}
 .unit-row.has-critical { border-left: 3px solid var(--red); }
-.unit-row.has-warning  { border-left: 3px solid var(--amber); }
+.unit-row.has-warning  { border-left: 3px solid var(--amber-solid); }
+
+/* ── Timestamp hover box ── */
+.ts-wrap { position: relative; display: inline-flex; align-items: center; gap: 5px; cursor: default; }
+.ts-label { font-size: 0.75rem; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.ts-icon { width: 13px; height: 13px; stroke: var(--text-tertiary); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; cursor: pointer; transition: stroke 0.15s; }
+.ts-wrap:hover .ts-icon { stroke: var(--brand-800); }
+.ts-tooltip {
+  display: none; position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%); z-index: 50;
+  background: var(--brand-900); color: #fff;
+  border-radius: 10px; padding: 14px 16px;
+  box-shadow: var(--elev-3); min-width: 240px; max-width: 280px;
+  pointer-events: none;
+}
+.ts-wrap:hover .ts-tooltip { display: block; }
+/* caret */
+.ts-tooltip::after {
+  content: ''; position: absolute; top: 100%; left: 50%;
+  transform: translateX(-50%); border: 7px solid transparent;
+  border-top-color: var(--brand-900);
+}
+.ts-tt-title { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,0.45); margin-bottom: 10px; }
+.ts-tt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ts-tt-item { }
+.ts-tt-key { font-size: 0.64rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+.ts-tt-val { font-size: 0.78rem; font-weight: 600; color: #fff; font-variant-numeric: tabular-nums; }
+.ts-tt-val.mono { font-family: var(--font-mono); font-size: 0.74rem; }
+.ts-tt-sep { grid-column: 1 / -1; height: 0.5px; background: rgba(255,255,255,0.12); margin: 4px 0; }
+.ts-tt-trigger { display: inline-flex; align-items: center; gap: 4px; }
+.ts-tt-auto { color: #6EE7B7; } /* green tint */
+.ts-tt-manual { color: #FCD34D; } /* amber tint */
 .mode-cell-wrap { display: flex; flex-direction: column; gap: 3px; }
 .mode-cell-sub { font-size: 0.72rem; color: var(--text-tertiary); }
 .remaining-pill { display: inline-flex; align-items: center; font-size: 0.75rem; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
@@ -557,7 +641,7 @@ body {
     <div class="fb-sep"></div>
     <div class="fb-group">
       <span class="fb-label">Mode</span>
-      <div class="fb-chips" id="fbModeChips">
+      <div class="fb-chips mode-chips" id="fbModeChips">
         <span class="fb-chip active" data-ft-mode="all">All</span>
         <span class="fb-chip" data-ft-mode="service">Service</span>
         <span class="fb-chip" data-ft-mode="filtration">Filtration</span>
@@ -592,20 +676,20 @@ body {
       <tbody>
         <!-- PSF Group — Law of Similarity -->
         <tr class="unit-group-hdr"><td colspan="5">Pressure Sand Filters (PSF)</td></tr>
-        <tr class="unit-row" data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td><div class="mode-cell-wrap"><span class="mode-pill green">Service (Filtration)</span><span class="mode-cell-sub">PSF Service · (Service Filtration)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:79%"></div></div><span class="unit-progress-label">79% · step 2/5</span></div></td><td>Flow: 120 m³/hr</td><td><span class="remaining-pill none">Continuous</span></td></tr>
-        <tr class="unit-row has-warning" data-unit="psf2"><td><span class="status-dot orange"></span>PSF-2</td><td><div class="mode-cell-wrap"><span class="mode-pill orange">Backwash</span><span class="mode-cell-sub">PSF Backwash · (Backwash)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:84%;background:var(--amber)"></div></div><span class="unit-progress-label">84% · step 2/4</span></div></td><td>BW Progress: 84%</td><td><span class="remaining-pill warn">5 min left</span></td></tr>
+        <tr class="unit-row" data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td><div class="mode-cell-wrap"><span class="mode-pill green">Service</span><span class="mode-cell-sub">PSF Service · Filtration</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:79%"></div></div><span class="unit-progress-label">79% · step 2/5</span></div></td><td><div class="ts-wrap">Flow: 120 m³/hr <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1041</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">07:22:04</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">2h 14m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">142</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Scheduled cycle start</div></div></div></div></div></td><td><span class="remaining-pill none">Continuous</span></td></tr>
+        <tr class="unit-row has-warning" data-unit="psf2"><td><span class="status-dot orange"></span>PSF-2</td><td><div class="mode-cell-wrap"><span class="mode-pill orange">Backwash</span><span class="mode-cell-sub">PSF Backwash</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:84%;background:var(--amber-solid)"></div></div><span class="unit-progress-label">84% · step 2/4</span></div></td><td><div class="ts-wrap">BW Progress: 84% <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1042</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:41:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3m 22s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">139</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Turbidity threshold exceeded</div></div></div></div></div></td><td><span class="remaining-pill warn">5 min left</span></td></tr>
         <!-- UF Group -->
         <tr class="unit-group-hdr"><td colspan="5">Ultrafiltration (UF)</td></tr>
-        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Filtration</span><span class="mode-cell-sub">UF Filtration · (Filtration Bottom Feed)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/6</span></div></td><td>TMP: 24 kPa</td><td><span class="remaining-pill ok">28 min left</span></td></tr>
-        <tr class="unit-row has-critical" data-unit="uf2"><td><span class="status-dot purple"></span>UF-2</td><td><div class="mode-cell-wrap"><span class="mode-pill purple">CEB</span><span class="mode-cell-sub">UF CEB · (CEB Flush)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:35%;background:var(--purple)"></div></div><span class="unit-progress-label">35% · step 3/5</span></div></td><td>Chem.: 118 ppm</td><td><span class="remaining-pill warn">19 min left</span></td></tr>
+        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Filtration</span><span class="mode-cell-sub">UF Filtration · Bottom Feed</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/6</span></div></td><td><div class="ts-wrap">TMP: 24 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2030</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">08:12:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">1h 32m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">318</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Post-backwash return to filtration</div></div></div></div></div></td><td><span class="remaining-pill ok">28 min left</span></td></tr>
+        <tr class="unit-row has-critical" data-unit="uf2"><td><span class="status-dot teal"></span>UF-2</td><td><div class="mode-cell-wrap"><span class="mode-pill teal">CEB</span><span class="mode-cell-sub">UF CEB · Flush</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:35%;background:var(--teal)"></div></div><span class="unit-progress-label">35% · step 3/5</span></div></td><td><div class="ts-wrap">Chem.: 118 ppm <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2035</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:33:22</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">11m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">305</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">TMP threshold exceeded — 38 kPa</div></div></div></div></div></td><td><span class="remaining-pill warn">19 min left</span></td></tr>
         <!-- RO Group -->
         <tr class="unit-group-hdr"><td colspan="5">Reverse Osmosis (RO)</td></tr>
-        <tr class="unit-row" data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td><div class="mode-cell-wrap"><span class="mode-pill green">Service</span><span class="mode-cell-sub">RO Service · (Service Permeate)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/5</span></div></td><td>Feed P: 14.2 bar</td><td><span class="remaining-pill none">Continuous</span></td></tr>
-        <tr class="unit-row" data-unit="ro2"><td><span class="status-dot blue"></span>RO-2</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Flush</span><span class="mode-cell-sub">RO Flush · (Flush)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:43%"></div></div><span class="unit-progress-label">43% · step 4/5</span></div></td><td>Flush Flow: 19.4 m³/hr</td><td><span class="remaining-pill ok">7 min left</span></td></tr>
+        <tr class="unit-row" data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td><div class="mode-cell-wrap"><span class="mode-pill green">Service</span><span class="mode-cell-sub">RO Service · Permeate</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/5</span></div></td><td><div class="ts-wrap">Feed P: 14.2 bar <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-3018</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">06:30:08</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3h 5m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">88</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">HP ramp-up completed</div></div></div></div></div></td><td><span class="remaining-pill none">Continuous</span></td></tr>
+        <tr class="unit-row" data-unit="ro2"><td><span class="status-dot blue"></span>RO-2</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Flush</span><span class="mode-cell-sub">RO Flush</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:43%"></div></div><span class="unit-progress-label">43% · step 4/5</span></div></td><td><div class="ts-wrap">Flush: 19.4 m³/hr <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-3022</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:39:41</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">5m 12s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">86</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">End of service cycle — scheduled flush</div></div></div></div></div></td><td><span class="remaining-pill ok">7 min left</span></td></tr>
         <!-- MBR Group -->
         <tr class="unit-group-hdr"><td colspan="5">Membrane Bioreactor (MBR)</td></tr>
-        <tr class="unit-row" data-unit="mbr1"><td><span class="status-dot green"></span>MBR-1</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Filtration</span><span class="mode-cell-sub">MBR Filtration · (Filtration)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:97%"></div></div><span class="unit-progress-label">97% · step 2/5</span></div></td><td>TMP: 22 kPa</td><td><span class="remaining-pill warn">12 min left</span></td></tr>
-        <tr class="unit-row has-warning" data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td><div class="mode-cell-wrap"><span class="mode-pill amber">Relaxation</span><span class="mode-cell-sub">MBR Relaxation · (Relaxation)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:56%;background:var(--amber)"></div></div><span class="unit-progress-label">56% · step 3/5</span></div></td><td>TMP Recovery: Low</td><td><span class="remaining-pill warn">4 min left</span></td></tr>
+        <tr class="unit-row" data-unit="mbr1"><td><span class="status-dot green"></span>MBR-1</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Filtration</span><span class="mode-cell-sub">MBR Filtration</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:97%"></div></div><span class="unit-progress-label">97% · step 2/5</span></div></td><td><div class="ts-wrap">TMP: 22 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4012</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">06:56:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">7m 48s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">224</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Relaxation complete — filtration resumed</div></div></div></div></div></td><td><span class="remaining-pill warn">12 min left</span></td></tr>
+        <tr class="unit-row has-warning" data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td><div class="mode-cell-wrap"><span class="mode-pill amber">Relaxation</span><span class="mode-cell-sub">MBR Relaxation</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:56%;background:var(--amber-solid)"></div></div><span class="unit-progress-label">56% · step 3/5</span></div></td><td><div class="ts-wrap">TMP Recovery: Low <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4019</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:40:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">4m 30s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">219</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Filtration step completed — entering relaxation</div></div></div></div></div></td><td><span class="remaining-pill warn">4 min left</span></td></tr>
       </tbody>
     </table>
     <div class="legend">
@@ -706,17 +790,44 @@ body {
 <script>
 // ── DATA ──
 const unitData = {
-  psf1: { name:'PSF-1', mode:'Service (Filtration)', modeColor:'green', cycleType:'UF Backwash', cleanings:35, onTarget:69, alertsToReview:7, elapsed:'7 min ago', remaining:'10 min left',
+  psf1: { name:'PSF-1', mode:'Service (Filtration)', modeColor:'green', cycleType:'PSF Service', cleanings:35, onTarget:69, alertsToReview:7, elapsed:'7 min ago', remaining:'10 min left',
+    ts:{startTime:'07:22:04',endTime:'--',duration:'2h 14m',trigger:'Auto',reason:'Scheduled cycle start',eventId:'EVT-1041',cycle:142},
     equipment:[{id:'V-101',type:'Inlet Valve',state:'Open',sc:'green',since:'02:14:38',sp:'--',ac:'--'},{id:'V-102',type:'Outlet Valve',state:'Open',sc:'green',since:'02:14:38',sp:'--',ac:'--'},{id:'V-103',type:'Drain Valve',state:'Closed',sc:'gray',since:'02:14:38',sp:'--',ac:'--'},{id:'P-101',type:'Feed Pump',state:'Running',sc:'green',since:'02:14:38',sp:'120 m³/hr',ac:'118.5 m³/hr'}],
-    params:[{name:'Inlet pressure',ctx:'Cycle · UF Backwash',ref:'#104138',h:'healthy',b:'1.46',a:'1.67',c:'+0.21',u:'bar',dir:'pos',spark:'10,12,11,13,12,14,11,12,15,13,14,16',ft:'Within the healthy range.',n:35},{name:'Permeate flow',ctx:'Cycle · UF Backwash',ref:'#104138',h:'healthy',b:'6.21',a:'6.14',c:'-0.07',u:'m³/h',dir:'neg',spark:'15,14,16,15,13,14,15,14,12,13,14,13',ft:'Within the healthy range.',n:35},{name:'Recovery',ctx:'Whole process',ref:'#104138',h:'healthy',b:'85.39',a:'87.82',c:'+2.43',u:'%',dir:'pos',spark:'8,9,8,10,9,11,10,12,11,12,13,14',ft:'Within the healthy range.',n:35},{name:'Trans-membrane pressure',ctx:'Cycle · UF Backwash',ref:'#104138',h:'critical',b:'0.39',a:'0.49',c:'+0.1',u:'bar',dir:'neg',spark:'8,9,10,9,11,12,13,14,13,15,16,18',ft:'Above 0.4 bar ceiling. Worth a look.',n:35,thr:14}],
+    params:[{name:'Inlet pressure',ctx:'PSF Service',ref:'#104138',h:'healthy',b:'1.46',a:'1.67',c:'+0.21',u:'bar',dir:'pos',spark:'10,12,11,13,12,14,11,12,15,13,14,16',ft:'Within the healthy range.',n:35},{name:'Permeate flow',ctx:'PSF Service',ref:'#104138',h:'healthy',b:'6.21',a:'6.14',c:'-0.07',u:'m³/h',dir:'neg',spark:'15,14,16,15,13,14,15,14,12,13,14,13',ft:'Within the healthy range.',n:35},{name:'Recovery',ctx:'Whole process',ref:'#104138',h:'healthy',b:'85.39',a:'87.82',c:'+2.43',u:'%',dir:'pos',spark:'8,9,8,10,9,11,10,12,11,12,13,14',ft:'Within the healthy range.',n:35},{name:'Trans-membrane pressure',ctx:'PSF Service',ref:'#104138',h:'critical',b:'0.39',a:'0.49',c:'+0.1',u:'bar',dir:'neg',spark:'8,9,10,9,11,12,13,14,13,15,16,18',ft:'Above 0.4 bar ceiling. Worth a look.',n:35,thr:14}],
     steps:[{name:'Drain',tgt:'1:00',act:'1:00',p:100},{name:'Service (Filtration)',tgt:'120:00',act:'94:38',p:79},{name:'Backwash',tgt:'5:00',act:'0:00',p:0},{name:'Rinse',tgt:'2:00',act:'0:00',p:0},{name:'Return to Service',tgt:'--',act:'0:00',p:0}],aStep:1,sd:{r:35,w:'97%',al:1}},
-  psf2:{name:'PSF-2',mode:'Backwash',modeColor:'orange',cycleType:'PSF Backwash',cleanings:28,onTarget:82,alertsToReview:2,elapsed:'3 min ago',remaining:'5 min left',equipment:[{id:'V-111',type:'Inlet Valve',state:'Closed',sc:'gray',since:'00:03:22',sp:'--',ac:'--'},{id:'V-114',type:'BW Valve',state:'Open',sc:'green',since:'00:03:22',sp:'--',ac:'--'},{id:'P-112',type:'BW Pump',state:'Running',sc:'green',since:'00:03:22',sp:'80 m³/hr',ac:'78.2 m³/hr'}],params:[{name:'Inlet pressure',ctx:'PSF Backwash',ref:'#104120',h:'healthy',b:'1.52',a:'1.61',c:'+0.09',u:'bar',dir:'pos',spark:'10,11,10,12,11,13,12,11,13,12,13,14',ft:'Within the healthy range.',n:28}],steps:[{name:'Drain',tgt:'1:00',act:'1:00',p:100},{name:'Backwash',tgt:'4:00',act:'3:22',p:84},{name:'Rinse',tgt:'2:00',act:'0:00',p:0},{name:'Return to Service',tgt:'--',act:'0:00',p:0}],aStep:1,sd:{r:28,w:'82%',al:2}},
-  uf1:{name:'UF-1',mode:'Filtration (Bottom Feed)',modeColor:'blue',cycleType:'UF Filtration',cleanings:42,onTarget:91,alertsToReview:1,elapsed:'1h 32m',remaining:'28 min left',equipment:[{id:'V-201',type:'Feed Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'V-202',type:'Filtrate Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'P-201',type:'Feed Pump',state:'Running',sc:'green',since:'01:32:11',sp:'60 m³/hr',ac:'58.7 m³/hr'}],params:[{name:'TMP',ctx:'UF Filtration',ref:'#104130',h:'healthy',b:'20',a:'24',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,9,11,10,12,11,13,12,14,13',ft:'Within range.',n:42}],steps:[{name:'Backwash (Top)',tgt:'3:00',act:'3:00',p:100},{name:'Rinse',tgt:'1:00',act:'1:00',p:100},{name:'Filtration (Bottom Feed)',tgt:'120:00',act:'92:11',p:77},{name:'Backwash (Bottom)',tgt:'3:00',act:'0:00',p:0},{name:'Air Scouring',tgt:'2:00',act:'0:00',p:0},{name:'Rinse',tgt:'1:00',act:'0:00',p:0}],aStep:2,sd:{r:42,w:'91%',al:1}},
-  uf2:{name:'UF-2',mode:'CEB',modeColor:'purple',cycleType:'UF CEB',cleanings:14,onTarget:69,alertsToReview:7,elapsed:'11 min',remaining:'19 min left',equipment:[{id:'V-211',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:11:45',sp:'--',ac:'--'},{id:'V-214',type:'CEB Valve',state:'Open',sc:'green',since:'00:11:45',sp:'--',ac:'--'},{id:'D-201',type:'NaOCl Dosing',state:'Running',sc:'green',since:'00:11:45',sp:'120 ppm',ac:'118 ppm'},{id:'P-212',type:'CEB Pump',state:'Running',sc:'green',since:'00:11:45',sp:'40 m³/hr',ac:'39.1 m³/hr'}],params:[{name:'Chemical conc.',ctx:'UF CEB',ref:'#104135',h:'healthy',b:'0',a:'118',c:'+118',u:'ppm',dir:'pos',spark:'0,5,15,30,50,70,85,95,110,115,118,118',ft:'Within range.',n:14}],steps:[{name:'Drain',tgt:'2:00',act:'2:00',p:100},{name:'CEB Soak',tgt:'10:00',act:'10:00',p:100},{name:'CEB Flush',tgt:'5:00',act:'1:45',p:35},{name:'Rinse',tgt:'3:00',act:'0:00',p:0},{name:'Return to Filtration',tgt:'--',act:'0:00',p:0}],aStep:2,sd:{r:14,w:'69%',al:7}},
-  ro1:{name:'RO-1',mode:'Service (Permeate)',modeColor:'green',cycleType:'RO Service',cleanings:0,onTarget:95,alertsToReview:1,elapsed:'3h 5m',remaining:'--',equipment:[{id:'V-301',type:'Feed Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'V-302',type:'Permeate Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'P-301',type:'HP Pump',state:'Running',sc:'green',since:'03:05:20',sp:'14.5 bar',ac:'14.2 bar'}],params:[{name:'Feed pressure',ctx:'Whole process',ref:'#104125',h:'healthy',b:'14.0',a:'14.2',c:'+0.2',u:'bar',dir:'pos',spark:'12,13,12,13,14,13,14,14,13,14,14,14',ft:'Within range.',n:35},{name:'Diff pressure',ctx:'Whole process',ref:'#104125',h:'warning',b:'2.5',a:'2.8',c:'+0.3',u:'bar',dir:'neg',spark:'8,9,9,10,10,11,11,12,12,13,14,15',ft:'Rising trend. Monitor.',n:35}],steps:[{name:'Low Pressure Flush',tgt:'5:00',act:'5:00',p:100},{name:'HP Ramp-up',tgt:'3:00',act:'3:00',p:100},{name:'Service (Permeate)',tgt:'240:00',act:'185:20',p:77},{name:'Flush',tgt:'8:00',act:'0:00',p:0},{name:'Standby',tgt:'--',act:'0:00',p:0}],aStep:2,sd:{r:35,w:'95%',al:1}},
-  ro2:{name:'RO-2',mode:'Flush',modeColor:'blue',cycleType:'RO Flush',cleanings:12,onTarget:88,alertsToReview:0,elapsed:'5 min',remaining:'7 min left',equipment:[{id:'V-311',type:'Feed Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'V-314',type:'Flush Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'P-311',type:'Flush Pump',state:'Running',sc:'green',since:'00:05:12',sp:'20 m³/hr',ac:'19.4 m³/hr'}],params:[{name:'Flush flow',ctx:'RO Flush',ref:'#104128',h:'healthy',b:'0',a:'19.4',c:'+19.4',u:'m³/hr',dir:'pos',spark:'0,5,10,15,18,19,19,20,19,20,19,19',ft:'Within range.',n:12}],steps:[{name:'Low Pressure Flush',tgt:'5:00',act:'5:00',p:100},{name:'HP Ramp-up',tgt:'3:00',act:'3:00',p:100},{name:'Service (Permeate)',tgt:'180:00',act:'180:00',p:100},{name:'Flush',tgt:'12:00',act:'5:12',p:43},{name:'Standby',tgt:'--',act:'0:00',p:0}],aStep:3,sd:{r:12,w:'88%',al:0}},
-  mbr1:{name:'MBR-1',mode:'Filtration',modeColor:'blue',cycleType:'MBR Filtration',cleanings:48,onTarget:92,alertsToReview:1,elapsed:'2h 48m',remaining:'12 min left',equipment:[{id:'V-401',type:'Feed Valve',state:'Open',sc:'green',since:'02:47:55',sp:'--',ac:'--'},{id:'B-401',type:'Aeration Blower',state:'Running',sc:'green',since:'02:47:55',sp:'50 Hz',ac:'49.2 Hz'},{id:'P-401',type:'Permeate Pump',state:'Running',sc:'green',since:'02:47:55',sp:'30 m³/hr',ac:'29.5 m³/hr'}],params:[{name:'TMP',ctx:'MBR Filtration',ref:'#104132',h:'healthy',b:'18',a:'22',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,11,10,11,12,11,12,13,12,13',ft:'Within range.',n:48}],steps:[{name:'Air Scouring',tgt:'2:00',act:'2:00',p:100},{name:'Filtration',tgt:'8:00',act:'7:48',p:97},{name:'Relaxation',tgt:'2:00',act:'0:00',p:0},{name:'Filtration',tgt:'8:00',act:'0:00',p:0},{name:'Backpulse',tgt:'1:00',act:'0:00',p:0}],aStep:1,sd:{r:48,w:'92%',al:1}},
-  mbr2:{name:'MBR-2',mode:'Relaxation',modeColor:'amber',cycleType:'MBR Relaxation',cleanings:45,onTarget:78,alertsToReview:3,elapsed:'4 min',remaining:'4 min left',equipment:[{id:'V-411',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:04:30',sp:'--',ac:'--'},{id:'B-411',type:'Aeration Blower',state:'Running',sc:'green',since:'00:04:30',sp:'35 Hz',ac:'34.8 Hz'}],params:[{name:'TMP',ctx:'MBR Relaxation',ref:'#104133',h:'warning',b:'28',a:'24',c:'-4',u:'kPa',dir:'pos',spark:'18,17,16,17,15,16,14,15,13,14,13,12',ft:'TMP not recovering.',n:45}],steps:[{name:'Air Scouring',tgt:'2:00',act:'2:00',p:100},{name:'Filtration',tgt:'8:00',act:'8:00',p:100},{name:'Relaxation',tgt:'8:00',act:'4:30',p:56},{name:'Filtration',tgt:'8:00',act:'0:00',p:0},{name:'Backpulse',tgt:'1:00',act:'0:00',p:0}],aStep:2,sd:{r:45,w:'78%',al:3}}
+  psf2:{name:'PSF-2',mode:'Backwash',modeColor:'orange',cycleType:'PSF Backwash',cleanings:28,onTarget:82,alertsToReview:2,elapsed:'3 min ago',remaining:'5 min left',
+    ts:{startTime:'09:41:10',endTime:'--',duration:'3m 22s',trigger:'Auto',reason:'Turbidity threshold exceeded',eventId:'EVT-1042',cycle:139},
+    equipment:[{id:'V-111',type:'Inlet Valve',state:'Closed',sc:'gray',since:'00:03:22',sp:'--',ac:'--'},{id:'V-114',type:'BW Valve',state:'Open',sc:'green',since:'00:03:22',sp:'--',ac:'--'},{id:'P-112',type:'BW Pump',state:'Running',sc:'green',since:'00:03:22',sp:'80 m³/hr',ac:'78.2 m³/hr'}],params:[{name:'Inlet pressure',ctx:'PSF Backwash',ref:'#104120',h:'healthy',b:'1.52',a:'1.61',c:'+0.09',u:'bar',dir:'pos',spark:'10,11,10,12,11,13,12,11,13,12,13,14',ft:'Within the healthy range.',n:28}],steps:[{name:'Drain',tgt:'1:00',act:'1:00',p:100},{name:'Backwash',tgt:'4:00',act:'3:22',p:84},{name:'Rinse',tgt:'2:00',act:'0:00',p:0},{name:'Return to Service',tgt:'--',act:'0:00',p:0}],aStep:1,sd:{r:28,w:'82%',al:2}},
+  uf1:{name:'UF-1',mode:'Filtration (Bottom Feed)',modeColor:'blue',cycleType:'UF Filtration',cleanings:42,onTarget:91,alertsToReview:1,elapsed:'1h 32m',remaining:'28 min left',
+    ts:{startTime:'08:12:55',endTime:'--',duration:'1h 32m',trigger:'Auto',reason:'Post-backwash return to filtration',eventId:'EVT-2030',cycle:318},
+    modeCapture:{label:'UF Mode-Linked Capture',fields:[{k:'TMP at Start of Filtration',v:'20 kPa'},{k:'TMP at End of Filtration',v:'24 kPa (running)'},{k:'Permeate Flow',v:'58.7 m³/hr'},{k:'Cycle Duration',v:'92:11 (running)'}]},
+    keyParams:{label:'UF Key Parameters',items:[{k:'Filtration Cycle Time',v:'92:11 / 120:00',trend:'on-track'},{k:'Backwash Frequency',v:'2.1 / hr',trend:'normal'},{k:'CEB Frequency',v:'0 today',trend:'normal'},{k:'TMP Rise Per Cycle',v:'+4 kPa',trend:'watch'}]},
+    equipment:[{id:'V-201',type:'Feed Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'V-202',type:'Filtrate Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'P-201',type:'Feed Pump',state:'Running',sc:'green',since:'01:32:11',sp:'60 m³/hr',ac:'58.7 m³/hr'}],params:[{name:'TMP',ctx:'UF Filtration',ref:'#104130',h:'healthy',b:'20',a:'24',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,9,11,10,12,11,13,12,14,13',ft:'Within range.',n:42}],steps:[{name:'Backwash (Top)',tgt:'3:00',act:'3:00',p:100},{name:'Rinse',tgt:'1:00',act:'1:00',p:100},{name:'Filtration (Bottom Feed)',tgt:'120:00',act:'92:11',p:77},{name:'Backwash (Bottom)',tgt:'3:00',act:'0:00',p:0},{name:'Air Scouring',tgt:'2:00',act:'0:00',p:0},{name:'Rinse',tgt:'1:00',act:'0:00',p:0}],aStep:2,sd:{r:42,w:'91%',al:1}},
+  uf2:{name:'UF-2',mode:'CEB',modeColor:'teal',cycleType:'UF CEB',cleanings:14,onTarget:69,alertsToReview:7,elapsed:'11 min',remaining:'19 min left',
+    ts:{startTime:'09:33:22',endTime:'--',duration:'11m',trigger:'Auto',reason:'TMP threshold exceeded — 38 kPa',eventId:'EVT-2035',cycle:305},
+    modeCapture:{label:'UF Mode-Linked Capture',fields:[{k:'TMP at Start of Filtration',v:'32 kPa'},{k:'TMP at End of Filtration',v:'38 kPa'},{k:'Permeate Flow',v:'39.1 m³/hr (CEB)'},{k:'Cycle Duration',v:'11:00 (running)'}]},
+    keyParams:{label:'UF Key Parameters',items:[{k:'Filtration Cycle Time',v:'Interrupted',trend:'alert'},{k:'Backwash Frequency',v:'5.0 / hr',trend:'alert'},{k:'CEB Frequency',v:'1 today',trend:'watch'},{k:'TMP Rise Per Cycle',v:'+8 kPa',trend:'alert'}]},
+    equipment:[{id:'V-211',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:11:45',sp:'--',ac:'--'},{id:'V-214',type:'CEB Valve',state:'Open',sc:'green',since:'00:11:45',sp:'--',ac:'--'},{id:'D-201',type:'NaOCl Dosing',state:'Running',sc:'green',since:'00:11:45',sp:'120 ppm',ac:'118 ppm'},{id:'P-212',type:'CEB Pump',state:'Running',sc:'green',since:'00:11:45',sp:'40 m³/hr',ac:'39.1 m³/hr'}],params:[{name:'Chemical conc.',ctx:'UF CEB',ref:'#104135',h:'healthy',b:'0',a:'118',c:'+118',u:'ppm',dir:'pos',spark:'0,5,15,30,50,70,85,95,110,115,118,118',ft:'Within range.',n:14}],steps:[{name:'Drain',tgt:'2:00',act:'2:00',p:100},{name:'CEB Soak',tgt:'10:00',act:'10:00',p:100},{name:'CEB Flush',tgt:'5:00',act:'1:45',p:35},{name:'Rinse',tgt:'3:00',act:'0:00',p:0},{name:'Return to Filtration',tgt:'--',act:'0:00',p:0}],aStep:2,sd:{r:14,w:'69%',al:7}},
+  ro1:{name:'RO-1',mode:'Service (Permeate)',modeColor:'green',cycleType:'RO Service',cleanings:0,onTarget:95,alertsToReview:1,elapsed:'3h 5m',remaining:'--',
+    ts:{startTime:'06:30:08',endTime:'--',duration:'3h 5m',trigger:'Auto',reason:'HP ramp-up completed',eventId:'EVT-3018',cycle:88},
+    modeCapture:{label:'RO Mode-Linked Capture',fields:[{k:'Feed Pressure',v:'14.2 bar'},{k:'Permeate Flow',v:'42.1 m³/hr'},{k:'Reject Flow',v:'11.8 m³/hr'},{k:'Energy Consumption',v:'4.2 kWh/m³'}]},
+    keyParams:{label:'RO Key Parameters',items:[{k:'Permeate Flow / Cycle',v:'42.1 m³/hr',trend:'normal'},{k:'Diff Pressure Rise / Cycle',v:'+0.3 bar',trend:'watch'},{k:'Salt Rejection',v:'97.2%',trend:'normal'},{k:'Recovery',v:'74%',trend:'watch'}]},
+    equipment:[{id:'V-301',type:'Feed Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'V-302',type:'Permeate Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'P-301',type:'HP Pump',state:'Running',sc:'green',since:'03:05:20',sp:'14.5 bar',ac:'14.2 bar'}],params:[{name:'Feed pressure',ctx:'Whole process',ref:'#104125',h:'healthy',b:'14.0',a:'14.2',c:'+0.2',u:'bar',dir:'pos',spark:'12,13,12,13,14,13,14,14,13,14,14,14',ft:'Within range.',n:35},{name:'Diff pressure',ctx:'Whole process',ref:'#104125',h:'warning',b:'2.5',a:'2.8',c:'+0.3',u:'bar',dir:'neg',spark:'8,9,9,10,10,11,11,12,12,13,14,15',ft:'Rising trend. Monitor.',n:35}],steps:[{name:'Low Pressure Flush',tgt:'5:00',act:'5:00',p:100},{name:'HP Ramp-up',tgt:'3:00',act:'3:00',p:100},{name:'Service (Permeate)',tgt:'240:00',act:'185:20',p:77},{name:'Flush',tgt:'8:00',act:'0:00',p:0},{name:'Standby',tgt:'--',act:'0:00',p:0}],aStep:2,sd:{r:35,w:'95%',al:1}},
+  ro2:{name:'RO-2',mode:'Flush',modeColor:'blue',cycleType:'RO Flush',cleanings:12,onTarget:88,alertsToReview:0,elapsed:'5 min',remaining:'7 min left',
+    ts:{startTime:'09:39:41',endTime:'--',duration:'5m 12s',trigger:'Auto',reason:'End of service cycle — scheduled flush',eventId:'EVT-3022',cycle:86},
+    modeCapture:{label:'RO Mode-Linked Capture',fields:[{k:'Feed Pressure',v:'6.1 bar (flush)'},{k:'Permeate Flow',v:'19.4 m³/hr'},{k:'Reject Flow',v:'--'},{k:'Energy Consumption',v:'1.8 kWh/m³'}]},
+    keyParams:{label:'RO Key Parameters',items:[{k:'Permeate Flow / Cycle',v:'41.6 m³/hr',trend:'normal'},{k:'Diff Pressure Rise / Cycle',v:'+0.2 bar',trend:'normal'},{k:'Salt Rejection',v:'96.8%',trend:'normal'},{k:'Recovery',v:'72%',trend:'watch'}]},
+    equipment:[{id:'V-311',type:'Feed Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'V-314',type:'Flush Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'P-311',type:'Flush Pump',state:'Running',sc:'green',since:'00:05:12',sp:'20 m³/hr',ac:'19.4 m³/hr'}],params:[{name:'Flush flow',ctx:'RO Flush',ref:'#104128',h:'healthy',b:'0',a:'19.4',c:'+19.4',u:'m³/hr',dir:'pos',spark:'0,5,10,15,18,19,19,20,19,20,19,19',ft:'Within range.',n:12}],steps:[{name:'Low Pressure Flush',tgt:'5:00',act:'5:00',p:100},{name:'HP Ramp-up',tgt:'3:00',act:'3:00',p:100},{name:'Service (Permeate)',tgt:'180:00',act:'180:00',p:100},{name:'Flush',tgt:'12:00',act:'5:12',p:43},{name:'Standby',tgt:'--',act:'0:00',p:0}],aStep:3,sd:{r:12,w:'88%',al:0}},
+  mbr1:{name:'MBR-1',mode:'Filtration',modeColor:'blue',cycleType:'MBR Filtration',cleanings:48,onTarget:92,alertsToReview:1,elapsed:'2h 48m',remaining:'12 min left',
+    ts:{startTime:'06:56:10',endTime:'--',duration:'7m 48s (step)',trigger:'Auto',reason:'Relaxation complete — filtration resumed',eventId:'EVT-4012',cycle:224},
+    modeCapture:{label:'MBR Mode-Linked Capture',fields:[{k:'TMP Rise / Filtration Cycle',v:'+4 kPa'},{k:'Air Flow (Air Scouring)',v:'49.2 Hz blower'},{k:'MLSS Level',v:'8,400 mg/L'}]},
+    keyParams:{label:'MBR Key Parameters',items:[{k:'TMP Increase Rate',v:'+0.5 kPa/cycle',trend:'normal'},{k:'Filtration:Relaxation',v:'8:2 min',trend:'normal'},{k:'Air Scour Effectiveness',v:'92% TMP recovery',trend:'normal'}]},
+    equipment:[{id:'V-401',type:'Feed Valve',state:'Open',sc:'green',since:'02:47:55',sp:'--',ac:'--'},{id:'B-401',type:'Aeration Blower',state:'Running',sc:'green',since:'02:47:55',sp:'50 Hz',ac:'49.2 Hz'},{id:'P-401',type:'Permeate Pump',state:'Running',sc:'green',since:'02:47:55',sp:'30 m³/hr',ac:'29.5 m³/hr'}],params:[{name:'TMP',ctx:'MBR Filtration',ref:'#104132',h:'healthy',b:'18',a:'22',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,11,10,11,12,11,12,13,12,13',ft:'Within range.',n:48}],steps:[{name:'Air Scouring',tgt:'2:00',act:'2:00',p:100},{name:'Filtration',tgt:'8:00',act:'7:48',p:97},{name:'Relaxation',tgt:'2:00',act:'0:00',p:0},{name:'Filtration',tgt:'8:00',act:'0:00',p:0},{name:'Backpulse',tgt:'1:00',act:'0:00',p:0}],aStep:1,sd:{r:48,w:'92%',al:1}},
+  mbr2:{name:'MBR-2',mode:'Relaxation',modeColor:'amber',cycleType:'MBR Relaxation',cleanings:45,onTarget:78,alertsToReview:3,elapsed:'4 min',remaining:'4 min left',
+    ts:{startTime:'09:40:55',endTime:'--',duration:'4m 30s',trigger:'Auto',reason:'Filtration step completed — entering relaxation',eventId:'EVT-4019',cycle:219},
+    modeCapture:{label:'MBR Mode-Linked Capture',fields:[{k:'TMP Rise / Filtration Cycle',v:'+6 kPa (elevated)'},{k:'Air Flow (Air Scouring)',v:'34.8 Hz blower'},{k:'MLSS Level',v:'9,200 mg/L'}]},
+    keyParams:{label:'MBR Key Parameters',items:[{k:'TMP Increase Rate',v:'+0.75 kPa/cycle',trend:'watch'},{k:'Filtration:Relaxation',v:'8:8 min (extended)',trend:'watch'},{k:'Air Scour Effectiveness',v:'57% TMP recovery',trend:'alert'}]},
+    equipment:[{id:'V-411',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:04:30',sp:'--',ac:'--'},{id:'B-411',type:'Aeration Blower',state:'Running',sc:'green',since:'00:04:30',sp:'35 Hz',ac:'34.8 Hz'}],params:[{name:'TMP',ctx:'MBR Relaxation',ref:'#104133',h:'warning',b:'28',a:'24',c:'-4',u:'kPa',dir:'pos',spark:'18,17,16,17,15,16,14,15,13,14,13,12',ft:'TMP not recovering.',n:45}],steps:[{name:'Air Scouring',tgt:'2:00',act:'2:00',p:100},{name:'Filtration',tgt:'8:00',act:'8:00',p:100},{name:'Relaxation',tgt:'8:00',act:'4:30',p:56},{name:'Filtration',tgt:'8:00',act:'0:00',p:0},{name:'Backpulse',tgt:'1:00',act:'0:00',p:0}],aStep:2,sd:{r:45,w:'78%',al:3}}
 };
 
 const alertData = [
@@ -775,10 +886,10 @@ function renderModeChart() {
   if (!el) return;
   const totalH = 168;
   const segments = [
-    {key:'service',  label:'Service',  color:'#16A34A', hex:'#16A34A'},
-    {key:'cleaning', label:'Cleaning', color:'#2563EB', hex:'#2563EB'},
-    {key:'standby',  label:'Standby',  color:'#D97706', hex:'#D97706'},
-    {key:'trip',     label:'Trip',     color:'#DC2626', hex:'#DC2626'},
+    {key:'service',  label:'Service',  color:'#299700', hex:'#299700'},
+    {key:'cleaning', label:'Cleaning', color:'#19368E', hex:'#19368E'},
+    {key:'standby',  label:'Standby',  color:'#CC9A00', hex:'#CC9A00'},
+    {key:'trip',     label:'Trip',     color:'#AC0000', hex:'#AC0000'},
   ];
   const totals = segments.map(s => ({
     ...s,
@@ -899,7 +1010,7 @@ function renderSparklines() {
   let data = sparkData[metric] || [];
   if (uf !== 'all') data = data.filter(d => d.unit.toLowerCase().startsWith(uf));
 
-  const colors = {tmp:'var(--blue)',flow:'var(--green)',cycles:'var(--purple)',recovery:'var(--amber)'};
+  const colors = {tmp:'var(--blue)',flow:'var(--green)',cycles:'var(--teal)',recovery:'var(--amber-solid)'};
   const color = colors[metric] || 'var(--blue)';
 
   grid.innerHTML = data.map(d => `
@@ -947,7 +1058,7 @@ function renderBarChart() {
     const x = leftPad + i * step;
     const bh = Math.round((d.count / max) * H);
     const isSpike = d.count > avg * 1.3;
-    const color = isSpike ? '#D97706' : d.count > avg ? '#2563EB' : '#16A34A';
+    const color = isSpike ? '#FF6200' : d.count > avg ? '#19368E' : '#299700';
     bars += `<rect x="${x}" y="${VAL_PAD + H - bh}" width="${barW}" height="${bh}" rx="4" fill="${color}" opacity="0.88"/>`;
     labels += `<text x="${x + barW/2}" y="${VAL_PAD + H + 14}" text-anchor="middle" font-size="9.5" fill="#9ca3af">${d.day}</text>`;
     values += `<text x="${x + barW/2}" y="${VAL_PAD + H - bh - 5}" text-anchor="middle" font-size="9" fill="#374151" font-weight="600">${d.count}</text>`;
@@ -957,7 +1068,7 @@ function renderBarChart() {
   const avgLine = `<line x1="${leftPad}" y1="${avgY}" x2="${rightX}" y2="${avgY}" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 3"/>
     <text x="${rightX + 4}" y="${avgY + 4}" font-size="8.5" fill="#9ca3af">avg</text>`;
   const trendPts = data.map((d,i) => `${leftPad + i * step + barW/2},${VAL_PAD + H - Math.round((d.count/max)*H)}`).join(' ');
-  const trendLine = `<polyline points="${trendPts}" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.55"/>`;
+  const trendLine = `<polyline points="${trendPts}" fill="none" stroke="#19368E" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.55"/>`;
 
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -968,9 +1079,9 @@ function renderBarChart() {
       ${avgLine}${bars}${trendLine}${values}${labels}
     </svg>
     <div style="display:flex;gap:12px;margin-top:6px">
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#D97706;display:inline-block"></span>Spike</span>
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#2563EB;display:inline-block"></span>Above avg</span>
-      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#16A34A;display:inline-block"></span>Normal</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#FF6200;display:inline-block"></span>Spike</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#19368E;display:inline-block"></span>Above avg</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#299700;display:inline-block"></span>Normal</span>
     </div>`;
 }
 
@@ -998,7 +1109,7 @@ function showUnitModal(key) {
   const u = unitData[key]; if (!u) return;
   modalTitle.textContent = u.name;
   modalSubtitle.textContent = u.mode;
-  const iconColors = {green:'green',blue:'blue',amber:'amber',orange:'amber',purple:'purple',red:'red'};
+  const iconColors = {green:'green',blue:'blue',amber:'amber',orange:'amber',teal:'teal',red:'red'};
   setModalIcon(iconColors[u.modeColor]||'blue', '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>');
 
   modalTabs.innerHTML = ['Parameters','Equipment','Cycle Steps'].map((t,i)=>`<div class="modal-tab ${i===0?'active':''}" data-tab="${t}">${t}</div>`).join('');
@@ -1006,11 +1117,53 @@ function showUnitModal(key) {
   function renderTab(tab) {
     if (tab === 'Parameters') {
       let h = `<div class="cycle-banner"><div class="cycle-banner-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="cycle-banner-info"><div class="cycle-banner-label">Today</div><div class="cycle-banner-name">${u.cycleType}</div><div class="cycle-banner-stats"><strong>${u.cleanings}</strong> cleanings &middot; <strong>${u.onTarget}%</strong> on target &middot; <strong>${u.alertsToReview}</strong> alerts</div></div><div style="text-align:right"><div class="running-pill"><span class="pulse"></span>Running now</div><div class="cycle-elapsed">Started ${u.elapsed} &middot; ${u.remaining}</div></div></div>`;
+      // Timestamp strip
+      if (u.ts) {
+        const trigCls = u.ts.trigger==='Auto' ? 'color:#299700' : 'color:#FF6200';
+        h += `<div style="display:flex;align-items:center;gap:16px;padding:10px 14px;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:8px;margin-bottom:16px;flex-wrap:wrap">
+          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">Mode Change</div>
+          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Start</span><span style="font-size:0.78rem;font-weight:600;font-family:var(--font-mono)">${u.ts.startTime}</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Duration</span><span style="font-size:0.78rem;font-weight:600;font-family:var(--font-mono)">${u.ts.duration}</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Trigger</span><span style="font-size:0.78rem;font-weight:600;${trigCls}">${u.ts.trigger}</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Cycle</span><span style="font-size:0.78rem;font-weight:600;font-family:var(--font-mono)">#${u.ts.cycle}</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Event</span><span style="font-size:0.78rem;font-weight:500;color:var(--brand-800)">${u.ts.eventId}</span></div>
+          <div style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-style:italic">${u.ts.reason}</div>
+        </div>`;
+      }
       h += `<div class="section-label">Tracked Parameters · Before &amp; After <span class="right">Reading at start &amp; end of each cleaning</span></div>`;
       u.params.forEach(p => {
         const neg = p.dir==='neg';
         h += `<div class="param-card"><div class="param-card-header"><div class="param-health-dot ${p.h}"></div><div class="param-name">${p.name}</div><div class="param-context">&middot; ${p.ctx}</div><div class="param-latest">Latest: ${p.ref}</div></div><div class="param-values"><div class="param-box"><div class="param-box-label">Before</div><div class="param-box-value">${p.b}<span class="unit">${p.u}</span></div></div><div class="param-arrow">&rarr;</div><div class="param-box"><div class="param-box-label">After</div><div class="param-box-value">${p.a}<span class="unit">${p.u}</span></div></div><div class="param-arrow">=</div><div class="param-box ${neg?'change-negative':'change-positive'}"><div class="param-box-label ${neg?'change-neg':'change'}">Change</div><div class="param-box-value">${p.c}<span class="unit">${p.u}</span></div></div></div>${mkParamSparkSVG(p.spark, p.h!=='healthy', p.thr)}<div class="param-footer">${p.h==='healthy'?'<strong>'+p.ft+'</strong>':'<strong style="color:var(--orange)">'+p.ft+'</strong>'} &middot; ${p.n} readings today.</div></div>`;
       });
+      // Mode-linked parameter capture
+      if (u.modeCapture) {
+        h += `<div class="section-label" style="margin-top:20px">${u.modeCapture.label} <span class="right">Captured while mode is active</span></div>`;
+        h += `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px">`;
+        u.modeCapture.fields.forEach(f => {
+          h += `<div style="background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:8px;padding:10px 14px">
+            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);margin-bottom:4px">${f.k}</div>
+            <div style="font-size:0.92rem;font-weight:700;font-family:var(--font-mono);color:var(--brand-900)">${f.v}</div>
+          </div>`;
+        });
+        h += `</div>`;
+      }
+      // Key parameters
+      if (u.keyParams) {
+        const trendIcon = {normal:'<span style="color:var(--green)">●</span>',watch:'<span style="color:var(--amber-solid)">●</span>',alert:'<span style="color:var(--red)">●</span>','on-track':'<span style="color:var(--green)">●</span>'};
+        h += `<div class="section-label" style="margin-top:4px">${u.keyParams.label} <span class="right">Tracked across cycles</span></div>`;
+        h += `<div style="border:0.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px">`;
+        u.keyParams.items.forEach((item, i) => {
+          const bg = i%2===0 ? 'var(--surface)' : 'var(--surface-secondary)';
+          h += `<div style="display:flex;align-items:center;padding:10px 14px;background:${bg};border-bottom:0.5px solid var(--border-light)">
+            <div style="flex:1;font-size:0.82rem;font-weight:500;color:var(--text-primary)">${item.k}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:0.85rem;font-weight:700;font-family:var(--font-mono);color:var(--brand-900)">${item.v}</span>
+              ${trendIcon[item.trend]||''}
+            </div>
+          </div>`;
+        });
+        h += `</div>`;
+      }
       modalBody.innerHTML = h;
     } else if (tab === 'Equipment') {
       let h = `<table class="equip-table"><thead><tr><th>ID</th><th>Type</th><th>State</th><th>Since</th><th>Actual</th></tr></thead><tbody>`;
