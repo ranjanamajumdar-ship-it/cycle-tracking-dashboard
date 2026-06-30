@@ -99,18 +99,35 @@ body {
 .date-dropdown { min-width: 240px; }
 .date-dropdown .dropdown-section-title { font-size: 0.7rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 10px 4px; }
 .date-dropdown .dropdown-divider { height: 1px; background: var(--border-light); margin: 4px 0; }
-.filter-dropdown { min-width: 280px; padding: 12px; }
-.filter-group { margin-bottom: 12px; }
-.filter-group:last-child { margin-bottom: 0; }
-.filter-group-title { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-.filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.filter-chip { padding: 4px 10px; font-size: 0.78rem; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; background: var(--surface); color: var(--text-secondary); transition: all 0.15s; }
-.filter-chip:hover { border-color: var(--blue); color: var(--blue); }
-.filter-chip.active { background: var(--blue); border-color: var(--blue); color: white; }
-.filter-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-light); }
-.filter-btn { padding: 6px 14px; font-size: 0.8rem; font-weight: 500; border: none; border-radius: 4px; cursor: pointer; }
-.filter-btn.clear { background: none; color: var(--text-secondary); }
-.filter-btn.apply { background: var(--text-primary); color: white; }
+
+/* ── Inline Filter Bar ── */
+.filter-bar {
+  display: flex; align-items: center;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 16px;
+  margin-bottom: 20px; gap: 0; overflow-x: auto;
+}
+.fb-group { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.fb-label { font-size: 0.7rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+.fb-chips { display: flex; gap: 4px; }
+.fb-chip {
+  padding: 4px 11px; font-size: 0.78rem; border: 1px solid var(--border);
+  border-radius: 20px; cursor: pointer; background: var(--surface);
+  color: var(--text-secondary); transition: all 0.15s; font-weight: 500; white-space: nowrap;
+}
+.fb-chip:hover { border-color: var(--blue); color: var(--blue); }
+.fb-chip.active { background: var(--text-primary); border-color: var(--text-primary); color: white; }
+.fb-sep { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; margin: 0 14px; }
+.fb-alerts {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-left: auto; flex-shrink: 0; padding: 5px 13px;
+  background: var(--red-bg); border: 1px solid #FECACA;
+  border-radius: 20px; cursor: pointer; transition: opacity 0.15s;
+}
+.fb-alerts:hover { opacity: 0.8; }
+.fb-alert-icon { width: 14px; height: 14px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.fb-alert-count { font-size: 0.82rem; font-weight: 700; color: var(--red); }
+.fb-alert-label { font-size: 0.78rem; font-weight: 500; color: #991B1B; }
 
 /* ── Cards ── */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
@@ -204,40 +221,14 @@ body {
 .perf-bar.mid { background: var(--amber); }
 .perf-bar.low { background: var(--red); }
 
-/* ── Fouling Heatmap ── */
-.heatmap-wrap { overflow-x: auto; }
-.heatmap { display: grid; gap: 5px; }
-.hm-row { display: contents; }
-.hm-cell {
-  border-radius: 6px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.72rem; font-weight: 600; cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.12s;
-  position: relative;
-}
-.hm-cell:hover { transform: scale(1.08); box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 2; }
-.hm-label-unit {
-  display: flex; align-items: center; height: 34px;
-  font-size: 0.78rem; font-weight: 600; color: var(--text-secondary);
-  white-space: nowrap; padding-right: 10px;
-}
-.hm-label-day {
-  display: flex; align-items: center; justify-content: center; height: 24px;
-  font-size: 0.7rem; font-weight: 600; color: var(--text-tertiary);
-  text-transform: uppercase; letter-spacing: 0.04em;
-}
-.hm-legend { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
-.hm-legend-track { flex: 1; max-width: 160px; height: 8px; border-radius: 4px; background: linear-gradient(to right, #D1FAE5, #FEF3C7, #FFEDD5, #FEE2E2, #FECACA); }
-.hm-legend-label { font-size: 0.7rem; color: var(--text-tertiary); white-space: nowrap; }
-/* Tooltip */
-.hm-tooltip {
-  display: none; position: fixed; z-index: 200;
-  background: var(--text-primary); color: white;
-  font-size: 0.75rem; padding: 6px 10px; border-radius: 6px;
-  pointer-events: none; white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-.hm-tooltip.visible { display: block; }
+/* ── Bar Chart ── */
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 0 4px; }
+.bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar-stack { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 1; }
+.bar { width: 70%; max-width: 40px; border-radius: 4px 4px 0 0; transition: opacity 0.15s; cursor: pointer; position: relative; }
+.bar:hover { opacity: 0.8; }
+.bar-label { font-size: 0.7rem; color: var(--text-tertiary); font-weight: 500; }
+.bar-value { font-size: 0.7rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
 
 /* ── Sparkline Card (Analytics) ── */
 .spark-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
@@ -494,14 +485,6 @@ body {
           <div class="dropdown-option" data-date="This Month">This Month</div>
         </div>
       </div>
-      <div class="dropdown-wrap" id="filterDropdown">
-        <button class="btn" id="filterTrigger"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filters</button>
-        <div class="dropdown-panel filter-dropdown">
-          <div class="filter-group"><div class="filter-group-title">Unit Type</div><div class="filter-chips"><span class="filter-chip active">All</span><span class="filter-chip">PSF</span><span class="filter-chip">UF</span><span class="filter-chip">RO</span><span class="filter-chip">MBR</span></div></div>
-          <div class="filter-group"><div class="filter-group-title">Current Mode</div><div class="filter-chips"><span class="filter-chip active">All</span><span class="filter-chip">Service</span><span class="filter-chip">Backwash</span><span class="filter-chip">CEB</span><span class="filter-chip">Flush</span><span class="filter-chip">Relaxation</span></div></div>
-          <div class="filter-actions"><button class="filter-btn clear">Clear All</button><button class="filter-btn apply">Apply</button></div>
-        </div>
-      </div>
       <div class="dropdown-wrap" id="downloadDropdown">
         <button class="btn" id="downloadTrigger"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
         <div class="dropdown-panel" style="min-width:160px"><div class="dropdown-option">PDF</div><div class="dropdown-option">CSV</div><div class="dropdown-option">Excel</div></div>
@@ -616,68 +599,69 @@ body {
     <div class="grid-3" id="sparkGrid" style="margin-bottom:0"></div>
   </div>
 
-  <!-- 4. Bottom: Mode Distribution + Fouling Heatmap -->
-  <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;margin-bottom:20px;align-items:start">
+  <!-- 4. Bottom: Mode Distribution + Alerts + Bar Chart -->
+  <div style="display:grid;grid-template-columns:1.2fr 0.8fr 1fr;gap:16px;margin-bottom:20px">
     <!-- Mode Distribution -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">Mode Distribution</div>
         <div class="card-link" id="viewModeReportBtn">Full report &rarr;</div>
       </div>
-      <div class="donut-container" style="flex-direction:column;gap:14px">
-        <div style="display:flex;align-items:center;gap:16px">
-          <div class="donut-wrapper" style="width:120px;height:120px;flex-shrink:0">
-            <svg viewBox="0 0 160 160">
-              <circle cx="80" cy="80" r="60" fill="none" stroke="#E5E7EB" stroke-width="24"/>
-              <circle cx="80" cy="80" r="60" fill="none" stroke="var(--green)" stroke-width="24" stroke-dasharray="234 143" stroke-dashoffset="94" transform="rotate(-90 80 80)"/>
-              <circle cx="80" cy="80" r="60" fill="none" stroke="var(--blue)" stroke-width="24" stroke-dasharray="47 330" stroke-dashoffset="-140" transform="rotate(-90 80 80)"/>
-              <circle cx="80" cy="80" r="60" fill="none" stroke="var(--amber)" stroke-width="24" stroke-dasharray="60 317" stroke-dashoffset="-187" transform="rotate(-90 80 80)"/>
-              <circle cx="80" cy="80" r="60" fill="none" stroke="var(--red)" stroke-width="24" stroke-dasharray="9.4 367" stroke-dashoffset="-247" transform="rotate(-90 80 80)"/>
-              <circle cx="80" cy="80" r="60" fill="none" stroke="#9CA3AF" stroke-width="24" stroke-dasharray="27 350" stroke-dashoffset="-256" transform="rotate(-90 80 80)"/>
-            </svg>
-            <div class="donut-center"><div class="label">Total</div><div class="value" style="font-size:1.1rem">168</div><div class="unit">Hours</div></div>
-          </div>
-          <div class="donut-legend">
-            <table>
-              <thead><tr><th>Mode</th><th>%</th></tr></thead>
-              <tbody>
-                <tr><td><span class="legend-dot" style="background:var(--green)"></span>Service</td><td>62%</td></tr>
-                <tr><td><span class="legend-dot" style="background:var(--blue)"></span>Cleaning</td><td>12%</td></tr>
-                <tr><td><span class="legend-dot" style="background:var(--amber)"></span>Standby</td><td>16%</td></tr>
-                <tr><td><span class="legend-dot" style="background:var(--red)"></span>Trip</td><td>3%</td></tr>
-                <tr><td><span class="legend-dot" style="background:#9CA3AF"></span>Other</td><td>7%</td></tr>
-              </tbody>
-            </table>
-          </div>
+      <div class="donut-container">
+        <div class="donut-wrapper">
+          <svg viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#E5E7EB" stroke-width="24"/>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--green)" stroke-width="24" stroke-dasharray="234 143" stroke-dashoffset="94" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--blue)" stroke-width="24" stroke-dasharray="47 330" stroke-dashoffset="-140" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--amber)" stroke-width="24" stroke-dasharray="60 317" stroke-dashoffset="-187" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="var(--red)" stroke-width="24" stroke-dasharray="9.4 367" stroke-dashoffset="-247" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#9CA3AF" stroke-width="24" stroke-dasharray="27 350" stroke-dashoffset="-256" transform="rotate(-90 80 80)"/>
+          </svg>
+          <div class="donut-center"><div class="label">Total</div><div class="value">168</div><div class="unit">Hours</div></div>
+        </div>
+        <div class="donut-legend">
+          <table>
+            <thead><tr><th>Mode</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td><span class="legend-dot" style="background:var(--green)"></span>Service</td><td>62%</td></tr>
+              <tr><td><span class="legend-dot" style="background:var(--blue)"></span>Cleaning</td><td>12%</td></tr>
+              <tr><td><span class="legend-dot" style="background:var(--amber)"></span>Standby</td><td>16%</td></tr>
+              <tr><td><span class="legend-dot" style="background:var(--red)"></span>Trip</td><td>3%</td></tr>
+              <tr><td><span class="legend-dot" style="background:#9CA3AF"></span>Other</td><td>7%</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- Fouling Heatmap -->
+    <!-- Alerts -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Membrane Fouling Index <span class="badge">Last 7 Days</span></div>
-        <div style="font-size:0.78rem;color:var(--text-tertiary)">TMP rise rate vs. baseline · hover for detail</div>
+        <div class="card-title">Alerts <span class="badge" style="background:var(--red-bg);color:var(--red)">7</span></div>
+        <div class="card-link" id="viewAllAlertsBtn">All &rarr;</div>
       </div>
-      <div class="heatmap-wrap">
-        <div id="foulingHeatmap"></div>
+      <div class="alert-list" id="dashboardAlerts">
+        <div class="alert-item" data-alert="0"><div class="alert-severity-bar critical"></div><div class="alert-body"><div class="alert-title">UF-2: BW frequency up</div></div><div class="alert-time">10m</div></div>
+        <div class="alert-item" data-alert="1"><div class="alert-severity-bar warning"></div><div class="alert-body"><div class="alert-title">RO-1: Diff pressure rising</div></div><div class="alert-time">25m</div></div>
+        <div class="alert-item" data-alert="2"><div class="alert-severity-bar warning"></div><div class="alert-body"><div class="alert-title">MBR-1: Relaxation short</div></div><div class="alert-time">45m</div></div>
+        <div class="alert-item" data-alert="3"><div class="alert-severity-bar critical"></div><div class="alert-body"><div class="alert-title">PSF-2: BW valve stuck</div></div><div class="alert-time">1h</div></div>
       </div>
-      <div class="hm-legend">
-        <span class="hm-legend-label">Low</span>
-        <div class="hm-legend-track"></div>
-        <span class="hm-legend-label">Critical</span>
-        <div style="flex:1"></div>
-        <div style="display:flex;gap:12px;font-size:0.72rem;color:var(--text-tertiary)">
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#D1FAE5;margin-right:4px"></span>0–25%</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#FEF3C7;margin-right:4px"></span>26–50%</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#FFEDD5;margin-right:4px"></span>51–75%</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#FEE2E2;margin-right:4px"></span>76–100%</span>
-        </div>
+      <div class="alert-summary">
+        <div class="alert-summary-item"><div class="count" style="color:var(--red)">2</div><div class="label">Critical</div></div>
+        <div class="alert-summary-item"><div class="count" style="color:var(--amber)">1</div><div class="label">Warning</div></div>
+        <div class="alert-summary-item"><div class="count" style="color:var(--blue)">4</div><div class="label">Info</div></div>
       </div>
     </div>
+
+    <!-- Cycle Count Bar Chart -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Cleanings / Day</div>
+        <div class="card-link"><span class="badge">Last 7 Days</span></div>
+      </div>
+      <div class="bar-chart" id="barChart"></div>
+    </div>
   </div>
-  <!-- Tooltip -->
-  <div class="hm-tooltip" id="hmTooltip"></div>
 </main>
 
 <!-- Modal -->
@@ -751,18 +735,13 @@ const sparkData = {
   ]
 };
 
-// Fouling index per unit per day (0–100 = % of TMP clean-trigger threshold)
-const foulingData = [
-  { unit:'PSF-1', type:'psf', days:[18,22,24,20,26,28,30], tmps:['0.28','0.31','0.33','0.30','0.36','0.38','0.42'], u:'bar' },
-  { unit:'PSF-2', type:'psf', days:[30,35,38,42,36,38,40], tmps:['0.31','0.34','0.36','0.39','0.35','0.37','0.38'], u:'bar' },
-  { unit:'UF-1',  type:'uf',  days:[20,22,18,24,26,22,28], tmps:['16','18','14','19','21','18','24'], u:'kPa' },
-  { unit:'UF-2',  type:'uf',  days:[45,52,58,64,70,76,82], tmps:['22','26','29','32','35','38','41'], u:'kPa' },
-  { unit:'RO-1',  type:'ro',  days:[38,42,46,52,58,64,72], tmps:['2.1','2.2','2.4','2.5','2.6','2.7','2.8'], u:'bar' },
-  { unit:'RO-2',  type:'ro',  days:[22,24,26,28,24,26,28], tmps:['1.8','1.9','2.0','2.1','1.9','2.0','2.1'], u:'bar' },
-  { unit:'MBR-1', type:'mbr', days:[28,30,34,36,38,40,44], tmps:['16','17','19','20','21','22','22'], u:'kPa' },
-  { unit:'MBR-2', type:'mbr', days:[55,60,65,70,62,68,74], tmps:['22','24','26','28','25','27','29'], u:'kPa' },
-];
-const hmDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const barDataByType = {
+  all: [{day:'Mon',count:38},{day:'Tue',count:42},{day:'Wed',count:35},{day:'Thu',count:45},{day:'Fri',count:41},{day:'Sat',count:32},{day:'Sun',count:28}],
+  psf: [{day:'Mon',count:12},{day:'Tue',count:14},{day:'Wed',count:11},{day:'Thu',count:15},{day:'Fri',count:13},{day:'Sat',count:10},{day:'Sun',count:9}],
+  uf:  [{day:'Mon',count:16},{day:'Tue',count:17},{day:'Wed',count:14},{day:'Thu',count:18},{day:'Fri',count:16},{day:'Sat',count:13},{day:'Sun',count:11}],
+  ro:  [{day:'Mon',count:4},{day:'Tue',count:5},{day:'Wed',count:4},{day:'Thu',count:6},{day:'Fri',count:5},{day:'Sat',count:3},{day:'Sun',count:3}],
+  mbr: [{day:'Mon',count:18},{day:'Tue',count:19},{day:'Wed',count:16},{day:'Thu',count:20},{day:'Fri',count:18},{day:'Sat',count:14},{day:'Sun',count:12}],
+};
 
 // ── HELPERS ──
 function mkSparkSVG(dataStr, color, w, h) {
@@ -811,50 +790,19 @@ function renderSparklines() {
   grid.style.gridTemplateColumns = `repeat(${Math.min(data.length, 3)}, 1fr)`;
 }
 
-// ── RENDER FOULING HEATMAP ──
-function foulingColor(v) {
-  if (v <= 25) return { bg:'#D1FAE5', text:'#065F46' };
-  if (v <= 45) return { bg:'#FEF9C3', text:'#713F12' };
-  if (v <= 65) return { bg:'#FED7AA', text:'#7C2D12' };
-  if (v <= 80) return { bg:'#FECACA', text:'#7F1D1D' };
-  return { bg:'#F87171', text:'#fff' };
-}
-
-function renderFoulingHeatmap() {
-  const el = document.getElementById('foulingHeatmap');
-  if (!el) return;
-  const tooltip = document.getElementById('hmTooltip');
+// ── RENDER BAR CHART ──
+function renderBarChart() {
+  const el = document.getElementById('barChart');
   const activeUnit = document.querySelector('.fb-chip[data-ft-unit].active');
   const ut = activeUnit ? activeUnit.dataset.ftUnit : 'all';
-  const rows = ut === 'all' ? foulingData : foulingData.filter(r => r.type === ut);
-
-  let html = `<div style="display:grid;grid-template-columns:72px repeat(${hmDays.length},1fr);gap:5px;align-items:center">`;
-  html += `<div></div>`;
-  hmDays.forEach(d => { html += `<div class="hm-label-day">${d}</div>`; });
-  rows.forEach(row => {
-    html += `<div class="hm-label-unit">${row.unit}</div>`;
-    row.days.forEach((v, i) => {
-      const c = foulingColor(v);
-      const icon = v >= 75 ? '!' : v >= 50 ? '▲' : '';
-      html += `<div class="hm-cell" style="background:${c.bg};color:${c.text}" data-unit="${row.unit}" data-day="${hmDays[i]}" data-val="${v}" data-tmp="${row.tmps[i]}" data-u="${row.u}">${icon}</div>`;
-    });
-  });
-  html += `</div>`;
-  el.innerHTML = html;
-
-  el.querySelectorAll('.hm-cell').forEach(cell => {
-    cell.addEventListener('mouseenter', e => {
-      const v = +cell.dataset.val, level = v >= 75 ? 'Critical' : v >= 50 ? 'High' : v >= 25 ? 'Moderate' : 'Low';
-      tooltip.textContent = `${cell.dataset.unit} · ${cell.dataset.day}   TMP ${cell.dataset.tmp} ${cell.dataset.u}  ·  Fouling ${v}%  ·  ${level}`;
-      tooltip.classList.add('visible');
-    });
-    cell.addEventListener('mousemove', e => { tooltip.style.left=(e.clientX+14)+'px'; tooltip.style.top=(e.clientY-36)+'px'; });
-    cell.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
-    cell.addEventListener('click', () => { const k = Object.keys(unitData).find(k => unitData[k].name === cell.dataset.unit); if(k) showUnitModal(k); });
-  });
+  const data = barDataByType[ut] || barDataByType.all;
+  const max = Math.max(...data.map(d=>d.count));
+  el.innerHTML = data.map(d => {
+    const h = (d.count/max)*100;
+    const color = h > 80 ? 'var(--blue)' : h > 55 ? 'var(--green)' : 'var(--text-tertiary)';
+    return `<div class="bar-group"><div class="bar-value">${d.count}</div><div class="bar-stack"><div class="bar" style="height:${h}%;background:${color}"></div></div><div class="bar-label">${d.day}</div></div>`;
+  }).join('');
 }
-
-function renderBarChart() { renderFoulingHeatmap(); }
 
 // ── MODAL ──
 const backdrop = document.getElementById('modalBackdrop');
@@ -895,8 +843,8 @@ function showUnitModal(key) {
       });
       modalBody.innerHTML = h;
     } else if (tab === 'Equipment') {
-      let h = `<table class="equip-table"><thead><tr><th>ID</th><th>Type</th><th>State</th><th>Since</th><th>Actual</th></tr></thead><tbody>`;
-      u.equipment.forEach(e => { h += `<tr><td>${e.id}</td><td>${e.type}</td><td><span class="state-pill ${e.sc}">${e.state}</span></td><td>${e.since}</td><td>${e.ac}</td></tr>`; });
+      let h = `<table class="equip-table"><thead><tr><th>ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead><tbody>`;
+      u.equipment.forEach(e => { h += `<tr><td>${e.id}</td><td>${e.type}</td><td><span class="state-pill ${e.sc}">${e.state}</span></td><td>${e.since}</td><td>${e.sp}</td><td>${e.ac}</td></tr>`; });
       modalBody.innerHTML = h + '</tbody></table>';
     } else {
       let h = `<div class="section-label">Steps in this cleaning <span class="right">Click a step to inspect</span></div><div class="steps-row" style="grid-template-columns:repeat(${u.steps.length},1fr)">`;
@@ -976,26 +924,35 @@ function applyDashboardFilter() {
   const activeMode = document.querySelector('.fb-chip[data-ft-mode].active');
   const ut = activeUnit ? activeUnit.dataset.ftUnit : 'all';
   const md = activeMode ? activeMode.dataset.ftMode : 'all';
+
+  // unit table rows
   document.querySelectorAll('#unitTable tbody tr[data-unit]').forEach(row => {
-    const matchUnit = ut === 'all' || row.dataset.unit.startsWith(ut);
+    const unit = row.dataset.unit; // psf1, uf2, ro1 …
     const modeCell = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+    const matchUnit = ut === 'all' || unit.startsWith(ut);
     const matchMode = md === 'all' || modeCell.includes(md);
     row.style.display = (matchUnit && matchMode) ? '' : 'none';
   });
+
+  // perf table rows
   document.querySelectorAll('#perfTable tbody tr[data-unit]').forEach(row => {
-    row.style.display = (ut === 'all' || row.dataset.unit.startsWith(ut)) ? '' : 'none';
+    const unit = row.dataset.unit;
+    const matchUnit = ut === 'all' || unit.startsWith(ut);
+    row.style.display = matchUnit ? '' : 'none';
   });
-  renderFoulingHeatmap();
+
+  renderBarChart();
 }
 
 document.querySelectorAll('.fb-chip[data-ft-unit]').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.fb-chip[data-ft-unit]').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
+    // sync analytics unit filter
     const ut = chip.dataset.ftUnit;
     document.querySelectorAll('.af-chip[data-unitf]').forEach(c => c.classList.remove('active'));
-    const match = document.querySelector(`.af-chip[data-unitf="${ut}"]`);
-    if (match) match.classList.add('active');
+    const matchAf = document.querySelector(`.af-chip[data-unitf="${ut}"]`);
+    if (matchAf) matchAf.classList.add('active');
     applyDashboardFilter();
     renderSparklines();
   });
@@ -1032,15 +989,12 @@ const pw = document.getElementById('plantSelectorWrap');
 document.getElementById('plantSelectorBtn').addEventListener('click', e => { e.stopPropagation(); document.querySelectorAll('.dropdown-wrap.open').forEach(el=>el.classList.remove('open')); pw.classList.toggle('open'); });
 pw.querySelectorAll('.plant-option').forEach(o => { o.addEventListener('click', ()=>{ pw.querySelectorAll('.plant-option').forEach(x=>x.classList.remove('selected')); o.classList.add('selected'); document.getElementById('plantSelectorLabel').textContent=o.dataset.plant; pw.classList.remove('open'); }); });
 document.querySelectorAll('#dateDropdown .dropdown-option').forEach(o => { o.addEventListener('click', ()=>{ document.querySelectorAll('#dateDropdown .dropdown-option').forEach(x=>x.classList.remove('selected')); o.classList.add('selected'); document.getElementById('dateLabel').textContent=o.dataset.date; document.getElementById('dateDropdown').classList.remove('open'); }); });
-document.querySelectorAll('.filter-chips').forEach(g => { g.querySelectorAll('.filter-chip').forEach(c => { c.addEventListener('click', ()=>{ if(c.textContent==='All'){g.querySelectorAll('.filter-chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');}else{g.querySelector('.filter-chip:first-child').classList.remove('active');c.classList.toggle('active');if(!g.querySelector('.filter-chip.active'))g.querySelector('.filter-chip:first-child').classList.add('active');} }); }); });
-document.querySelector('.filter-btn.clear')?.addEventListener('click',()=>{document.querySelectorAll('.filter-chips').forEach(g=>{g.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));g.querySelector('.filter-chip:first-child').classList.add('active');});});
-document.querySelector('.filter-btn.apply')?.addEventListener('click',()=>document.getElementById('filterDropdown').classList.remove('open'));
 document.addEventListener('click',()=>document.querySelectorAll('.dropdown-wrap.open,.plant-selector-wrap.open').forEach(el=>el.classList.remove('open')));
 document.querySelectorAll('.dropdown-panel,.plant-dropdown').forEach(p=>p.addEventListener('click',e=>e.stopPropagation()));
 
 // Init
 renderSparklines();
-renderFoulingHeatmap();
+renderBarChart();
 </script>
 </body>
 </html>
