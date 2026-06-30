@@ -572,16 +572,12 @@ body {
   <!-- 4. Bottom: Mode Distribution + Cleanings/Day -->
   <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px">
     <!-- Mode Distribution -->
-    <div class="card">
+    <div class="card" id="modeDistCard" style="cursor:pointer" title="Click for full breakdown">
       <div class="card-header">
-        <div class="card-title">Mode Distribution <span style="font-size:0.75rem;font-weight:400;color:var(--text-tertiary);margin-left:4px">Last 7 days · 168h total</span></div>
+        <div class="card-title">Mode Distribution</div>
+        <div class="card-link" id="viewModeReportBtn">Full report →</div>
       </div>
-      <div style="display:flex;gap:16px;margin-bottom:14px">
-        <span style="display:flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block"></span>Service</span>
-        <span style="display:flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:var(--blue);display:inline-block"></span>Cleaning</span>
-        <span style="display:flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:var(--amber);display:inline-block"></span>Standby</span>
-        <span style="display:flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:var(--red);display:inline-block"></span>Trip</span>
-      </div>
+      <p style="font-size:0.78rem;color:var(--text-secondary);margin:0 0 14px;line-height:1.5">How units split their time across operating modes. More cleaning time means membranes are under stress — watch for Service % dropping below 55%.</p>
       <div id="modeChart"></div>
     </div>
 
@@ -683,31 +679,69 @@ function renderModeChart() {
   if (!el) return;
   const totalH = 168;
   const segments = [
-    {key:'service', label:'Service', color:'var(--green)'},
-    {key:'cleaning', label:'Cleaning', color:'var(--blue)'},
-    {key:'standby', label:'Standby', color:'var(--amber)'},
-    {key:'trip', label:'Trip', color:'var(--red)'},
+    {key:'service',  label:'Service',  color:'#22c55e', hex:'#22c55e'},
+    {key:'cleaning', label:'Cleaning', color:'#3b82f6', hex:'#3b82f6'},
+    {key:'standby',  label:'Standby',  color:'#f59e0b', hex:'#f59e0b'},
+    {key:'trip',     label:'Trip',     color:'#ef4444', hex:'#ef4444'},
   ];
-  // Aggregate totals across all units
   const totals = segments.map(s => ({
     ...s,
     pct: Math.round(modeDistData.reduce((sum,d) => sum + d[s.key], 0) / modeDistData.length),
   }));
-  const segmentDivs = totals.map(s => {
+  const totalPct = totals.reduce((a,b) => a + b.pct, 0);
+
+  // Build SVG donut
+  const cx = 80, cy = 80, r = 58, sw = 20;
+  const circ = 2 * Math.PI * r;
+  let offset = -90; // start at top
+  const arcs = totals.map(s => {
+    const angle = (s.pct / totalPct) * 360;
+    const dash = (s.pct / totalPct) * circ;
+    const gap = circ - dash;
+    const arc = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+      stroke="${s.color}" stroke-width="${sw}"
+      stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
+      stroke-dashoffset="${(-offset * circ / 360).toFixed(2)}"
+      transform="rotate(-90 ${cx} ${cy})"
+      style="transition:stroke-width 0.2s;cursor:pointer"
+      data-mode="${s.label}" data-pct="${s.pct}"
+      onmouseenter="this.setAttribute('stroke-width','${sw+5}');document.getElementById('modeDonutCenter').innerHTML='<tspan x=\'80\' dy=\'0\' font-size=\'18\' font-weight=\'700\' fill=\'var(--text-primary)\'>${s.pct}%</tspan><tspan x=\'80\' dy=\'18\' font-size=\'10\' fill=\'var(--text-secondary)\'>${s.label}</tspan><tspan x=\'80\' dy=\'14\' font-size=\'10\' fill=\'var(--text-secondary)\'>${Math.round(totalH * s.pct / 100)}h</tspan>'"
+      onmouseleave="this.setAttribute('stroke-width','${sw}');document.getElementById('modeDonutCenter').innerHTML='<tspan x=\'80\' dy=\'0\' font-size=\'18\' font-weight=\'700\' fill=\'var(--text-primary)\'>${totalH}h</tspan><tspan x=\'80\' dy=\'18\' font-size=\'10\' fill=\'var(--text-secondary)\'>Total</tspan>'"
+    />`;
+    offset += angle;
+    return arc;
+  }).join('');
+
+  const legendRows = totals.map(s => {
     const hrs = Math.round(totalH * s.pct / 100);
-    const segCount = Math.round(s.pct / 3); // ~1 dot per 3%
-    const dots = Array.from({length: Math.max(segCount,1)}, () =>
-      `<span style="display:inline-block;width:6px;height:18px;border-radius:2px;background:${s.color};flex-shrink:0"></span>`
-    ).join('');
-    return `<div style="flex:${s.pct};display:flex;flex-direction:column;gap:6px;min-width:0">
-      <div style="display:flex;gap:2px;flex-wrap:nowrap;overflow:hidden">${dots}</div>
-      <div style="border-left:2px solid ${s.color};padding-left:6px">
-        <div style="font-size:0.85rem;font-weight:700;color:var(--text-primary)">${hrs}h</div>
-        <div style="font-size:0.72rem;color:var(--text-secondary)">${s.pct}%</div>
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border-light)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:10px;height:10px;border-radius:50%;background:${s.color};display:inline-block;flex-shrink:0"></span>
+        <span style="font-size:0.82rem;color:var(--text-primary)">${s.label}</span>
+      </div>
+      <div style="display:flex;gap:14px;font-size:0.82rem">
+        <span style="color:var(--text-secondary)">${hrs}h</span>
+        <span style="font-weight:600;color:${s.color};min-width:32px;text-align:right">${s.pct}%</span>
       </div>
     </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div style="display:flex;gap:20px;align-items:center">
+      <svg viewBox="0 0 160 160" style="width:160px;height:160px;flex-shrink:0">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="${sw}"/>
+        ${arcs}
+        <text id="modeDonutCenter" x="80" y="76" text-anchor="middle" dominant-baseline="middle">
+          <tspan x="80" dy="0" font-size="18" font-weight="700" fill="var(--text-primary)">${totalH}h</tspan>
+          <tspan x="80" dy="18" font-size="10" fill="var(--text-secondary)">Total</tspan>
+        </text>
+      </svg>
+      <div style="flex:1;min-width:0">${legendRows}</div>
+    </div>`;
+
+  document.getElementById('modeDistCard')?.addEventListener('click', e => {
+    if (!e.target.closest('#viewModeReportBtn')) showModeHistoryModal();
   });
-  el.innerHTML = `<div style="display:flex;gap:8px;align-items:flex-start">${segmentDivs.join('')}</div>`;
 }
 
 const barDataByType = {
@@ -805,40 +839,42 @@ function renderBarChart() {
     ? `<span style="color:var(--green);font-weight:600">↓ Falling — membranes recovering</span>`
     : `<span style="color:var(--text-secondary);font-weight:600">→ Stable</span>`;
 
-  // Build SVG bar chart with avg reference line + trend line overlay
-  const W = 280, H = 100, pad = 24, barW = 24, gap = (W - pad*2 - barW*7) / 6;
+  // SVG dimensions — extra top padding (VAL_PAD) so value labels never clip
+  const VAL_PAD = 18, BOT_PAD = 20, W = 300, H = 90;
+  const barW = 26, totalBars = data.length;
+  const usableW = W - 10;
+  const step = Math.floor(usableW / totalBars);
+  const gap = step - barW;
+  const leftPad = Math.floor((W - (totalBars * step - gap)) / 2);
   let bars = '', labels = '', values = '';
   data.forEach((d, i) => {
-    const x = pad + i * (barW + gap);
+    const x = leftPad + i * step;
     const bh = Math.round((d.count / max) * H);
     const isSpike = d.count > avg * 1.3;
-    const color = isSpike ? 'var(--amber)' : d.count > avg ? 'var(--blue)' : 'var(--green)';
-    bars += `<rect x="${x}" y="${H - bh}" width="${barW}" height="${bh}" rx="3" fill="${color}" opacity="0.85"/>`;
-    if (isSpike) bars += `<rect x="${x}" y="${H - bh - 6}" width="${barW}" height="4" rx="2" fill="var(--amber)"/>`;
-    labels += `<text x="${x + barW/2}" y="${H + 14}" text-anchor="middle" font-size="9" fill="var(--text-tertiary)">${d.day}</text>`;
-    values += `<text x="${x + barW/2}" y="${H - bh - 5}" text-anchor="middle" font-size="8" fill="var(--text-secondary)" font-weight="600">${d.count}</text>`;
+    const color = isSpike ? '#f59e0b' : d.count > avg ? '#3b82f6' : '#22c55e';
+    bars += `<rect x="${x}" y="${VAL_PAD + H - bh}" width="${barW}" height="${bh}" rx="4" fill="${color}" opacity="0.88"/>`;
+    labels += `<text x="${x + barW/2}" y="${VAL_PAD + H + 14}" text-anchor="middle" font-size="9.5" fill="#9ca3af">${d.day}</text>`;
+    values += `<text x="${x + barW/2}" y="${VAL_PAD + H - bh - 5}" text-anchor="middle" font-size="9" fill="#374151" font-weight="600">${d.count}</text>`;
   });
-  // avg dashed line
-  const avgY = H - Math.round((avg / max) * H);
-  const avgLine = `<line x1="${pad}" y1="${avgY}" x2="${W - pad + barW}" y2="${avgY}" stroke="var(--text-tertiary)" stroke-width="1" stroke-dasharray="3 3"/>
-    <text x="${W - pad + barW + 3}" y="${avgY + 3}" font-size="8" fill="var(--text-tertiary)">avg</text>`;
-  // trend polyline
-  const trendPts = data.map((d, i) => {
-    const x = pad + i * (barW + gap) + barW/2;
-    const y = H - Math.round((d.count / max) * H);
-    return `${x},${y}`;
-  }).join(' ');
-  const trendLine = `<polyline points="${trendPts}" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.6"/>`;
+  const avgY = VAL_PAD + H - Math.round((avg / max) * H);
+  const rightX = leftPad + totalBars * step - gap;
+  const avgLine = `<line x1="${leftPad}" y1="${avgY}" x2="${rightX}" y2="${avgY}" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="${rightX + 4}" y="${avgY + 4}" font-size="8.5" fill="#9ca3af">avg</text>`;
+  const trendPts = data.map((d,i) => `${leftPad + i * step + barW/2},${VAL_PAD + H - Math.round((d.count/max)*H)}`).join(' ');
+  const trendLine = `<polyline points="${trendPts}" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.55"/>`;
 
   el.innerHTML = `
-    <div style="font-size:0.75rem;margin-bottom:8px">${trendLabel} <span style="color:var(--text-tertiary);font-weight:400;margin-left:6px">Avg ${avg}/day</span></div>
-    <svg viewBox="0 0 ${W + 30} ${H + 20}" style="width:100%;overflow:visible">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:0.78rem">${trendLabel}</div>
+      <div style="font-size:0.75rem;color:var(--text-tertiary)">Avg <strong style="color:var(--text-secondary)">${avg}</strong>/day</div>
+    </div>
+    <svg viewBox="0 0 ${W + 40} ${VAL_PAD + H + BOT_PAD}" style="width:100%;display:block">
       ${avgLine}${bars}${trendLine}${values}${labels}
     </svg>
-    <div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:4px">
-      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="width:8px;height:8px;border-radius:1px;background:var(--amber);display:inline-block"></span>Spike day</span>
-      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="width:8px;height:8px;border-radius:1px;background:var(--blue);display:inline-block"></span>Above avg</span>
-      <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:1px;background:var(--green);display:inline-block"></span>Normal</span>
+    <div style="display:flex;gap:12px;margin-top:6px">
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#f59e0b;display:inline-block"></span>Spike</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#3b82f6;display:inline-block"></span>Above avg</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--text-tertiary)"><span style="width:8px;height:8px;border-radius:2px;background:#22c55e;display:inline-block"></span>Normal</span>
     </div>`;
 }
 
@@ -881,8 +917,8 @@ function showUnitModal(key) {
       });
       modalBody.innerHTML = h;
     } else if (tab === 'Equipment') {
-      let h = `<table class="equip-table"><thead><tr><th>ID</th><th>Type</th><th>State</th><th>Since</th><th>Setpoint</th><th>Actual</th></tr></thead><tbody>`;
-      u.equipment.forEach(e => { h += `<tr><td>${e.id}</td><td>${e.type}</td><td><span class="state-pill ${e.sc}">${e.state}</span></td><td>${e.since}</td><td>${e.sp}</td><td>${e.ac}</td></tr>`; });
+      let h = `<table class="equip-table"><thead><tr><th>ID</th><th>Type</th><th>State</th><th>Since</th><th>Actual</th></tr></thead><tbody>`;
+      u.equipment.forEach(e => { h += `<tr><td>${e.id}</td><td>${e.type}</td><td><span class="state-pill ${e.sc}">${e.state}</span></td><td>${e.since}</td><td>${e.ac}</td></tr>`; });
       modalBody.innerHTML = h + '</tbody></table>';
     } else {
       let h = `<div class="section-label">Steps in this cleaning <span class="right">Click a step to inspect</span></div><div class="steps-row" style="grid-template-columns:repeat(${u.steps.length},1fr)">`;
@@ -944,7 +980,7 @@ document.querySelectorAll('.unit-row').forEach(r => r.addEventListener('click', 
 document.querySelectorAll('.perf-table tbody tr').forEach(r => r.addEventListener('click', () => showUnitModal(r.dataset.unit)));
 document.querySelectorAll('.alert-item').forEach(r => r.addEventListener('click', () => showAlertModal(+r.dataset.alert)));
 document.getElementById('fbAlertBtn').addEventListener('click', showAllAlertsModal);
-document.getElementById('viewModeReportBtn')?.addEventListener('click', showModeHistoryModal);
+document.getElementById('viewModeReportBtn')?.addEventListener('click', e => { e.stopPropagation(); showModeHistoryModal(); });
 document.getElementById('viewAllUnitsBtn').addEventListener('click', () => {
   modalTitle.textContent = 'All Units'; modalSubtitle.textContent = '8 units'; modalTabs.innerHTML = '';
   setModalIcon('blue', '<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>');
