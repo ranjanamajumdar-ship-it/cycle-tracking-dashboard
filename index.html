@@ -382,23 +382,53 @@ body {
 .state-pill.green { background: var(--green-bg); color: #15803D; }
 .state-pill.gray { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
 
-/* Cycle Steps */
-.steps-row { display: grid; gap: 8px; margin-bottom: 16px; }
-.step-card { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; transition: all 0.15s; }
-.step-card:hover { border-color: var(--blue); }
-.step-card.active { border-color: var(--blue); border-width: 2px; background: #F0F7FF; }
-.step-number { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--bg); font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); margin-right: 6px; }
-.step-card.active .step-number { background: var(--blue); color: white; }
-.step-name { font-size: 0.82rem; font-weight: 600; }
-.step-duration { font-size: 0.78rem; color: var(--text-tertiary); margin-top: 4px; }
-.step-progress { height: 3px; background: var(--border-light); border-radius: 2px; margin-top: 8px; overflow: hidden; }
-.step-progress-fill { height: 100%; border-radius: 2px; background: var(--blue); }
-.step-detail { padding: 16px 20px; background: var(--bg); border-radius: var(--radius); }
-.step-detail h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 12px; }
-.step-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.step-stat { font-size: 0.82rem; }
-.step-stat .stat-label { color: var(--text-secondary); }
-.step-stat .stat-value { font-weight: 600; }
+/* Cycle Steps — accordion */
+.steps-accordion { display: flex; flex-direction: column; gap: 6px; }
+.step-item { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; transition: border-color 0.15s; }
+.step-item.step-past  { border-color: var(--border-light); background: var(--surface); }
+.step-item.step-current { border-color: var(--blue); border-width: 2px; background: #F0F7FF; box-shadow: 0 2px 12px rgba(59,130,246,0.1); }
+.step-item.step-future { border-color: var(--border-light); background: var(--surface); opacity: 0.72; }
+.step-header { display: flex; align-items: center; gap: 12px; padding: 11px 16px; cursor: default; }
+.step-num-badge { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
+.step-past   .step-num-badge { background: var(--green-bg); color: #15803D; }
+.step-current .step-num-badge { background: var(--blue); color: white; }
+.step-future  .step-num-badge { background: var(--border); color: var(--text-tertiary); }
+.step-hd-name { font-size: 0.85rem; font-weight: 600; flex: 1; }
+.step-hd-time { font-size: 0.78rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.step-hd-status { font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+.step-past   .step-hd-status { background: var(--green-bg); color: #15803D; }
+.step-current .step-hd-status { background: var(--blue-bg); color: #1D4ED8; }
+.step-future  .step-hd-status { background: var(--bg); color: var(--text-tertiary); border: 1px solid var(--border); }
+.step-progress-bar { height: 3px; background: var(--border-light); overflow: hidden; }
+.step-progress-bar-fill { height: 100%; border-radius: 0; transition: width 0.4s; }
+.step-past   .step-progress-bar-fill { background: var(--green); }
+.step-current .step-progress-bar-fill { background: var(--blue); }
+.step-body { padding: 16px 18px 18px; border-top: 1px solid var(--border-light); }
+.step-analytics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.step-analytic-box { background: var(--bg); border-radius: 8px; padding: 12px 14px; }
+.step-analytic-label { font-size: 0.68rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+.step-analytic-value { font-size: 1.15rem; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.step-analytic-sub { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
+.step-past-summary { display: flex; gap: 20px; }
+.step-past-stat { font-size: 0.82rem; }
+.step-past-stat .sps-label { color: var(--text-tertiary); font-size: 0.72rem; }
+.step-past-stat .sps-value { font-weight: 600; margin-top: 1px; }
+/* Unit table — psychology enhancements */
+.unit-group-hdr td { background: var(--bg); color: var(--text-tertiary); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 14px 4px; border-bottom: 1px solid var(--border-light); }
+.unit-row.has-critical { border-left: 3px solid var(--red); }
+.unit-row.has-warning  { border-left: 3px solid var(--amber); }
+.mode-cell-wrap { display: flex; flex-direction: column; gap: 3px; }
+.mode-cell-sub { font-size: 0.72rem; color: var(--text-tertiary); }
+.remaining-pill { display: inline-flex; align-items: center; font-size: 0.75rem; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+.remaining-pill.ok    { background: var(--green-bg);  color: #15803D; }
+.remaining-pill.warn  { background: var(--amber-bg);  color: #92400E; }
+.remaining-pill.alert { background: var(--red-bg);    color: #991B1B; }
+.remaining-pill.none  { background: var(--bg); color: var(--text-tertiary); border: 1px solid var(--border); }
+/* Goal-gradient progress in unit table */
+.unit-progress-wrap { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.unit-progress-track { flex: 1; height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden; max-width: 60px; }
+.unit-progress-fill { height: 100%; border-radius: 2px; background: var(--green); }
+.unit-progress-label { font-size: 0.68rem; color: var(--text-tertiary); }
 
 /* Alert detail */
 .alert-detail-item { padding: 16px 0; border-bottom: 1px solid var(--border-light); }
@@ -421,13 +451,27 @@ body {
 .gantt-track { flex: 1; height: 16px; background: var(--bg); border-radius: 20px; position: relative; border: 1px solid var(--border-light); }
 .gantt-bar { position: absolute; top: 0; bottom: 0; border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 1px 2px rgba(0,0,0,0.08); transition: opacity 0.15s; cursor: default; }
 .gantt-bar:hover { opacity: 0.82; }
-.gantt-bar.service    { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); border: 1px solid #059669; }
-.gantt-bar.filtration { background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); border: 1px solid #2563eb; }
-.gantt-bar.backwash   { background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); border: 1px solid #ea580c; }
-.gantt-bar.ceb        { background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%); border: 1px solid #9333ea; }
-.gantt-bar.flush      { background: linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%); border: 1px solid #0891b2; }
-.gantt-bar.relaxation { background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%); border: 1px solid #d97706; }
-.gantt-bar.standby    { background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%); border: 1px solid #9ca3af; }
+.gantt-bar.service         { background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%); border: 1px solid #4ade80; }
+.gantt-bar.filtration      { background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%); border: 1px solid #60a5fa; }
+.gantt-bar.backwash        { background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border: 1px solid #fb923c; }
+.gantt-bar.ceb             { background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border: 1px solid #c084fc; }
+.gantt-bar.flush           { background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%); border: 1px solid #67e8f9; }
+.gantt-bar.relaxation      { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #fcd34d; }
+.gantt-bar.standby         { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border: 1px solid #d1d5db; }
+.gantt-bar.rinse           { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: 1px solid #6ee7b7; }
+.gantt-bar.drain           { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border: 1px solid #f9a8d4; }
+.gantt-bar.bypass          { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border: 1px solid #a5b4fc; }
+.gantt-bar.idle            { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; }
+.gantt-bar.manual          { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fed7aa; }
+.gantt-bar.alarm           { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border: 1px solid #f87171; }
+.gantt-bar.air-scouring    { background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border: 1px solid #a5f3fc; }
+.gantt-bar.integrity-test  { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; }
+.gantt-bar.backpulse       { background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border: 1px solid #e879f9; }
+.gantt-bar.maintenance-wash{ background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border: 1px solid #fda4af; }
+.gantt-bar.hp-ramp         { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #7dd3fc; }
+.gantt-bar.lp-flush        { background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border: 1px solid #5eead4; }
+.gantt-bar.cip             { background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%); border: 1px solid #f0abfc; }
+.gantt-bar.high-tmp        { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 1px solid #fca5a5; }
 .gantt-time-axis { display: flex; justify-content: space-between; padding-left: 62px; margin-top: 6px; }
 .gantt-time-axis span { font-size: 0.68rem; color: var(--text-tertiary); }
 </style>
@@ -481,10 +525,16 @@ body {
       <div class="fb-chips" id="fbModeChips">
         <span class="fb-chip active" data-ft-mode="all">All</span>
         <span class="fb-chip" data-ft-mode="service">Service</span>
+        <span class="fb-chip" data-ft-mode="filtration">Filtration</span>
         <span class="fb-chip" data-ft-mode="backwash">Backwash</span>
+        <span class="fb-chip" data-ft-mode="rinse">Rinse</span>
         <span class="fb-chip" data-ft-mode="ceb">CEB</span>
+        <span class="fb-chip" data-ft-mode="cip">CIP</span>
         <span class="fb-chip" data-ft-mode="flush">Flush</span>
         <span class="fb-chip" data-ft-mode="relaxation">Relaxation</span>
+        <span class="fb-chip" data-ft-mode="air scouring">Air Scouring</span>
+        <span class="fb-chip" data-ft-mode="standby">Standby</span>
+        <span class="fb-chip" data-ft-mode="bypass">Bypass</span>
       </div>
     </div>
     <div class="fb-sep"></div>
@@ -503,16 +553,24 @@ body {
       <div class="card-link" id="viewAllUnitsBtn">View all units &rarr;</div>
     </div>
     <table class="data-table" id="unitTable">
-      <thead><tr><th>Unit / Skid</th><th>Current Mode</th><th>Duration</th><th>Key Parameter</th><th>Status</th></tr></thead>
+      <thead><tr><th>Unit / Skid</th><th>Current Mode</th><th>Step Progress</th><th>Key Parameter</th><th>Remaining</th></tr></thead>
       <tbody>
-        <tr class="unit-row" data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td><span class="mode-pill green">Service (Filtration)</span></td><td>02:14:38</td><td>Flow: 120 m³/hr</td><td><span class="status-badge">Healthy</span></td></tr>
-        <tr class="unit-row" data-unit="psf2"><td><span class="status-dot blue"></span>PSF-2</td><td><span class="mode-pill orange">Backwash</span></td><td>00:03:22</td><td>BW Progress: 65%</td><td><span class="status-badge">Healthy</span></td></tr>
-        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td><span class="mode-pill blue">Filtration</span></td><td>01:32:11</td><td>TMP: 24 kPa</td><td><span class="status-badge">Healthy</span></td></tr>
-        <tr class="unit-row" data-unit="uf2"><td><span class="status-dot blue"></span>UF-2</td><td><span class="mode-pill purple">CEB</span></td><td>00:11:45</td><td>Chem.: 120 ppm</td><td><span class="status-badge">Healthy</span></td></tr>
-        <tr class="unit-row" data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td><span class="mode-pill green">Service</span></td><td>03:05:20</td><td>Feed P: 14.2 bar</td><td><span class="status-badge">Healthy</span></td></tr>
-        <tr class="unit-row" data-unit="ro2"><td><span class="status-dot blue"></span>RO-2</td><td><span class="mode-pill blue">Flush</span></td><td>00:05:12</td><td>Flush: 40%</td><td><span class="status-badge">Healthy</span></td></tr>
-        <tr class="unit-row" data-unit="mbr1"><td><span class="status-dot green"></span>MBR-1</td><td><span class="mode-pill blue">Filtration</span></td><td>02:47:55</td><td>TMP: 22 kPa</td><td><span class="status-badge">Healthy</span></td></tr>
-        <tr class="unit-row" data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td><span class="mode-pill amber">Relaxation</span></td><td>00:04:30</td><td>TMP Recovery: Good</td><td><span class="status-badge">Healthy</span></td></tr>
+        <!-- PSF Group — Law of Similarity -->
+        <tr class="unit-group-hdr"><td colspan="5">Pressure Sand Filters (PSF)</td></tr>
+        <tr class="unit-row" data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td><div class="mode-cell-wrap"><span class="mode-pill green">Service (Filtration)</span><span class="mode-cell-sub">PSF Service · (Service Filtration)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:79%"></div></div><span class="unit-progress-label">79% · step 2/5</span></div></td><td>Flow: 120 m³/hr</td><td><span class="remaining-pill none">Continuous</span></td></tr>
+        <tr class="unit-row has-warning" data-unit="psf2"><td><span class="status-dot orange"></span>PSF-2</td><td><div class="mode-cell-wrap"><span class="mode-pill orange">Backwash</span><span class="mode-cell-sub">PSF Backwash · (Backwash)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:84%;background:var(--amber)"></div></div><span class="unit-progress-label">84% · step 2/4</span></div></td><td>BW Progress: 84%</td><td><span class="remaining-pill warn">5 min left</span></td></tr>
+        <!-- UF Group -->
+        <tr class="unit-group-hdr"><td colspan="5">Ultrafiltration (UF)</td></tr>
+        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Filtration</span><span class="mode-cell-sub">UF Filtration · (Filtration Bottom Feed)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/6</span></div></td><td>TMP: 24 kPa</td><td><span class="remaining-pill ok">28 min left</span></td></tr>
+        <tr class="unit-row has-critical" data-unit="uf2"><td><span class="status-dot purple"></span>UF-2</td><td><div class="mode-cell-wrap"><span class="mode-pill purple">CEB</span><span class="mode-cell-sub">UF CEB · (CEB Flush)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:35%;background:var(--purple)"></div></div><span class="unit-progress-label">35% · step 3/5</span></div></td><td>Chem.: 118 ppm</td><td><span class="remaining-pill warn">19 min left</span></td></tr>
+        <!-- RO Group -->
+        <tr class="unit-group-hdr"><td colspan="5">Reverse Osmosis (RO)</td></tr>
+        <tr class="unit-row" data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td><div class="mode-cell-wrap"><span class="mode-pill green">Service</span><span class="mode-cell-sub">RO Service · (Service Permeate)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/5</span></div></td><td>Feed P: 14.2 bar</td><td><span class="remaining-pill none">Continuous</span></td></tr>
+        <tr class="unit-row" data-unit="ro2"><td><span class="status-dot blue"></span>RO-2</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Flush</span><span class="mode-cell-sub">RO Flush · (Flush)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:43%"></div></div><span class="unit-progress-label">43% · step 4/5</span></div></td><td>Flush Flow: 19.4 m³/hr</td><td><span class="remaining-pill ok">7 min left</span></td></tr>
+        <!-- MBR Group -->
+        <tr class="unit-group-hdr"><td colspan="5">Membrane Bioreactor (MBR)</td></tr>
+        <tr class="unit-row" data-unit="mbr1"><td><span class="status-dot green"></span>MBR-1</td><td><div class="mode-cell-wrap"><span class="mode-pill blue">Filtration</span><span class="mode-cell-sub">MBR Filtration · (Filtration)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:97%"></div></div><span class="unit-progress-label">97% · step 2/5</span></div></td><td>TMP: 22 kPa</td><td><span class="remaining-pill warn">12 min left</span></td></tr>
+        <tr class="unit-row has-warning" data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td><div class="mode-cell-wrap"><span class="mode-pill amber">Relaxation</span><span class="mode-cell-sub">MBR Relaxation · (Relaxation)</span></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:56%;background:var(--amber)"></div></div><span class="unit-progress-label">56% · step 3/5</span></div></td><td>TMP Recovery: Low</td><td><span class="remaining-pill warn">4 min left</span></td></tr>
       </tbody>
     </table>
     <div class="legend">
@@ -616,14 +674,14 @@ const unitData = {
   psf1: { name:'PSF-1', mode:'Service (Filtration)', modeColor:'green', cycleType:'UF Backwash', cleanings:35, onTarget:69, alertsToReview:7, elapsed:'7 min ago', remaining:'10 min left',
     equipment:[{id:'V-101',type:'Inlet Valve',state:'Open',sc:'green',since:'02:14:38',sp:'--',ac:'--'},{id:'V-102',type:'Outlet Valve',state:'Open',sc:'green',since:'02:14:38',sp:'--',ac:'--'},{id:'V-103',type:'Drain Valve',state:'Closed',sc:'gray',since:'02:14:38',sp:'--',ac:'--'},{id:'P-101',type:'Feed Pump',state:'Running',sc:'green',since:'02:14:38',sp:'120 m³/hr',ac:'118.5 m³/hr'}],
     params:[{name:'Inlet pressure',ctx:'Cycle · UF Backwash',ref:'#104138',h:'healthy',b:'1.46',a:'1.67',c:'+0.21',u:'bar',dir:'pos',spark:'10,12,11,13,12,14,11,12,15,13,14,16',ft:'Within the healthy range.',n:35},{name:'Permeate flow',ctx:'Cycle · UF Backwash',ref:'#104138',h:'healthy',b:'6.21',a:'6.14',c:'-0.07',u:'m³/h',dir:'neg',spark:'15,14,16,15,13,14,15,14,12,13,14,13',ft:'Within the healthy range.',n:35},{name:'Recovery',ctx:'Whole process',ref:'#104138',h:'healthy',b:'85.39',a:'87.82',c:'+2.43',u:'%',dir:'pos',spark:'8,9,8,10,9,11,10,12,11,12,13,14',ft:'Within the healthy range.',n:35},{name:'Trans-membrane pressure',ctx:'Cycle · UF Backwash',ref:'#104138',h:'critical',b:'0.39',a:'0.49',c:'+0.1',u:'bar',dir:'neg',spark:'8,9,10,9,11,12,13,14,13,15,16,18',ft:'Above 0.4 bar ceiling. Worth a look.',n:35,thr:14}],
-    steps:[{name:'Top drain',tgt:'2:00',act:'1:40',p:83},{name:'Air scour',tgt:'3:00',act:'0:00',p:0},{name:'Bottom backwash',tgt:'5:00',act:'0:00',p:0},{name:'Forward flush',tgt:'2:00',act:'0:00',p:0}],aStep:0,sd:{r:35,w:'97%',al:1}},
-  psf2:{name:'PSF-2',mode:'Backwash',modeColor:'orange',cycleType:'PSF Backwash',cleanings:28,onTarget:82,alertsToReview:2,elapsed:'3 min ago',remaining:'5 min left',equipment:[{id:'V-111',type:'Inlet Valve',state:'Closed',sc:'gray',since:'00:03:22',sp:'--',ac:'--'},{id:'V-114',type:'BW Valve',state:'Open',sc:'green',since:'00:03:22',sp:'--',ac:'--'},{id:'P-112',type:'BW Pump',state:'Running',sc:'green',since:'00:03:22',sp:'80 m³/hr',ac:'78.2 m³/hr'}],params:[{name:'Inlet pressure',ctx:'PSF Backwash',ref:'#104120',h:'healthy',b:'1.52',a:'1.61',c:'+0.09',u:'bar',dir:'pos',spark:'10,11,10,12,11,13,12,11,13,12,13,14',ft:'Within the healthy range.',n:28}],steps:[{name:'Drain',tgt:'1:00',act:'1:00',p:100},{name:'Backwash',tgt:'4:00',act:'3:22',p:84},{name:'Rinse',tgt:'2:00',act:'0:00',p:0}],aStep:1,sd:{r:28,w:'82%',al:2}},
-  uf1:{name:'UF-1',mode:'Filtration',modeColor:'blue',cycleType:'UF Filtration',cleanings:42,onTarget:91,alertsToReview:1,elapsed:'1h 32m',remaining:'28 min left',equipment:[{id:'V-201',type:'Feed Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'V-202',type:'Filtrate Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'P-201',type:'Feed Pump',state:'Running',sc:'green',since:'01:32:11',sp:'60 m³/hr',ac:'58.7 m³/hr'}],params:[{name:'TMP',ctx:'UF Filtration',ref:'#104130',h:'healthy',b:'20',a:'24',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,9,11,10,12,11,13,12,14,13',ft:'Within range.',n:42}],steps:[{name:'Filtration',tgt:'120:00',act:'92:11',p:77}],aStep:0,sd:{r:42,w:'91%',al:1}},
-  uf2:{name:'UF-2',mode:'CEB',modeColor:'purple',cycleType:'UF CEB',cleanings:14,onTarget:69,alertsToReview:7,elapsed:'11 min',remaining:'19 min left',equipment:[{id:'V-211',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:11:45',sp:'--',ac:'--'},{id:'V-214',type:'CEB Valve',state:'Open',sc:'green',since:'00:11:45',sp:'--',ac:'--'},{id:'D-201',type:'NaOCl Dosing',state:'Running',sc:'green',since:'00:11:45',sp:'120 ppm',ac:'118 ppm'},{id:'P-212',type:'CEB Pump',state:'Running',sc:'green',since:'00:11:45',sp:'40 m³/hr',ac:'39.1 m³/hr'}],params:[{name:'Chemical conc.',ctx:'UF CEB',ref:'#104135',h:'healthy',b:'0',a:'118',c:'+118',u:'ppm',dir:'pos',spark:'0,5,15,30,50,70,85,95,110,115,118,118',ft:'Within range.',n:14}],steps:[{name:'Soak',tgt:'10:00',act:'10:00',p:100},{name:'Flush',tgt:'5:00',act:'1:45',p:35}],aStep:1,sd:{r:14,w:'69%',al:7}},
-  ro1:{name:'RO-1',mode:'Service',modeColor:'green',cycleType:'RO Service',cleanings:0,onTarget:95,alertsToReview:1,elapsed:'3h 5m',remaining:'--',equipment:[{id:'V-301',type:'Feed Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'V-302',type:'Permeate Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'P-301',type:'HP Pump',state:'Running',sc:'green',since:'03:05:20',sp:'14.5 bar',ac:'14.2 bar'}],params:[{name:'Feed pressure',ctx:'Whole process',ref:'#104125',h:'healthy',b:'14.0',a:'14.2',c:'+0.2',u:'bar',dir:'pos',spark:'12,13,12,13,14,13,14,14,13,14,14,14',ft:'Within range.',n:35},{name:'Diff pressure',ctx:'Whole process',ref:'#104125',h:'warning',b:'2.5',a:'2.8',c:'+0.3',u:'bar',dir:'neg',spark:'8,9,9,10,10,11,11,12,12,13,14,15',ft:'Rising trend. Monitor.',n:35}],steps:[{name:'Service',tgt:'--',act:'03:05:20',p:100}],aStep:0,sd:{r:35,w:'95%',al:1}},
-  ro2:{name:'RO-2',mode:'Flush',modeColor:'blue',cycleType:'RO Flush',cleanings:12,onTarget:88,alertsToReview:0,elapsed:'5 min',remaining:'7 min left',equipment:[{id:'V-311',type:'Feed Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'V-314',type:'Flush Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'P-311',type:'Flush Pump',state:'Running',sc:'green',since:'00:05:12',sp:'20 m³/hr',ac:'19.4 m³/hr'}],params:[{name:'Flush flow',ctx:'RO Flush',ref:'#104128',h:'healthy',b:'0',a:'19.4',c:'+19.4',u:'m³/hr',dir:'pos',spark:'0,5,10,15,18,19,19,20,19,20,19,19',ft:'Within range.',n:12}],steps:[{name:'Flush',tgt:'12:00',act:'5:12',p:43}],aStep:0,sd:{r:12,w:'88%',al:0}},
-  mbr1:{name:'MBR-1',mode:'Filtration',modeColor:'blue',cycleType:'MBR Filtration',cleanings:48,onTarget:92,alertsToReview:1,elapsed:'2h 48m',remaining:'12 min left',equipment:[{id:'V-401',type:'Feed Valve',state:'Open',sc:'green',since:'02:47:55',sp:'--',ac:'--'},{id:'B-401',type:'Aeration Blower',state:'Running',sc:'green',since:'02:47:55',sp:'50 Hz',ac:'49.2 Hz'},{id:'P-401',type:'Permeate Pump',state:'Running',sc:'green',since:'02:47:55',sp:'30 m³/hr',ac:'29.5 m³/hr'}],params:[{name:'TMP',ctx:'MBR Filtration',ref:'#104132',h:'healthy',b:'18',a:'22',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,11,10,11,12,11,12,13,12,13',ft:'Within range.',n:48}],steps:[{name:'Filtration',tgt:'8:00',act:'7:48',p:97},{name:'Relaxation',tgt:'2:00',act:'0:00',p:0}],aStep:0,sd:{r:48,w:'92%',al:1}},
-  mbr2:{name:'MBR-2',mode:'Relaxation',modeColor:'amber',cycleType:'MBR Relaxation',cleanings:45,onTarget:78,alertsToReview:3,elapsed:'4 min',remaining:'4 min left',equipment:[{id:'V-411',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:04:30',sp:'--',ac:'--'},{id:'B-411',type:'Aeration Blower',state:'Running',sc:'green',since:'00:04:30',sp:'35 Hz',ac:'34.8 Hz'}],params:[{name:'TMP',ctx:'MBR Relaxation',ref:'#104133',h:'warning',b:'28',a:'24',c:'-4',u:'kPa',dir:'pos',spark:'18,17,16,17,15,16,14,15,13,14,13,12',ft:'TMP not recovering.',n:45}],steps:[{name:'Relaxation',tgt:'8:00',act:'4:30',p:56}],aStep:0,sd:{r:45,w:'78%',al:3}}
+    steps:[{name:'Drain',tgt:'1:00',act:'1:00',p:100},{name:'Service (Filtration)',tgt:'120:00',act:'94:38',p:79},{name:'Backwash',tgt:'5:00',act:'0:00',p:0},{name:'Rinse',tgt:'2:00',act:'0:00',p:0},{name:'Return to Service',tgt:'--',act:'0:00',p:0}],aStep:1,sd:{r:35,w:'97%',al:1}},
+  psf2:{name:'PSF-2',mode:'Backwash',modeColor:'orange',cycleType:'PSF Backwash',cleanings:28,onTarget:82,alertsToReview:2,elapsed:'3 min ago',remaining:'5 min left',equipment:[{id:'V-111',type:'Inlet Valve',state:'Closed',sc:'gray',since:'00:03:22',sp:'--',ac:'--'},{id:'V-114',type:'BW Valve',state:'Open',sc:'green',since:'00:03:22',sp:'--',ac:'--'},{id:'P-112',type:'BW Pump',state:'Running',sc:'green',since:'00:03:22',sp:'80 m³/hr',ac:'78.2 m³/hr'}],params:[{name:'Inlet pressure',ctx:'PSF Backwash',ref:'#104120',h:'healthy',b:'1.52',a:'1.61',c:'+0.09',u:'bar',dir:'pos',spark:'10,11,10,12,11,13,12,11,13,12,13,14',ft:'Within the healthy range.',n:28}],steps:[{name:'Drain',tgt:'1:00',act:'1:00',p:100},{name:'Backwash',tgt:'4:00',act:'3:22',p:84},{name:'Rinse',tgt:'2:00',act:'0:00',p:0},{name:'Return to Service',tgt:'--',act:'0:00',p:0}],aStep:1,sd:{r:28,w:'82%',al:2}},
+  uf1:{name:'UF-1',mode:'Filtration (Bottom Feed)',modeColor:'blue',cycleType:'UF Filtration',cleanings:42,onTarget:91,alertsToReview:1,elapsed:'1h 32m',remaining:'28 min left',equipment:[{id:'V-201',type:'Feed Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'V-202',type:'Filtrate Valve',state:'Open',sc:'green',since:'01:32:11',sp:'--',ac:'--'},{id:'P-201',type:'Feed Pump',state:'Running',sc:'green',since:'01:32:11',sp:'60 m³/hr',ac:'58.7 m³/hr'}],params:[{name:'TMP',ctx:'UF Filtration',ref:'#104130',h:'healthy',b:'20',a:'24',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,9,11,10,12,11,13,12,14,13',ft:'Within range.',n:42}],steps:[{name:'Backwash (Top)',tgt:'3:00',act:'3:00',p:100},{name:'Rinse',tgt:'1:00',act:'1:00',p:100},{name:'Filtration (Bottom Feed)',tgt:'120:00',act:'92:11',p:77},{name:'Backwash (Bottom)',tgt:'3:00',act:'0:00',p:0},{name:'Air Scouring',tgt:'2:00',act:'0:00',p:0},{name:'Rinse',tgt:'1:00',act:'0:00',p:0}],aStep:2,sd:{r:42,w:'91%',al:1}},
+  uf2:{name:'UF-2',mode:'CEB',modeColor:'purple',cycleType:'UF CEB',cleanings:14,onTarget:69,alertsToReview:7,elapsed:'11 min',remaining:'19 min left',equipment:[{id:'V-211',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:11:45',sp:'--',ac:'--'},{id:'V-214',type:'CEB Valve',state:'Open',sc:'green',since:'00:11:45',sp:'--',ac:'--'},{id:'D-201',type:'NaOCl Dosing',state:'Running',sc:'green',since:'00:11:45',sp:'120 ppm',ac:'118 ppm'},{id:'P-212',type:'CEB Pump',state:'Running',sc:'green',since:'00:11:45',sp:'40 m³/hr',ac:'39.1 m³/hr'}],params:[{name:'Chemical conc.',ctx:'UF CEB',ref:'#104135',h:'healthy',b:'0',a:'118',c:'+118',u:'ppm',dir:'pos',spark:'0,5,15,30,50,70,85,95,110,115,118,118',ft:'Within range.',n:14}],steps:[{name:'Drain',tgt:'2:00',act:'2:00',p:100},{name:'CEB Soak',tgt:'10:00',act:'10:00',p:100},{name:'CEB Flush',tgt:'5:00',act:'1:45',p:35},{name:'Rinse',tgt:'3:00',act:'0:00',p:0},{name:'Return to Filtration',tgt:'--',act:'0:00',p:0}],aStep:2,sd:{r:14,w:'69%',al:7}},
+  ro1:{name:'RO-1',mode:'Service (Permeate)',modeColor:'green',cycleType:'RO Service',cleanings:0,onTarget:95,alertsToReview:1,elapsed:'3h 5m',remaining:'--',equipment:[{id:'V-301',type:'Feed Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'V-302',type:'Permeate Valve',state:'Open',sc:'green',since:'03:05:20',sp:'--',ac:'--'},{id:'P-301',type:'HP Pump',state:'Running',sc:'green',since:'03:05:20',sp:'14.5 bar',ac:'14.2 bar'}],params:[{name:'Feed pressure',ctx:'Whole process',ref:'#104125',h:'healthy',b:'14.0',a:'14.2',c:'+0.2',u:'bar',dir:'pos',spark:'12,13,12,13,14,13,14,14,13,14,14,14',ft:'Within range.',n:35},{name:'Diff pressure',ctx:'Whole process',ref:'#104125',h:'warning',b:'2.5',a:'2.8',c:'+0.3',u:'bar',dir:'neg',spark:'8,9,9,10,10,11,11,12,12,13,14,15',ft:'Rising trend. Monitor.',n:35}],steps:[{name:'Low Pressure Flush',tgt:'5:00',act:'5:00',p:100},{name:'HP Ramp-up',tgt:'3:00',act:'3:00',p:100},{name:'Service (Permeate)',tgt:'240:00',act:'185:20',p:77},{name:'Flush',tgt:'8:00',act:'0:00',p:0},{name:'Standby',tgt:'--',act:'0:00',p:0}],aStep:2,sd:{r:35,w:'95%',al:1}},
+  ro2:{name:'RO-2',mode:'Flush',modeColor:'blue',cycleType:'RO Flush',cleanings:12,onTarget:88,alertsToReview:0,elapsed:'5 min',remaining:'7 min left',equipment:[{id:'V-311',type:'Feed Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'V-314',type:'Flush Valve',state:'Open',sc:'green',since:'00:05:12',sp:'--',ac:'--'},{id:'P-311',type:'Flush Pump',state:'Running',sc:'green',since:'00:05:12',sp:'20 m³/hr',ac:'19.4 m³/hr'}],params:[{name:'Flush flow',ctx:'RO Flush',ref:'#104128',h:'healthy',b:'0',a:'19.4',c:'+19.4',u:'m³/hr',dir:'pos',spark:'0,5,10,15,18,19,19,20,19,20,19,19',ft:'Within range.',n:12}],steps:[{name:'Low Pressure Flush',tgt:'5:00',act:'5:00',p:100},{name:'HP Ramp-up',tgt:'3:00',act:'3:00',p:100},{name:'Service (Permeate)',tgt:'180:00',act:'180:00',p:100},{name:'Flush',tgt:'12:00',act:'5:12',p:43},{name:'Standby',tgt:'--',act:'0:00',p:0}],aStep:3,sd:{r:12,w:'88%',al:0}},
+  mbr1:{name:'MBR-1',mode:'Filtration',modeColor:'blue',cycleType:'MBR Filtration',cleanings:48,onTarget:92,alertsToReview:1,elapsed:'2h 48m',remaining:'12 min left',equipment:[{id:'V-401',type:'Feed Valve',state:'Open',sc:'green',since:'02:47:55',sp:'--',ac:'--'},{id:'B-401',type:'Aeration Blower',state:'Running',sc:'green',since:'02:47:55',sp:'50 Hz',ac:'49.2 Hz'},{id:'P-401',type:'Permeate Pump',state:'Running',sc:'green',since:'02:47:55',sp:'30 m³/hr',ac:'29.5 m³/hr'}],params:[{name:'TMP',ctx:'MBR Filtration',ref:'#104132',h:'healthy',b:'18',a:'22',c:'+4',u:'kPa',dir:'neg',spark:'8,9,10,11,10,11,12,11,12,13,12,13',ft:'Within range.',n:48}],steps:[{name:'Air Scouring',tgt:'2:00',act:'2:00',p:100},{name:'Filtration',tgt:'8:00',act:'7:48',p:97},{name:'Relaxation',tgt:'2:00',act:'0:00',p:0},{name:'Filtration',tgt:'8:00',act:'0:00',p:0},{name:'Backpulse',tgt:'1:00',act:'0:00',p:0}],aStep:1,sd:{r:48,w:'92%',al:1}},
+  mbr2:{name:'MBR-2',mode:'Relaxation',modeColor:'amber',cycleType:'MBR Relaxation',cleanings:45,onTarget:78,alertsToReview:3,elapsed:'4 min',remaining:'4 min left',equipment:[{id:'V-411',type:'Feed Valve',state:'Closed',sc:'gray',since:'00:04:30',sp:'--',ac:'--'},{id:'B-411',type:'Aeration Blower',state:'Running',sc:'green',since:'00:04:30',sp:'35 Hz',ac:'34.8 Hz'}],params:[{name:'TMP',ctx:'MBR Relaxation',ref:'#104133',h:'warning',b:'28',a:'24',c:'-4',u:'kPa',dir:'pos',spark:'18,17,16,17,15,16,14,15,13,14,13,12',ft:'TMP not recovering.',n:45}],steps:[{name:'Air Scouring',tgt:'2:00',act:'2:00',p:100},{name:'Filtration',tgt:'8:00',act:'8:00',p:100},{name:'Relaxation',tgt:'8:00',act:'4:30',p:56},{name:'Filtration',tgt:'8:00',act:'0:00',p:0},{name:'Backpulse',tgt:'1:00',act:'0:00',p:0}],aStep:2,sd:{r:45,w:'78%',al:3}}
 };
 
 const alertData = [
@@ -924,12 +982,37 @@ function showUnitModal(key) {
       u.equipment.forEach(e => { h += `<tr><td>${e.id}</td><td>${e.type}</td><td><span class="state-pill ${e.sc}">${e.state}</span></td><td>${e.since}</td><td>${e.ac}</td></tr>`; });
       modalBody.innerHTML = h + '</tbody></table>';
     } else {
-      let h = `<div class="section-label">Steps in this cleaning <span class="right">Click a step to inspect</span></div><div class="steps-row" style="grid-template-columns:repeat(${u.steps.length},1fr)">`;
-      u.steps.forEach((s,i) => { h += `<div class="step-card ${i===u.aStep?'active':''}" data-step="${i}"><span class="step-number">${i+1}</span><span class="step-name">${s.name}</span><div class="step-duration">${s.act} / ${s.tgt}</div><div class="step-progress"><div class="step-progress-fill" style="width:${s.p}%"></div></div></div>`; });
       const as = u.steps[u.aStep];
-      h += `</div><div class="step-detail"><h4>Step ${u.aStep+1} · ${as.name}</h4><div class="step-stats"><div class="step-stat"><span class="stat-label">Target:</span> <span class="stat-value">${as.tgt}</span></div><div class="step-stat"><span class="stat-label">Runs in range:</span> <span class="stat-value">${u.sd.r}</span></div><div class="step-stat"><span class="stat-label">Avg actual:</span> <span class="stat-value">${as.act}</span></div><div class="step-stat"><span class="stat-label">Within ±10%:</span> <span class="stat-value">${u.sd.w}</span></div><div class="step-stat"><span class="stat-label">Alerts:</span> <span class="stat-value">${u.sd.al}</span></div></div></div>`;
+      let h = `<div class="section-label" style="margin-bottom:14px">${u.cycleType} <span class="right">${u.steps.length} steps · Step ${u.aStep+1} active</span></div>`;
+      h += `<div class="steps-accordion">`;
+      u.steps.forEach((s,i) => {
+        const isPast    = i < u.aStep;
+        const isCurrent = i === u.aStep;
+        const isFuture  = i > u.aStep;
+        const cls = isPast ? 'step-past' : isCurrent ? 'step-current' : 'step-future';
+        const statusLabel = isPast ? 'Completed' : isCurrent ? 'In Progress' : 'Pending';
+        const timeDisplay = isPast ? `${s.act} / ${s.tgt}` : isCurrent ? `${s.act} elapsed` : `est. ${s.tgt}`;
+        h += `<div class="step-item ${cls}">`;
+        h += `<div class="step-header"><div class="step-num-badge">${isPast?'✓':i+1}</div><div class="step-hd-name">${s.name}</div><div class="step-hd-time">${timeDisplay}</div><div class="step-hd-status">${statusLabel}</div></div>`;
+        h += `<div class="step-progress-bar"><div class="step-progress-bar-fill" style="width:${s.p}%"></div></div>`;
+        if (isPast) {
+          h += `<div class="step-body"><div class="step-past-summary"><div class="step-past-stat"><div class="sps-label">Actual time</div><div class="sps-value">${s.act}</div></div><div class="step-past-stat"><div class="sps-label">Target</div><div class="sps-value">${s.tgt}</div></div><div class="step-past-stat"><div class="sps-label">Variance</div><div class="sps-value" style="color:var(--green)">On target</div></div></div></div>`;
+        }
+        if (isCurrent) {
+          h += `<div class="step-body"><div class="step-analytics-grid">
+            <div class="step-analytic-box"><div class="step-analytic-label">Elapsed</div><div class="step-analytic-value">${s.act}</div><div class="step-analytic-sub">of ${s.tgt} target</div></div>
+            <div class="step-analytic-box"><div class="step-analytic-label">Progress</div><div class="step-analytic-value">${s.p}%</div><div class="step-analytic-sub">${100-s.p}% remaining</div></div>
+            <div class="step-analytic-box"><div class="step-analytic-label">Historical avg</div><div class="step-analytic-value">${u.sd.r} runs</div><div class="step-analytic-sub">${u.sd.w} within ±10%</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${u.sd.al} alert${u.sd.al!==1?'s':''} recorded in this step across all runs today
+          </div></div>`;
+        }
+        h += `</div>`;
+      });
+      h += `</div>`;
       modalBody.innerHTML = h;
-      modalBody.querySelectorAll('.step-card').forEach(c => { c.addEventListener('click', () => { u.aStep = +c.dataset.step; renderTab('Cycle Steps'); }); });
     }
   }
 
@@ -1114,11 +1197,21 @@ function applyDashboardFilter() {
 
   // unit table rows
   document.querySelectorAll('#unitTable tbody tr[data-unit]').forEach(row => {
-    const unit = row.dataset.unit; // psf1, uf2, ro1 …
+    const unit = row.dataset.unit;
     const modeCell = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
     const matchUnit = ut === 'all' || unit.startsWith(ut);
     const matchMode = md === 'all' || modeCell.includes(md);
     row.style.display = (matchUnit && matchMode) ? '' : 'none';
+  });
+  // hide group headers when their group is fully hidden
+  document.querySelectorAll('#unitTable .unit-group-hdr').forEach(hdr => {
+    let next = hdr.nextElementSibling;
+    let anyVisible = false;
+    while (next && !next.classList.contains('unit-group-hdr')) {
+      if (next.style.display !== 'none') anyVisible = true;
+      next = next.nextElementSibling;
+    }
+    hdr.style.display = anyVisible ? '' : 'none';
   });
 
   // perf table rows
