@@ -609,31 +609,26 @@ body {
 
 .alert-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
   background: var(--bg);
+  transition: background 0.15s;
 }
 
-.alert-icon-wrap {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.alert-item:hover { background: var(--border); }
+
+.alert-severity-bar {
+  width: 3px;
+  border-radius: 3px;
   flex-shrink: 0;
+  align-self: stretch;
 }
 
-.alert-icon-wrap.critical { background: var(--red-bg); }
-.alert-icon-wrap.warning { background: var(--amber-bg); }
-.alert-icon-wrap.info { background: var(--blue-bg); }
-
-.alert-icon-wrap svg { width: 16px; height: 16px; fill: none; stroke-width: 2; }
-.alert-icon-wrap.critical svg { stroke: var(--red); }
-.alert-icon-wrap.warning svg { stroke: var(--amber); }
-.alert-icon-wrap.info svg { stroke: var(--blue); }
+.alert-severity-bar.critical { background: var(--red); }
+.alert-severity-bar.warning { background: var(--amber); }
+.alert-severity-bar.info { background: var(--blue); }
 
 .alert-body { flex: 1; min-width: 0; }
 .alert-title { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; }
@@ -806,7 +801,7 @@ body {
       <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Analytics
     </a>
-    <a class="nav-item" href="#">
+    <a class="nav-item" href="alerts.html">
       <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
       Alerts
     </a>
@@ -1217,64 +1212,61 @@ body {
       </div>
     </div>
 
-    <!-- Top Alerts -->
+    <!-- Top Alerts (Notifications) -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Top Alerts</div>
-        <div class="card-link">View all alerts &rarr;</div>
+        <div class="card-title">Alerts <span class="badge" style="background:var(--red-bg);color:var(--red)">7</span></div>
+        <a class="card-link" href="alerts.html">View all &rarr;</a>
       </div>
       <div class="alert-list">
-        <div class="alert-item">
-          <div class="alert-icon-wrap critical">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
+        <a class="alert-item" href="alerts.html?id=1" style="text-decoration:none;color:inherit">
+          <div class="alert-severity-bar critical"></div>
           <div class="alert-body">
             <div class="alert-title">UF-2: Backwash frequency increased</div>
-            <div class="alert-desc">Backwash frequency up by 18% in last 7 days</div>
           </div>
-          <div class="alert-time">10 min ago</div>
-        </div>
-        <div class="alert-item">
-          <div class="alert-icon-wrap warning">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
+          <div class="alert-time">10m</div>
+        </a>
+        <a class="alert-item" href="alerts.html?id=2" style="text-decoration:none;color:inherit">
+          <div class="alert-severity-bar warning"></div>
           <div class="alert-body">
             <div class="alert-title">RO-1: Differential pressure rising</div>
-            <div class="alert-desc">Differential pressure increased by 5% per cycle</div>
           </div>
-          <div class="alert-time">25 min ago</div>
-        </div>
-        <div class="alert-item">
-          <div class="alert-icon-wrap warning">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
+          <div class="alert-time">25m</div>
+        </a>
+        <a class="alert-item" href="alerts.html?id=3" style="text-decoration:none;color:inherit">
+          <div class="alert-severity-bar warning"></div>
           <div class="alert-body">
             <div class="alert-title">MBR-1: Relaxation period insufficient</div>
-            <div class="alert-desc">TMP not resetting to baseline</div>
           </div>
-          <div class="alert-time">45 min ago</div>
-        </div>
+          <div class="alert-time">45m</div>
+        </a>
+        <a class="alert-item" href="alerts.html?id=4" style="text-decoration:none;color:inherit">
+          <div class="alert-severity-bar critical"></div>
+          <div class="alert-body">
+            <div class="alert-title">PSF-2: Backwash valve stuck</div>
+          </div>
+          <div class="alert-time">1h</div>
+        </a>
+        <a class="alert-item" href="alerts.html?id=5" style="text-decoration:none;color:inherit">
+          <div class="alert-severity-bar info"></div>
+          <div class="alert-body">
+            <div class="alert-title">RO-2: Flush cycle completed</div>
+          </div>
+          <div class="alert-time">1h</div>
+        </a>
       </div>
       <div class="alert-summary">
         <div class="alert-summary-item">
-          <svg viewBox="0 0 24 24" stroke="var(--red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <div class="count" style="color:var(--red)">2</div>
           <div class="label">Critical</div>
         </div>
         <div class="alert-summary-item">
-          <svg viewBox="0 0 24 24" stroke="var(--amber)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <div class="count" style="color:var(--amber)">1</div>
           <div class="label">Warning</div>
         </div>
         <div class="alert-summary-item">
-          <svg viewBox="0 0 24 24" stroke="var(--blue)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           <div class="count" style="color:var(--blue)">4</div>
           <div class="label">Info</div>
-        </div>
-        <div class="alert-summary-item">
-          <svg viewBox="0 0 24 24" stroke="var(--text-secondary)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <div class="count">7</div>
-          <div class="label">Total</div>
         </div>
       </div>
     </div>

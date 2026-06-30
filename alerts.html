@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alerts — DigitalPaani</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --border-light: #F0F1F3;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #DCFCE7;
+  --blue: #3B82F6;
+  --blue-bg: #DBEAFE;
+  --amber: #D97706;
+  --amber-bg: #FEF3C7;
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --orange: #EA580C;
+  --orange-bg: #FFEDD5;
+  --purple: #7C3AED;
+  --purple-bg: #EDE9FE;
+  --sidebar-width: 220px;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  display: flex;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 10;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo svg { flex-shrink: 0; }
+.sidebar-logo span { font-weight: 700; font-size: 1.07rem; letter-spacing: -0.01em; color: var(--text-primary); }
+
+.sidebar-nav {
+  flex: 1; padding: 8px 10px;
+  display: flex; flex-direction: column; gap: 2px; overflow-y: auto;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  color: var(--text-secondary); font-size: 0.93rem; font-weight: 500;
+  cursor: pointer; transition: background 0.15s, color 0.15s; text-decoration: none;
+}
+.nav-item:hover { background: var(--bg); color: var(--text-primary); }
+.nav-item.active { background: var(--bg); color: var(--text-primary); font-weight: 600; }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav-item .chevron { width: 14px; height: 14px; margin-left: auto; transition: transform 0.2s; }
+.nav-item.expanded .chevron { transform: rotate(180deg); }
+
+.nav-subitems { display: none; flex-direction: column; gap: 1px; padding-left: 28px; }
+.nav-subitems.open { display: flex; }
+.nav-subitem {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; border-radius: var(--radius-sm);
+  color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;
+  cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s;
+}
+.nav-subitem:hover { background: var(--bg); color: var(--text-primary); }
+.nav-subitem.active { color: var(--text-primary); font-weight: 600; }
+.nav-subitem::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--text-tertiary); flex-shrink: 0; }
+.nav-subitem.active::before { background: var(--text-primary); }
+
+.sidebar-bottom { border-top: 1px solid var(--border); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.plant-selector-wrap { position: relative; }
+.plant-selector {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; background: var(--bg); border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); width: 100%;
+}
+.plant-selector svg { width: 14px; height: 14px; stroke: var(--text-secondary); fill: none; stroke-width: 2; }
+.plant-selector .chevron-down { margin-left: auto; transition: transform 0.2s; }
+.plant-selector-wrap.open .chevron-down { transform: rotate(180deg); }
+
+.plant-dropdown {
+  display: none; position: absolute; bottom: calc(100% + 6px);
+  left: 0; right: 0; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); box-shadow: 0 4px 16px rgba(0,0,0,0.1); z-index: 20; padding: 4px;
+}
+.plant-selector-wrap.open .plant-dropdown { display: block; }
+.plant-option {
+  padding: 8px 10px; font-size: 0.82rem; border-radius: 4px; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; color: var(--text-primary);
+}
+.plant-option:hover { background: var(--bg); }
+.plant-option.selected { font-weight: 600; background: var(--blue-bg); }
+.plant-option .plant-type { font-size: 0.7rem; font-weight: 600; padding: 1px 5px; border-radius: 3px; margin-left: auto; }
+.plant-type.wtp { background: var(--blue-bg); color: #1D4ED8; }
+.plant-type.stp { background: var(--green-bg); color: #15803D; }
+.plant-type.etp { background: var(--amber-bg); color: #92400E; }
+
+.user-info { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+.user-details { display: flex; flex-direction: column; }
+.user-name { font-size: 0.85rem; font-weight: 600; }
+.user-email { font-size: 0.75rem; color: var(--text-tertiary); }
+
+/* Main content */
+.main { margin-left: var(--sidebar-width); flex: 1; padding: 24px 28px; min-width: 0; }
+
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.page-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+.page-header p { color: var(--text-secondary); font-size: 0.9rem; margin-top: 2px; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); font-size: 0.85rem; font-weight: 500;
+  color: var(--text-primary); cursor: pointer; transition: background 0.15s; white-space: nowrap;
+}
+.btn:hover { background: var(--bg); }
+.btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.dropdown-wrap { position: relative; }
+.dropdown-panel {
+  display: none; position: absolute; top: calc(100% + 6px); right: 0;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1); z-index: 20; padding: 6px; min-width: 200px;
+}
+.dropdown-wrap.open .dropdown-panel { display: block; }
+.dropdown-option { padding: 8px 10px; font-size: 0.82rem; border-radius: 4px; cursor: pointer; color: var(--text-primary); }
+.dropdown-option:hover { background: var(--bg); }
+.dropdown-option.selected { font-weight: 600; background: var(--blue-bg); }
+
+.date-dropdown { min-width: 240px; }
+.date-dropdown .dropdown-section-title { font-size: 0.7rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 10px 4px; }
+.date-dropdown .dropdown-divider { height: 1px; background: var(--border-light); margin: 4px 0; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+
+/* KPI Summary Strip */
+.kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 20px; display: flex; align-items: center; gap: 14px;
+}
+.kpi-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.kpi-icon svg { width: 20px; height: 20px; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.kpi-icon.red { background: var(--red-bg); }
+.kpi-icon.red svg { stroke: var(--red); }
+.kpi-icon.amber { background: var(--amber-bg); }
+.kpi-icon.amber svg { stroke: var(--amber); }
+.kpi-icon.blue { background: var(--blue-bg); }
+.kpi-icon.blue svg { stroke: var(--blue); }
+.kpi-icon.purple { background: var(--purple-bg); }
+.kpi-icon.purple svg { stroke: var(--purple); }
+.kpi-content { display: flex; flex-direction: column; }
+.kpi-count { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.kpi-label { font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; }
+
+/* Filter bar */
+.filter-bar {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.filter-section { display: flex; align-items: center; gap: 6px; }
+.filter-section-label { font-size: 0.75rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.filter-chip {
+  padding: 5px 12px; font-size: 0.8rem; border: 1px solid var(--border); border-radius: 20px;
+  cursor: pointer; background: var(--surface); color: var(--text-secondary); transition: all 0.15s;
+}
+.filter-chip:hover { border-color: var(--blue); color: var(--blue); }
+.filter-chip.active { background: var(--blue); border-color: var(--blue); color: white; }
+.filter-divider { width: 1px; height: 24px; background: var(--border); }
+.search-input {
+  margin-left: auto; padding: 7px 12px 7px 32px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 0.85rem; background: var(--surface);
+  color: var(--text-primary); outline: none; width: 220px; transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--blue); }
+.search-wrap { position: relative; margin-left: auto; }
+.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; stroke: var(--text-tertiary); fill: none; stroke-width: 2; }
+
+/* Alerts Table */
+.alerts-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.alerts-table th {
+  text-align: left; font-size: 0.75rem; font-weight: 600; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.04em; padding: 0 12px 10px; border-bottom: 1px solid var(--border);
+}
+.alerts-table td {
+  padding: 11px 12px; font-size: 0.85rem; border-bottom: 1px solid var(--border-light); vertical-align: middle;
+}
+
+.alert-row { cursor: pointer; transition: background 0.1s; }
+.alert-row:hover { background: var(--bg); }
+.alert-row td:first-child { position: relative; padding-left: 28px; }
+.alert-row-chevron {
+  position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; stroke: var(--text-tertiary); fill: none; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s;
+}
+.alert-row.expanded .alert-row-chevron { transform: translateY(-50%) rotate(90deg); }
+
+.severity-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.severity-dot.critical { background: var(--red); }
+.severity-dot.warning { background: var(--amber); }
+.severity-dot.info { background: var(--blue); }
+
+.status-pill {
+  display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 500; white-space: nowrap;
+}
+.status-pill.active { background: var(--red-bg); color: #991B1B; }
+.status-pill.acknowledged { background: var(--amber-bg); color: #92400E; }
+.status-pill.resolved { background: var(--green-bg); color: #15803D; }
+
+.trigger-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 500;
+  background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border);
+}
+
+.action-btn {
+  padding: 4px 10px; font-size: 0.78rem; font-weight: 500; border: 1px solid var(--border);
+  border-radius: 4px; cursor: pointer; background: var(--surface); color: var(--text-primary);
+  transition: all 0.15s; margin-right: 4px;
+}
+.action-btn:hover { background: var(--bg); }
+.action-btn.ack { border-color: var(--amber); color: var(--amber); }
+.action-btn.ack:hover { background: var(--amber-bg); }
+.action-btn.resolve { border-color: var(--green); color: var(--green); }
+.action-btn.resolve:hover { background: var(--green-bg); }
+
+/* Detail row */
+.detail-row { display: none; }
+.detail-row.open { display: table-row; }
+.detail-row td { padding: 0 12px; border-bottom: 1px solid var(--border-light); }
+
+.detail-content {
+  background: var(--bg); border-radius: var(--radius-sm); padding: 16px 20px; margin: 6px 0 12px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.detail-section { }
+.detail-section-title { font-size: 0.75rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+.detail-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 4px; }
+.detail-equip-list { list-style: none; }
+.detail-equip-list li { font-size: 0.82rem; padding: 3px 0; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+.detail-equip-list li::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--text-tertiary); flex-shrink: 0; }
+
+.param-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.param-item { font-size: 0.82rem; }
+.param-label { color: var(--text-tertiary); }
+.param-value { font-weight: 600; }
+
+.notes-area {
+  width: 100%; min-height: 60px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 0.82rem; resize: vertical; background: var(--surface); color: var(--text-primary); outline: none;
+}
+.notes-area:focus { border-color: var(--blue); }
+.notes-area::placeholder { color: var(--text-tertiary); }
+
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.timeline-item { display: flex; align-items: flex-start; gap: 10px; position: relative; padding-bottom: 12px; }
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-item::before {
+  content: ""; position: absolute; left: 5px; top: 14px; bottom: 0; width: 1px; background: var(--border);
+}
+.timeline-item:last-child::before { display: none; }
+.timeline-dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); flex-shrink: 0; margin-top: 2px; z-index: 1; }
+.timeline-dot.done { border-color: var(--green); background: var(--green); }
+.timeline-dot.current { border-color: var(--blue); background: var(--blue); }
+.timeline-text { font-size: 0.8rem; color: var(--text-secondary); }
+.timeline-text strong { color: var(--text-primary); font-weight: 600; }
+.timeline-text .time { color: var(--text-tertiary); font-size: 0.75rem; }
+
+/* Pagination */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0 0; margin-top: 4px; border-top: 1px solid var(--border-light);
+}
+.pagination-info { font-size: 0.82rem; color: var(--text-secondary); }
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.page-btn {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface);
+  font-size: 0.82rem; cursor: pointer; color: var(--text-primary); transition: all 0.15s;
+}
+.page-btn:hover { background: var(--bg); }
+.page-btn.active { background: var(--text-primary); color: white; border-color: var(--text-primary); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar (identical to index.html) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="6" fill="#111827"/>
+      <path d="M7 7L14 21L21 7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="10" y1="14" x2="18" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>DigitalPaani</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Overview
+    </a>
+
+    <a class="nav-item has-sub expanded" href="#" data-toggle="cycles-sub">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Cycles
+      <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div class="nav-subitems open" id="cycles-sub">
+      <a class="nav-subitem" href="all-cycles.html">All Cycles</a>
+      <a class="nav-subitem" href="units-skids.html">Units / Skids</a>
+      <a class="nav-subitem" href="mode-history.html">Mode History</a>
+      <a class="nav-subitem" href="cycle-logs.html">Cycle Logs</a>
+    </div>
+
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </a>
+    <a class="nav-item active" href="alerts.html">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Alerts
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Reports
+    </a>
+    <a class="nav-item" href="cycle-performance.html">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      Cycle Performance
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Help
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="plant-selector-wrap" id="plantSelectorWrap">
+      <div class="plant-selector" id="plantSelectorBtn">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <span id="plantSelectorLabel">Green Valley WTP</span>
+        <svg class="chevron-down" viewBox="0 0 24 24" stroke="var(--text-secondary)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="plant-dropdown">
+        <div class="plant-option selected" data-plant="Green Valley WTP">Green Valley WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="Riverside STP">Riverside STP <span class="plant-type stp">STP</span></div>
+        <div class="plant-option" data-plant="Industrial Zone ETP">Industrial Zone ETP <span class="plant-type etp">ETP</span></div>
+        <div class="plant-option" data-plant="Lakeside WTP">Lakeside WTP <span class="plant-type wtp">WTP</span></div>
+        <div class="plant-option" data-plant="North District STP">North District STP <span class="plant-type stp">STP</span></div>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">CU</div>
+      <div class="user-details">
+        <div class="user-name">Client User</div>
+        <div class="user-email">client@example.com</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;cursor:pointer"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Alerts</h1>
+      <p>Monitor and manage plant alerts and notifications</p>
+    </div>
+    <div class="header-actions">
+      <div class="dropdown-wrap" id="dateDropdown">
+        <button class="btn" id="dateTrigger">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="dateLabel">May 12, 2025 – May 18, 2025</span>
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--text-tertiary)"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-panel date-dropdown">
+          <div class="dropdown-section-title">Quick Select</div>
+          <div class="dropdown-option" data-date="Today">Today</div>
+          <div class="dropdown-option" data-date="Yesterday">Yesterday</div>
+          <div class="dropdown-option" data-date="Last 7 days">Last 7 days</div>
+          <div class="dropdown-option selected" data-date="May 12, 2025 – May 18, 2025">This Week (May 12 – May 18)</div>
+          <div class="dropdown-option" data-date="May 5, 2025 – May 11, 2025">Last Week (May 5 – May 11)</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-section-title">Longer Range</div>
+          <div class="dropdown-option" data-date="Last 30 days">Last 30 days</div>
+          <div class="dropdown-option" data-date="This Month">This Month</div>
+          <div class="dropdown-option" data-date="Last Month">Last Month</div>
+          <div class="dropdown-option" data-date="Last 90 days">Last 90 days</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-option" data-date="Custom range...">Custom range...</div>
+        </div>
+      </div>
+
+      <div class="dropdown-wrap" id="downloadDropdown">
+        <button class="btn" id="downloadTrigger">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--text-tertiary)"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-panel" style="min-width:180px">
+          <div class="dropdown-option" data-dl="pdf">Export as PDF</div>
+          <div class="dropdown-option" data-dl="csv">Export as CSV</div>
+          <div class="dropdown-option" data-dl="xlsx">Export as Excel</div>
+          <div class="dropdown-option" data-dl="png">Export as PNG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Summary Strip -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-icon red">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-count" style="color:var(--red)">2</div>
+        <div class="kpi-label">Critical</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon amber">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-count" style="color:var(--amber)">1</div>
+        <div class="kpi-label">Warning</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon blue">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-count" style="color:var(--blue)">4</div>
+        <div class="kpi-label">Info</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon purple">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </div>
+      <div class="kpi-content">
+        <div class="kpi-count">7</div>
+        <div class="kpi-label">Total Active</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-section">
+      <span class="filter-section-label">Severity</span>
+      <span class="filter-chip active" data-group="severity">All</span>
+      <span class="filter-chip" data-group="severity">Critical</span>
+      <span class="filter-chip" data-group="severity">Warning</span>
+      <span class="filter-chip" data-group="severity">Info</span>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-section">
+      <span class="filter-section-label">Unit</span>
+      <span class="filter-chip active" data-group="unit">All</span>
+      <span class="filter-chip" data-group="unit">PSF</span>
+      <span class="filter-chip" data-group="unit">UF</span>
+      <span class="filter-chip" data-group="unit">RO</span>
+      <span class="filter-chip" data-group="unit">MBR</span>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-section">
+      <span class="filter-section-label">Status</span>
+      <span class="filter-chip active" data-group="status">All</span>
+      <span class="filter-chip" data-group="status">Active</span>
+      <span class="filter-chip" data-group="status">Acknowledged</span>
+      <span class="filter-chip" data-group="status">Resolved</span>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="search-input" placeholder="Search alerts..." id="alertSearch">
+    </div>
+  </div>
+
+  <!-- Alerts Table Card -->
+  <div class="card">
+    <table class="alerts-table" id="alertsTable">
+      <thead>
+        <tr>
+          <th>Severity</th>
+          <th>Alert Title</th>
+          <th>Unit</th>
+          <th>Trigger</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="alertsBody">
+      </tbody>
+    </table>
+    <div class="pagination">
+      <div class="pagination-info">Showing <strong>1-12</strong> of <strong>47</strong> alerts</div>
+      <div class="pagination-controls">
+        <button class="page-btn" disabled><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">4</button>
+        <button class="page-btn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// Alert data
+const alerts = [
+  {
+    id: 1, severity: 'critical', title: 'UF-2: Backwash frequency increased', unit: 'UF',
+    trigger: 'Auto', time: '10 min ago', status: 'active',
+    desc: 'Backwash frequency has increased from 2 to 5 cycles per hour on UF-2. This indicates potential membrane fouling or feed water quality deterioration. Immediate inspection recommended.',
+    equipment: ['V-214 CEB Valve', 'P-212 CEB Pump', 'V-211 Feed Valve', 'FIT-201 Flow Transmitter'],
+    params: { 'BW Frequency': '5 cycles/hr', 'TMP': '38 kPa', 'Feed Turbidity': '12.4 NTU', 'Flux': '42 LMH' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 14:32', done: true },
+      { state: 'Active', time: 'May 18, 14:32', current: true }
+    ]
+  },
+  {
+    id: 2, severity: 'critical', title: 'PSF-2: Backwash valve stuck', unit: 'PSF',
+    trigger: 'Auto', time: '1 hr ago', status: 'acknowledged',
+    desc: 'Valve V-114 (BW Valve) on PSF-2 is not responding to open command. Backwash cycle cannot complete. Manual intervention required to check actuator and limit switches.',
+    equipment: ['V-114 BW Valve', 'V-111 Inlet Valve', 'P-112 BW Pump'],
+    params: { 'Valve Position': 'Closed (Stuck)', 'Actuator Current': '0.8 A', 'Command': 'Open', 'BW Duration': 'Timeout' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 13:42', done: true },
+      { state: 'Acknowledged', time: 'May 18, 13:55', done: true },
+      { state: 'In Progress', time: 'Now', current: true }
+    ]
+  },
+  {
+    id: 3, severity: 'warning', title: 'RO-1: Differential pressure rising', unit: 'RO',
+    trigger: 'Threshold', time: '25 min ago', status: 'active',
+    desc: 'Differential pressure across RO-1 membrane has risen to 2.8 bar, approaching the 3.0 bar alarm setpoint. This may indicate scaling or fouling. Consider scheduling a CIP.',
+    equipment: ['P-301 HP Pump', 'PIT-301 Feed Pressure', 'PIT-302 Permeate Pressure'],
+    params: { 'Diff. Pressure': '2.8 bar', 'Feed Pressure': '14.2 bar', 'Permeate Pressure': '11.4 bar', 'Recovery': '72%' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 14:17', done: true },
+      { state: 'Active', time: 'May 18, 14:17', current: true }
+    ]
+  },
+  {
+    id: 4, severity: 'warning', title: 'MBR-1: Relaxation period insufficient', unit: 'MBR',
+    trigger: 'Auto', time: '45 min ago', status: 'resolved',
+    desc: 'MBR-1 relaxation period was cut short to 3 minutes instead of the configured 8 minutes due to high inflow demand. TMP recovery was only partial.',
+    equipment: ['V-401 Feed Valve', 'B-401 Aeration Blower', 'P-401 Permeate Pump'],
+    params: { 'Relaxation Duration': '3 min', 'Configured': '8 min', 'TMP Before': '28 kPa', 'TMP After': '24 kPa' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 13:57', done: true },
+      { state: 'Acknowledged', time: 'May 18, 14:05', done: true },
+      { state: 'Resolved', time: 'May 18, 14:30', done: true }
+    ]
+  },
+  {
+    id: 5, severity: 'info', title: 'RO-2: Flush cycle completed', unit: 'RO',
+    trigger: 'Auto', time: '1 hr ago', status: 'resolved',
+    desc: 'Scheduled flush cycle on RO-2 completed successfully. All parameters within normal range post-flush.',
+    equipment: ['V-314 Flush Valve', 'P-311 Flush Pump'],
+    params: { 'Flush Duration': '12 min', 'Flow Rate': '19.4 m3/hr', 'Conductivity': '245 uS/cm', 'Status': 'Complete' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 13:30', done: true },
+      { state: 'Resolved', time: 'May 18, 13:42', done: true }
+    ]
+  },
+  {
+    id: 6, severity: 'info', title: 'UF-1: CEB scheduled in 2 hours', unit: 'UF',
+    trigger: 'Auto', time: '1.5 hr ago', status: 'active',
+    desc: 'Automated CEB (Chemically Enhanced Backwash) is scheduled for UF-1 based on elapsed filtration hours. NaOCl dosing tank level is adequate.',
+    equipment: ['V-204 CEB Valve', 'D-201 NaOCl Dosing', 'P-202 CEB Pump'],
+    params: { 'Filtration Hours': '46 hr', 'CEB Threshold': '48 hr', 'Chemical Level': '78%', 'Next CEB': '16:30' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 13:12', done: true },
+      { state: 'Active', time: 'May 18, 13:12', current: true }
+    ]
+  },
+  {
+    id: 7, severity: 'info', title: 'MBR-2: Scheduled maintenance due', unit: 'MBR',
+    trigger: 'Manual', time: '2 hr ago', status: 'active',
+    desc: 'Routine membrane inspection and aeration diffuser cleaning is due for MBR-2. Last maintenance was performed 28 days ago.',
+    equipment: ['B-411 Aeration Blower', 'MBR-2 Membrane Module', 'Diffuser Assembly'],
+    params: { 'Days Since Maint.': '28', 'Maintenance Interval': '30 days', 'TMP Trend': 'Rising', 'Aeration Efficiency': '89%' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 12:42', done: true },
+      { state: 'Active', time: 'May 18, 12:42', current: true }
+    ]
+  },
+  {
+    id: 8, severity: 'critical', title: 'PSF-1: High turbidity in effluent', unit: 'PSF',
+    trigger: 'Threshold', time: '2.5 hr ago', status: 'resolved',
+    desc: 'Effluent turbidity from PSF-1 exceeded 5 NTU threshold (reading: 7.2 NTU). Automatic backwash was triggered. Post-backwash turbidity returned to 1.8 NTU.',
+    equipment: ['TIT-101 Turbidity Sensor', 'V-103 Drain Valve', 'P-101 Feed Pump'],
+    params: { 'Turbidity': '7.2 NTU', 'Threshold': '5 NTU', 'Post-BW': '1.8 NTU', 'Flow': '118.5 m3/hr' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 12:12', done: true },
+      { state: 'Acknowledged', time: 'May 18, 12:15', done: true },
+      { state: 'Resolved', time: 'May 18, 12:28', done: true }
+    ]
+  },
+  {
+    id: 9, severity: 'info', title: 'RO-1: Permeate conductivity stable', unit: 'RO',
+    trigger: 'Auto', time: '3 hr ago', status: 'resolved',
+    desc: 'Daily conductivity check completed. RO-1 permeate conductivity is 18 uS/cm, well within the 50 uS/cm limit. Salt rejection rate is 99.2%.',
+    equipment: ['CIT-301 Conductivity Sensor', 'RO-1 Membrane Array'],
+    params: { 'Conductivity': '18 uS/cm', 'Limit': '50 uS/cm', 'Salt Rejection': '99.2%', 'Recovery': '74%' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 11:42', done: true },
+      { state: 'Resolved', time: 'May 18, 11:42', done: true }
+    ]
+  },
+  {
+    id: 10, severity: 'warning', title: 'UF-1: TMP approaching threshold', unit: 'UF',
+    trigger: 'Threshold', time: '3.5 hr ago', status: 'acknowledged',
+    desc: 'Trans-membrane pressure on UF-1 has reached 32 kPa, approaching the 35 kPa CEB trigger threshold. Monitor closely or initiate CEB early.',
+    equipment: ['PIT-201 Feed Pressure', 'PIT-202 Filtrate Pressure', 'UF-1 Membrane Module'],
+    params: { 'TMP': '32 kPa', 'Threshold': '35 kPa', 'Flux': '55 LMH', 'Temperature': '26.5 C' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 11:12', done: true },
+      { state: 'Acknowledged', time: 'May 18, 11:20', done: true },
+      { state: 'Monitoring', time: 'Now', current: true }
+    ]
+  },
+  {
+    id: 11, severity: 'info', title: 'MBR-1: Aeration blower speed adjusted', unit: 'MBR',
+    trigger: 'Auto', time: '4 hr ago', status: 'resolved',
+    desc: 'Aeration blower B-401 speed automatically adjusted from 50 Hz to 47 Hz based on DO feedback control. Current DO level is 2.8 mg/L (target: 2.5 mg/L).',
+    equipment: ['B-401 Aeration Blower', 'DOT-401 DO Sensor'],
+    params: { 'Blower Speed': '47 Hz', 'Previous': '50 Hz', 'DO Level': '2.8 mg/L', 'Target DO': '2.5 mg/L' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 10:42', done: true },
+      { state: 'Resolved', time: 'May 18, 10:42', done: true }
+    ]
+  },
+  {
+    id: 12, severity: 'warning', title: 'PSF-2: Media loss detected', unit: 'PSF',
+    trigger: 'Manual', time: '5 hr ago', status: 'active',
+    desc: 'Operator reported visible media carryover in PSF-2 backwash drain. Estimated 5% media loss over the past week. Underdrain inspection and media top-up recommended.',
+    equipment: ['PSF-2 Filter Vessel', 'V-114 BW Valve', 'Underdrain Assembly'],
+    params: { 'Media Level': '95%', 'BW Flow': '78.2 m3/hr', 'Pressure Drop': '0.6 bar', 'Last Top-up': '45 days ago' },
+    timeline: [
+      { state: 'Created', time: 'May 18, 09:42', done: true },
+      { state: 'Active', time: 'May 18, 09:42', current: true }
+    ]
+  }
+];
+
+// Render alerts
+function renderAlerts() {
+  const tbody = document.getElementById('alertsBody');
+  tbody.innerHTML = '';
+  alerts.forEach(a => {
+    const statusClass = a.status;
+    const statusLabel = a.status.charAt(0).toUpperCase() + a.status.slice(1);
+    const showAck = a.status === 'active';
+    const showResolve = a.status !== 'resolved';
+
+    // Main row
+    const tr = document.createElement('tr');
+    tr.className = 'alert-row';
+    tr.dataset.id = a.id;
+    tr.innerHTML = `
+      <td><svg class="alert-row-chevron" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg><span class="severity-dot ${a.severity}"></span></td>
+      <td>${a.title}</td>
+      <td>${a.unit}</td>
+      <td><span class="trigger-pill">${a.trigger}</span></td>
+      <td style="color:var(--text-secondary);white-space:nowrap">${a.time}</td>
+      <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+      <td>${showAck ? '<button class="action-btn ack" data-action="ack">Acknowledge</button>' : ''}${showResolve ? '<button class="action-btn resolve" data-action="resolve">Resolve</button>' : ''}</td>
+    `;
+    tbody.appendChild(tr);
+
+    // Detail row
+    const dtr = document.createElement('tr');
+    dtr.className = 'detail-row';
+    dtr.dataset.id = a.id;
+
+    const paramHtml = Object.entries(a.params).map(([k, v]) =>
+      `<div class="param-item"><span class="param-label">${k}:</span> <span class="param-value">${v}</span></div>`
+    ).join('');
+
+    const equipHtml = a.equipment.map(e => `<li>${e}</li>`).join('');
+
+    const timelineHtml = a.timeline.map(t => {
+      const dotClass = t.done ? 'done' : t.current ? 'current' : '';
+      return `<div class="timeline-item"><div class="timeline-dot ${dotClass}"></div><div class="timeline-text"><strong>${t.state}</strong> <span class="time">${t.time}</span></div></div>`;
+    }).join('');
+
+    dtr.innerHTML = `<td colspan="7"><div class="detail-content">
+      <div class="detail-section">
+        <div class="detail-section-title">Description</div>
+        <div class="detail-desc">${a.desc}</div>
+        <div class="detail-section-title" style="margin-top:14px">Affected Equipment</div>
+        <ul class="detail-equip-list">${equipHtml}</ul>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Parameter Readings</div>
+        <div class="param-grid">${paramHtml}</div>
+        <div class="detail-section-title" style="margin-top:14px">Operator Notes</div>
+        <textarea class="notes-area" placeholder="Add notes here..."></textarea>
+        <div class="detail-section-title" style="margin-top:14px">Timeline</div>
+        <div class="timeline">${timelineHtml}</div>
+      </div>
+    </div></td>`;
+    tbody.appendChild(dtr);
+  });
+
+  // Bind row click
+  tbody.querySelectorAll('.alert-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.action-btn')) return;
+      const id = row.dataset.id;
+      const detail = tbody.querySelector('.detail-row[data-id="' + id + '"]');
+      row.classList.toggle('expanded');
+      detail.classList.toggle('open');
+    });
+  });
+
+  // Bind action buttons
+  tbody.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const row = btn.closest('.alert-row');
+      const id = parseInt(row.dataset.id);
+      const alert = alerts.find(a => a.id === id);
+      const action = btn.dataset.action;
+      if (action === 'ack' && alert.status === 'active') {
+        alert.status = 'acknowledged';
+        alert.timeline.push({ state: 'Acknowledged', time: 'Just now', done: true });
+      } else if (action === 'resolve') {
+        alert.status = 'resolved';
+        alert.timeline.push({ state: 'Resolved', time: 'Just now', done: true });
+      }
+      renderAlerts();
+    });
+  });
+}
+
+renderAlerts();
+
+// Filter chip logic
+document.querySelectorAll('.filter-bar .filter-section').forEach(section => {
+  section.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const group = chip.dataset.group;
+      const siblings = section.querySelectorAll('.filter-chip');
+      if (chip.textContent === 'All') {
+        siblings.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      } else {
+        section.querySelector('.filter-chip:first-of-type').classList.remove('active');
+        chip.classList.toggle('active');
+        if (!section.querySelector('.filter-chip.active')) {
+          section.querySelector('.filter-chip:first-of-type').classList.add('active');
+        }
+      }
+    });
+  });
+});
+
+// Search
+document.getElementById('alertSearch').addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('.alert-row').forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const id = row.dataset.id;
+    const detail = document.querySelector('.detail-row[data-id="' + id + '"]');
+    const match = text.includes(q);
+    row.style.display = match ? '' : 'none';
+    if (detail && !match) { detail.classList.remove('open'); row.classList.remove('expanded'); detail.style.display = 'none'; }
+    else if (detail) { detail.style.display = ''; }
+  });
+});
+
+// Dropdown logic (same as index.html)
+function setupDropdown(wrapperId, triggerId) {
+  const wrap = document.getElementById(wrapperId);
+  const trigger = document.getElementById(triggerId);
+  if (!wrap || !trigger) return;
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => {
+      if (el !== wrap) el.classList.remove('open');
+    });
+    wrap.classList.toggle('open');
+  });
+}
+setupDropdown('dateDropdown', 'dateTrigger');
+setupDropdown('downloadDropdown', 'downloadTrigger');
+
+// Plant selector
+const plantWrap = document.getElementById('plantSelectorWrap');
+document.getElementById('plantSelectorBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.querySelectorAll('.dropdown-wrap.open').forEach(el => el.classList.remove('open'));
+  plantWrap.classList.toggle('open');
+});
+plantWrap.querySelectorAll('.plant-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    plantWrap.querySelectorAll('.plant-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('plantSelectorLabel').textContent = opt.dataset.plant;
+    plantWrap.classList.remove('open');
+  });
+});
+
+// Date dropdown selection
+document.querySelectorAll('#dateDropdown .dropdown-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('#dateDropdown .dropdown-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('dateLabel').textContent = opt.dataset.date;
+    document.getElementById('dateDropdown').classList.remove('open');
+  });
+});
+
+// Download dropdown
+document.querySelectorAll('#downloadDropdown .dropdown-option').forEach(opt => {
+  opt.addEventListener('click', () => { document.getElementById('downloadDropdown').classList.remove('open'); });
+});
+
+// Close dropdowns on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.dropdown-wrap.open, .plant-selector-wrap.open').forEach(el => el.classList.remove('open'));
+});
+document.querySelectorAll('.dropdown-panel, .plant-dropdown').forEach(panel => {
+  panel.addEventListener('click', e => e.stopPropagation());
+});
+
+// Sidebar nav
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', e => {
+    if (item.classList.contains('has-sub')) {
+      e.preventDefault();
+      item.classList.toggle('expanded');
+      const sub = document.getElementById(item.dataset.toggle);
+      sub.classList.toggle('open');
+    } else if (item.getAttribute('href') === '#') {
+      e.preventDefault();
+    }
+  });
+});
+
+// Pagination buttons
+document.querySelectorAll('.page-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.disabled) return;
+    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
