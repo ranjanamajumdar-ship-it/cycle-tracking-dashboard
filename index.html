@@ -508,7 +508,7 @@ body {
 .vtl-row.current .vtl-line-top { background: #AAE69B; }
 .vtl-row.current .vtl-line-bot { background: var(--border); }
 /* Right col: step content */
-.vtl-content { flex: 1; padding: 0 0 20px 14px; }
+.vtl-content { flex: 1; min-width: 0; padding: 0 0 20px 14px; }
 .vtl-row.past  .vtl-content { padding-top: 0; }
 .vtl-row.future .vtl-content { opacity: 0.55; }
 .vtl-step-name { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
@@ -522,7 +522,7 @@ body {
 .vtl-analytics { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
 .vtl-abox { background: var(--surface); border-radius: 6px; padding: 10px 12px; border: 0.5px solid var(--border-light); }
 .vtl-abox-label { font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
-.vtl-abox-val { font-size: 1.05rem; font-weight: 700; margin-top: 3px; font-family: var(--font-mono); color: var(--brand-900); }
+.vtl-abox-val { font-size: 0.9rem; font-weight: 700; margin-top: 3px; font-family: var(--font-mono); color: var(--brand-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .vtl-abox-sub { font-size: 0.68rem; color: var(--text-tertiary); margin-top: 1px; }
 /* Past step inline summary */
 .vtl-past-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
@@ -636,14 +636,14 @@ body {
 .mode-cell-wrap { display: flex; flex-direction: column; gap: 3px; }
 .mode-cell-sub { font-size: 0.72rem; color: var(--text-tertiary); }
 .remaining-pill { display: inline-flex; align-items: center; font-size: 0.75rem; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
-.remaining-pill.ok    { background: var(--green-bg);  color: #15803D; }
-.remaining-pill.warn  { background: var(--amber-bg);  color: #92400E; }
-.remaining-pill.alert { background: var(--red-bg);    color: #991B1B; }
-.remaining-pill.none  { background: var(--bg); color: var(--text-tertiary); border: 1px solid var(--border); }
+.remaining-pill.ok    { background: var(--surface-secondary); color: var(--text-secondary); }
+.remaining-pill.warn  { background: var(--surface-secondary); color: var(--text-secondary); }
+.remaining-pill.alert { background: var(--red-bg); color: var(--red); }
+.remaining-pill.none  { background: var(--surface-secondary); color: var(--text-tertiary); }
 /* Goal-gradient progress in unit table */
 .unit-progress-wrap { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
 .unit-progress-track { flex: 1; height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden; max-width: 60px; }
-.unit-progress-fill { height: 100%; border-radius: 2px; background: var(--green); }
+.unit-progress-fill { height: 100%; border-radius: 2px; background: var(--brand-300); }
 .unit-progress-label { font-size: 0.68rem; color: var(--text-tertiary); }
 
 /* Alert detail */
@@ -774,11 +774,11 @@ body {
         <!-- PSF Group — Law of Similarity -->
         <tr class="unit-group-hdr"><td colspan="5">Pressure Sand Filters (PSF)</td></tr>
         <tr class="unit-row" data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">PSF Service</span> <span class="mode-cell-step">(Service Filtration)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:79%"></div></div><span class="unit-progress-label">79% · step 2/5</span></div></td><td><div class="ts-wrap">Flow: 120 m³/hr <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1041</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">07:22:04</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">2h 14m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">142</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Scheduled cycle start</div></div></div></div></div></td><td><span class="remaining-pill none">Continuous</span></td></tr>
-        <tr class="unit-row has-warning" data-unit="psf2"><td><span class="status-dot orange"></span>PSF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">PSF Backwash</span> <span class="mode-cell-step">(Backwash)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:84%;background:var(--amber-solid)"></div></div><span class="unit-progress-label">84% · step 2/4</span></div></td><td><div class="ts-wrap">BW Progress: 84% <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1042</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:41:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3m 22s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">139</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Turbidity threshold exceeded</div></div></div></div></div></td><td><span class="remaining-pill warn">5 min left</span></td></tr>
+        <tr class="unit-row has-warning" data-unit="psf2"><td><span class="status-dot orange"></span>PSF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">PSF Backwash</span> <span class="mode-cell-step">(Backwash)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:84%"></div></div><span class="unit-progress-label">84% · step 2/4</span></div></td><td><div class="ts-wrap">BW Progress: 84% <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1042</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:41:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3m 22s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">139</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Turbidity threshold exceeded</div></div></div></div></div></td><td><span class="remaining-pill warn">5 min left</span></td></tr>
         <!-- UF Group -->
         <tr class="unit-group-hdr"><td colspan="5">Ultrafiltration (UF)</td></tr>
-        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF Filtration</span> <span class="mode-cell-step">(Bottom Feed)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/6</span></div></td><td><div class="ts-wrap">TMP: 24 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2030</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">08:12:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">1h 32m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">318</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Post-backwash return to filtration</div></div></div></div></div></td><td><span class="remaining-pill ok">28 min left</span></td></tr>
-        <tr class="unit-row has-critical" data-unit="uf2"><td><span class="status-dot teal"></span>UF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF CEB</span> <span class="mode-cell-step">(CEB Flush)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:35%;background:var(--teal)"></div></div><span class="unit-progress-label">35% · step 3/5</span></div></td><td><div class="ts-wrap">Chem.: 118 ppm <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2035</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:33:22</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">11m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">305</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">TMP threshold exceeded — 38 kPa</div></div></div></div></div></td><td><span class="remaining-pill warn">19 min left</span></td></tr>
+        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF Filtration</span> <span class="mode-cell-step">(Bottom Feed)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/6</span></div></td><td><div class="ts-wrap">TMP: 24 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2030</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">08:12:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">1h 32m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">318</div></div></div></div></div></td><td><span class="remaining-pill ok">28 min left</span></td></tr>
+        <tr class="unit-row has-critical" data-unit="uf2"><td><span class="status-dot teal"></span>UF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF CEB</span> <span class="mode-cell-step">(CEB Flush)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:35%"></div></div><span class="unit-progress-label">35% · step 3/5</span></div></td><td><div class="ts-wrap">Chem.: 118 ppm <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2035</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:33:22</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">11m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">305</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">TMP threshold exceeded — 38 kPa</div></div></div></div></div></td><td><span class="remaining-pill warn">19 min left</span></td></tr>
         <!-- RO Group -->
         <tr class="unit-group-hdr"><td colspan="5">Reverse Osmosis (RO)</td></tr>
         <tr class="unit-row" data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">RO Service</span> <span class="mode-cell-step">(Permeate)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/5</span></div></td><td><div class="ts-wrap">Feed P: 14.2 bar <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-3018</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">06:30:08</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3h 5m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">88</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">HP ramp-up completed</div></div></div></div></div></td><td><span class="remaining-pill none">Continuous</span></td></tr>
@@ -786,7 +786,7 @@ body {
         <!-- MBR Group -->
         <tr class="unit-group-hdr"><td colspan="5">Membrane Bioreactor (MBR)</td></tr>
         <tr class="unit-row" data-unit="mbr1"><td><span class="status-dot green"></span>MBR-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">MBR Filtration</span> <span class="mode-cell-step">(Submerged)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:97%"></div></div><span class="unit-progress-label">97% · step 2/5</span></div></td><td><div class="ts-wrap">TMP: 22 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4012</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">06:56:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">7m 48s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">224</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Relaxation complete — filtration resumed</div></div></div></div></div></td><td><span class="remaining-pill warn">12 min left</span></td></tr>
-        <tr class="unit-row has-warning" data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">MBR Relaxation</span> <span class="mode-cell-step">(Aeration)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:56%;background:var(--amber-solid)"></div></div><span class="unit-progress-label">56% · step 3/5</span></div></td><td><div class="ts-wrap">TMP Recovery: Low <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4019</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:40:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">4m 30s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">219</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Filtration step completed — entering relaxation</div></div></div></div></div></td><td><span class="remaining-pill warn">4 min left</span></td></tr>
+        <tr class="unit-row has-warning" data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">MBR Relaxation</span> <span class="mode-cell-step">(Aeration)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:56%"></div></div><span class="unit-progress-label">56% · step 3/5</span></div></td><td><div class="ts-wrap">TMP Recovery: Low <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4019</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:40:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">4m 30s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">219</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Filtration step completed — entering relaxation</div></div></div></div></div></td><td><span class="remaining-pill warn">4 min left</span></td></tr>
       </tbody>
     </table>
     <div class="legend">
@@ -846,27 +846,6 @@ body {
     <div class="grid-3" id="sparkGrid" style="margin-bottom:0"></div>
   </div>
 
-  <!-- 4. Bottom: Mode Distribution + Cleanings/Day -->
-  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px">
-    <!-- Mode Distribution -->
-    <div class="card" id="modeDistCard" style="cursor:pointer" title="Click for full breakdown">
-      <div class="card-header">
-        <div class="card-title">Mode Distribution</div>
-        <div class="card-link" id="viewModeReportBtn">Full report →</div>
-      </div>
-      <p style="font-size:0.78rem;color:var(--text-secondary);margin:0 0 14px;line-height:1.5">How units split their time across operating modes. More cleaning time means membranes are under stress — watch for Service % dropping below 55%.</p>
-      <div id="modeChart"></div>
-    </div>
-
-    <!-- Cleanings / Day Bar Chart -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Cleanings / Day</div>
-        <div class="card-link"><span class="badge">Last 7 Days</span></div>
-      </div>
-      <div class="bar-chart" id="barChart"></div>
-    </div>
-  </div>
 </main>
 
 <!-- Modal -->
@@ -1288,7 +1267,6 @@ function showUnitModal(key) {
           <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Trigger</span><span style="font-size:0.78rem;font-weight:600;${trigCls}">${u.ts.trigger}</span></div>
           <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Cycle</span><span style="font-size:0.78rem;font-weight:600;font-family:var(--font-mono)">#${u.ts.cycle}</span></div>
           <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Event</span><span style="font-size:0.78rem;font-weight:500;color:var(--brand-800)">${u.ts.eventId}</span></div>
-          <div style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-style:italic">${u.ts.reason}</div>
         </div>`;
       }
       h += `<div class="section-label" style="margin-bottom:8px">
@@ -1374,13 +1352,7 @@ function showUnitModal(key) {
         return `${s} sec`;
       }
 
-      let h = `<div class="section-label" style="margin-bottom:14px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        ${u.cycleType}
-        <span class="right">${u.steps.length} steps · Step ${u.aStep+1} active</span>
-      </div>`;
-
-      h += `<div class="vtl">`;
+      let h = `<div class="vtl">`;
       u.steps.forEach((s, i) => {
         const isPast    = i < u.aStep;
         const isCurrent = i === u.aStep;
@@ -1413,7 +1385,6 @@ function showUnitModal(key) {
               <div class="vtl-abox"><div class="vtl-abox-label">Progress</div><div class="vtl-abox-val">${s.p}%</div><div class="vtl-abox-sub">${100-s.p}% left</div></div>
               <div class="vtl-abox"><div class="vtl-abox-label">Hist. runs</div><div class="vtl-abox-val">${u.sd.r}</div><div class="vtl-abox-sub">${u.sd.w} on time</div></div>
             </div>
-            ${u.sd.al > 0 ? `<div style="font-size:0.75rem;color:var(--orange);display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>${u.sd.al} alert${u.sd.al!==1?'s':''} in this step today</div>` : ''}
           </div>`;
         }
 
