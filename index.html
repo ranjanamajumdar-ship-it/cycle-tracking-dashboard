@@ -125,7 +125,7 @@ body {
 
 .btn {
   display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
-  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
   background: var(--surface); font-size: 0.82rem; font-weight: 500;
   color: var(--text-secondary); font-family: var(--font-sans);
   cursor: pointer; transition: all 0.13s; white-space: nowrap;
@@ -149,7 +149,7 @@ body {
 .filter-bar {
   display: flex; align-items: center;
   background: var(--surface); border: 0.5px solid var(--border);
-  border-radius: var(--radius-pill); padding: 8px 16px;
+  border-radius: var(--radius); padding: 8px 16px;
   margin-bottom: 20px; gap: 0; overflow-x: auto;
   box-shadow: var(--elev-1);
 }
@@ -213,7 +213,7 @@ body {
 /* ── Table ── */
 .data-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .data-table thead tr { background: var(--surface-secondary); }
-.data-table th { text-align: left; font-size: 0.66rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.07em; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+.data-table th { text-align: left; font-size: 0.66rem; font-weight: 700; color: var(--brand-800); text-transform: uppercase; letter-spacing: 0.07em; padding: 10px 16px; border-bottom: 1px solid var(--border); }
 .data-table td { padding: 13px 16px; font-size: 0.82rem; border-bottom: 0.5px solid var(--border-light); vertical-align: middle; }
 .data-table tr:last-child td { border-bottom: none; }
 
@@ -277,7 +277,7 @@ body {
 .legend-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
 
 /* ── Legend ── */
-.legend { display: flex; gap: 20px; padding-top: 14px; border-top: 0.5px solid var(--border-light); margin-top: 4px; }
+.legend { display: flex; gap: 20px; padding: 12px 16px; background: var(--surface-secondary); border: 0.5px solid var(--border-light); border-radius: var(--radius-sm); margin-top: 14px; flex-wrap: wrap; }
 .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-secondary); }
 
 /* ── Alerts ── */
@@ -384,7 +384,7 @@ body {
 .modal-icon.blue,.modal-icon.green,.modal-icon.amber,.modal-icon.red,.modal-icon.teal,.modal-icon.orange { background: var(--brand-50); border-color: var(--brand-100); }
 .modal-icon svg { stroke: var(--brand-700); }
 
-.modal-header h2 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; color: var(--brand-900); }
+.modal-header h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; color: var(--brand-900); }
 .modal-subtitle { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
 
 .modal-close {
@@ -475,7 +475,7 @@ body {
 
 /* ── Vertical Timeline (Cycle Steps) ── */
 .vtl { display: flex; flex-direction: column; }
-.vtl-row { display: flex; gap: 0; align-items: flex-start; position: relative; }
+.vtl-row { display: flex; gap: 0; align-items: stretch; position: relative; }
 /* Left col hidden — timings shown inside each step card */
 .vtl-left { display: none; }
 .vtl-time { display: none; }
@@ -493,7 +493,7 @@ body {
   width: 28px; flex-shrink: 0; display: flex; flex-direction: column;
   align-items: center; position: relative;
 }
-.vtl-line-top { width: 2px; background: var(--brand-200); flex: 0 0 0px; }
+.vtl-line-top { width: 2px; background: var(--brand-200); flex: 0 0 16px; }
 .vtl-line-bot { width: 2px; background: var(--brand-200); flex: 1; min-height: 12px; }
 .vtl-row.future  .vtl-line-top,
 .vtl-row.future  .vtl-line-bot { background: var(--border-light); }
@@ -556,10 +556,10 @@ body {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 16px; border-bottom: 0.5px solid var(--border-light);
 }
-/* Health indicator as left border */
-.param-card.healthy { border-left: 3px solid var(--border); }
-.param-card.warning { border-left: 3px solid var(--amber-solid); }
-.param-card.critical { border-left: 3px solid var(--red); }
+/* Health indicator — neutral border only, no colour accent */
+.param-card.healthy { }
+.param-card.warning { }
+.param-card.critical { }
 .param-name { font-size: 0.88rem; font-weight: 700; color: var(--brand-900); flex: 1; }
 .param-context { font-size: 0.72rem; color: var(--text-tertiary); }
 .param-latest { font-size: 0.7rem; color: var(--text-tertiary); font-family: var(--font-mono); }
@@ -765,18 +765,18 @@ body {
         <!-- PSF Group — Law of Similarity -->
         <tr class="unit-group-hdr"><td colspan="5">Pressure Sand Filters (PSF)</td></tr>
         <tr class="unit-row" data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">PSF Service</span> <span class="mode-cell-step">(Service Filtration)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:79%"></div></div><span class="unit-progress-label">79% · step 2/5</span></div></td><td><div class="ts-wrap">Flow: 120 m³/hr <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1041</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">07:22:04</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">2h 14m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">142</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Scheduled cycle start</div></div></div></div></div></td><td><span class="remaining-pill none">Continuous</span></td></tr>
-        <tr class="unit-row has-warning" data-unit="psf2"><td><span class="status-dot orange"></span>PSF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">PSF Backwash</span> <span class="mode-cell-step">(Backwash)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:84%"></div></div><span class="unit-progress-label">84% · step 2/4</span></div></td><td><div class="ts-wrap">BW Progress: 84% <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1042</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:41:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3m 22s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">139</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Turbidity threshold exceeded</div></div></div></div></div></td><td><span class="remaining-pill warn">5 min left</span></td></tr>
+        <tr class="unit-row has-warning" data-unit="psf2"><td><span class="status-dot blue"></span>PSF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">PSF Backwash</span> <span class="mode-cell-step">(Backwash)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:84%"></div></div><span class="unit-progress-label">84% · step 2/4</span></div></td><td><div class="ts-wrap">BW Progress: 84% <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-1042</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:41:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3m 22s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">139</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Turbidity threshold exceeded</div></div></div></div></div></td><td><span class="remaining-pill warn">5 min left</span></td></tr>
         <!-- UF Group -->
         <tr class="unit-group-hdr"><td colspan="5">Ultrafiltration (UF)</td></tr>
-        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF Filtration</span> <span class="mode-cell-step">(Bottom Feed)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/6</span></div></td><td><div class="ts-wrap">TMP: 24 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2030</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">08:12:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">1h 32m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">318</div></div></div></div></div></td><td><span class="remaining-pill ok">28 min left</span></td></tr>
-        <tr class="unit-row has-critical" data-unit="uf2"><td><span class="status-dot teal"></span>UF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF CEB</span> <span class="mode-cell-step">(CEB Flush)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:35%"></div></div><span class="unit-progress-label">35% · step 3/5</span></div></td><td><div class="ts-wrap">Chem.: 118 ppm <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2035</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:33:22</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">11m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">305</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">TMP threshold exceeded — 38 kPa</div></div></div></div></div></td><td><span class="remaining-pill warn">19 min left</span></td></tr>
+        <tr class="unit-row" data-unit="uf1"><td><span class="status-dot blue"></span>UF-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF Filtration</span> <span class="mode-cell-step">(Bottom Feed)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/6</span></div></td><td><div class="ts-wrap">TMP: 24 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2030</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">08:12:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">1h 32m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">318</div></div></div></div></div></td><td><span class="remaining-pill ok">28 min left</span></td></tr>
+        <tr class="unit-row has-critical" data-unit="uf2"><td><span class="status-dot blue"></span>UF-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">UF CEB</span> <span class="mode-cell-step">(CEB Flush)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:35%"></div></div><span class="unit-progress-label">35% · step 3/5</span></div></td><td><div class="ts-wrap">Chem.: 118 ppm <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-2035</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:33:22</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">11m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">305</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">TMP threshold exceeded — 38 kPa</div></div></div></div></div></td><td><span class="remaining-pill warn">19 min left</span></td></tr>
         <!-- RO Group -->
         <tr class="unit-group-hdr"><td colspan="5">Reverse Osmosis (RO)</td></tr>
         <tr class="unit-row" data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">RO Service</span> <span class="mode-cell-step">(Permeate)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:77%"></div></div><span class="unit-progress-label">77% · step 3/5</span></div></td><td><div class="ts-wrap">Feed P: 14.2 bar <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-3018</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">06:30:08</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">3h 5m</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">88</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">HP ramp-up completed</div></div></div></div></div></td><td><span class="remaining-pill none">Continuous</span></td></tr>
         <tr class="unit-row" data-unit="ro2"><td><span class="status-dot blue"></span>RO-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">RO Flush</span> <span class="mode-cell-step">(Low Pressure)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:43%"></div></div><span class="unit-progress-label">43% · step 4/5</span></div></td><td><div class="ts-wrap">Flush: 19.4 m³/hr <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-3022</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:39:41</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">5m 12s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">86</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">End of service cycle — scheduled flush</div></div></div></div></div></td><td><span class="remaining-pill ok">7 min left</span></td></tr>
         <!-- MBR Group -->
         <tr class="unit-group-hdr"><td colspan="5">Membrane Bioreactor (MBR)</td></tr>
-        <tr class="unit-row" data-unit="mbr1"><td><span class="status-dot green"></span>MBR-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">MBR Filtration</span> <span class="mode-cell-step">(Submerged)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:97%"></div></div><span class="unit-progress-label">97% · step 2/5</span></div></td><td><div class="ts-wrap">TMP: 22 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4012</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">06:56:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">7m 48s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">224</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Relaxation complete — filtration resumed</div></div></div></div></div></td><td><span class="remaining-pill warn">12 min left</span></td></tr>
+        <tr class="unit-row" data-unit="mbr1"><td><span class="status-dot blue"></span>MBR-1</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">MBR Filtration</span> <span class="mode-cell-step">(Submerged)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:97%"></div></div><span class="unit-progress-label">97% · step 2/5</span></div></td><td><div class="ts-wrap">TMP: 22 kPa <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4012</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">06:56:10</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">7m 48s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">224</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Relaxation complete — filtration resumed</div></div></div></div></div></td><td><span class="remaining-pill warn">12 min left</span></td></tr>
         <tr class="unit-row has-warning" data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td><div class="mode-cell-wrap"><div><span class="mode-cell-name">MBR Relaxation</span> <span class="mode-cell-step">(Aeration)</span></div></div></td><td><div class="unit-progress-wrap"><div class="unit-progress-track"><div class="unit-progress-fill" style="width:56%"></div></div><span class="unit-progress-label">56% · step 3/5</span></div></td><td><div class="ts-wrap">TMP Recovery: Low <svg class="ts-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div class="ts-tooltip"><div class="ts-tt-title">Mode Change · Evt EVT-4019</div><div class="ts-tt-grid"><div class="ts-tt-item"><div class="ts-tt-key">Start</div><div class="ts-tt-val mono">09:40:55</div></div><div class="ts-tt-item"><div class="ts-tt-key">Duration</div><div class="ts-tt-val mono">4m 30s</div></div><div class="ts-tt-sep"></div><div class="ts-tt-item"><div class="ts-tt-key">Trigger</div><div class="ts-tt-val ts-tt-auto">⚡ Auto</div></div><div class="ts-tt-item"><div class="ts-tt-key">Cycle #</div><div class="ts-tt-val mono">219</div></div><div class="ts-tt-item" style="grid-column:1/-1"><div class="ts-tt-key">Reason</div><div class="ts-tt-val" style="font-size:0.72rem">Filtration step completed — entering relaxation</div></div></div></div></div></td><td><span class="remaining-pill warn">4 min left</span></td></tr>
       </tbody>
     </table>
@@ -788,32 +788,11 @@ body {
     </div>
   </div>
 
-  <!-- 2. Performance Summary Table (on dashboard) -->
-  <div class="card full-width-card">
-    <div class="card-header">
-      <div class="card-title">Performance Summary <span class="badge">This Week</span></div>
-    </div>
-    <table class="perf-table" id="perfTable">
-      <thead><tr><th>Unit</th><th>Total Cycles</th><th>Avg Duration</th><th>Uptime %</th><th>Cleaning %</th><th>Efficiency</th></tr></thead>
-      <tbody>
-        <tr data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td>42</td><td>02:12</td><td>94.2%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:94%"></span></span></td><td>4.8%</td><td>96.1%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:96%"></span></span></td></tr>
-        <tr data-unit="psf2"><td><span class="status-dot blue"></span>PSF-2</td><td>38</td><td>02:18</td><td>91.5%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:91%"></span></span></td><td>6.2%</td><td>93.8%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:93%"></span></span></td></tr>
-        <tr data-unit="uf1"><td><span class="status-dot green"></span>UF-1</td><td>56</td><td>01:48</td><td>92.8%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:92%"></span></span></td><td>5.4%</td><td>95.2%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:95%"></span></span></td></tr>
-        <tr data-unit="uf2"><td><span class="status-dot blue"></span>UF-2</td><td>61</td><td>01:42</td><td>87.3%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:87%"></span></span></td><td>9.8%</td><td>88.5%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:88%"></span></span></td></tr>
-        <tr data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td>12</td><td>08:30</td><td>96.1%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:96%"></span></span></td><td>2.1%</td><td>97.4%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:97%"></span></span></td></tr>
-        <tr data-unit="ro2"><td><span class="status-dot blue"></span>RO-2</td><td>14</td><td>07:55</td><td>93.7%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:93%"></span></span></td><td>3.5%</td><td>95.0%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:95%"></span></span></td></tr>
-        <tr data-unit="mbr1"><td><span class="status-dot green"></span>MBR-1</td><td>48</td><td>02:05</td><td>91.0%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:91%"></span></span></td><td>7.2%</td><td>92.8%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:92%"></span></span></td></tr>
-        <tr data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td>45</td><td>02:10</td><td>84.5%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:84%"></span></span></td><td>11.2%</td><td>85.3%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:85%"></span></span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 3. Analytics Row: Sparklines + Bar Chart -->
+  <!-- 2. Analytics Row: Sparklines -->
   <div class="card full-width-card">
     <div class="card-header">
       <div class="card-title">Analytics</div>
     </div>
-    <!-- Filters -->
     <div class="analytics-filters" id="analyticsFilters">
       <span class="af-label">Metric</span>
       <span class="af-chip active" data-metric="tmp">TMP</span>
@@ -833,8 +812,27 @@ body {
       <span class="af-chip" data-unitf="ro">RO</span>
       <span class="af-chip" data-unitf="mbr">MBR</span>
     </div>
-    <!-- Sparkline grid -->
     <div class="grid-3" id="sparkGrid" style="margin-bottom:0"></div>
+  </div>
+
+  <!-- 3. Performance Summary Table -->
+  <div class="card full-width-card">
+    <div class="card-header">
+      <div class="card-title">Performance Summary <span class="badge">This Week</span></div>
+    </div>
+    <table class="perf-table" id="perfTable">
+      <thead><tr><th>Unit</th><th>Total Cycles</th><th>Avg Duration</th><th>Uptime %</th><th>Cleaning %</th><th>Efficiency</th></tr></thead>
+      <tbody>
+        <tr data-unit="psf1"><td><span class="status-dot green"></span>PSF-1</td><td>42</td><td>02:12</td><td>94.2%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:94%"></span></span></td><td>4.8%</td><td>96.1%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:96%"></span></span></td></tr>
+        <tr data-unit="psf2"><td><span class="status-dot blue"></span>PSF-2</td><td>38</td><td>02:18</td><td>91.5%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:91%"></span></span></td><td>6.2%</td><td>93.8%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:93%"></span></span></td></tr>
+        <tr data-unit="uf1"><td><span class="status-dot blue"></span>UF-1</td><td>56</td><td>01:48</td><td>92.8%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:92%"></span></span></td><td>5.4%</td><td>95.2%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:95%"></span></span></td></tr>
+        <tr data-unit="uf2"><td><span class="status-dot blue"></span>UF-2</td><td>61</td><td>01:42</td><td>87.3%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:87%"></span></span></td><td>9.8%</td><td>88.5%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:88%"></span></span></td></tr>
+        <tr data-unit="ro1"><td><span class="status-dot green"></span>RO-1</td><td>12</td><td>08:30</td><td>96.1%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:96%"></span></span></td><td>2.1%</td><td>97.4%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:97%"></span></span></td></tr>
+        <tr data-unit="ro2"><td><span class="status-dot blue"></span>RO-2</td><td>14</td><td>07:55</td><td>93.7%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:93%"></span></span></td><td>3.5%</td><td>95.0%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:95%"></span></span></td></tr>
+        <tr data-unit="mbr1"><td><span class="status-dot blue"></span>MBR-1</td><td>48</td><td>02:05</td><td>91.0%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:91%"></span></span></td><td>7.2%</td><td>92.8%<span class="perf-bar-wrap"><span class="perf-bar high" style="width:92%"></span></span></td></tr>
+        <tr data-unit="mbr2"><td><span class="status-dot amber"></span>MBR-2</td><td>45</td><td>02:10</td><td>84.5%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:84%"></span></span></td><td>11.2%</td><td>85.3%<span class="perf-bar-wrap"><span class="perf-bar mid" style="width:85%"></span></span></td></tr>
+      </tbody>
+    </table>
   </div>
 
 </main>
@@ -898,13 +896,53 @@ const unitData = {
 };
 
 const alertData = [
-  {sev:'critical',title:'UF-2: Backwash frequency increased',unit:'UF-2',time:'10 min ago',desc:'BW frequency up from 2 to 5 cycles/hr. Possible membrane fouling.',params:{'BW Freq':'5/hr','TMP':'38 kPa','Turbidity':'12.4 NTU'}},
-  {sev:'warning',title:'RO-1: Differential pressure rising',unit:'RO-1',time:'25 min ago',desc:'Diff pressure approaching 3.0 bar alarm. CIP may be needed.',params:{'Diff P':'2.8 bar','Feed P':'14.2 bar','Recovery':'72%'}},
-  {sev:'warning',title:'MBR-1: Relaxation period insufficient',unit:'MBR-1',time:'45 min ago',desc:'TMP not recovering to baseline. <15% recovery in last 3 cycles.',params:{'TMP Before':'28 kPa','TMP After':'24 kPa','Expected':'17 kPa'}},
-  {sev:'critical',title:'PSF-2: Backwash valve stuck',unit:'PSF-2',time:'1 hr ago',desc:'V-114 not responding. 3 close attempts failed.',params:{'Position':'Stuck','Current':'0.8 A','Attempts':'3'}},
-  {sev:'info',title:'RO-2: Flush cycle completed',unit:'RO-2',time:'1 hr ago',desc:'Flush completed in 8m 12s. All normal.',params:{'Duration':'8m 12s','Water':'2.6 m³'}},
-  {sev:'info',title:'UF-1: CEB in 2 hours',unit:'UF-1',time:'1.5 hr ago',desc:'Automated CEB scheduled. Chemical tank adequate.',params:{'Filtration':'46 hr','Threshold':'48 hr'}},
-  {sev:'info',title:'MBR-2: Maintenance due',unit:'MBR-2',time:'2 hr ago',desc:'Membrane inspection due in 3 days.',params:{'Days Since':'27','Interval':'30 days'}},
+  // ── Before vs After (tolerance exceeded)
+  {type:'before-after', sev:'emergency',
+   title:'TMP Tolerance Exceeded', unit:'UF-2', time:'11 min ago', param:'Trans-Membrane Pressure',
+   desc:'TMP increased by +18 kPa from start to end of the filtration cycle, crossing the configured tolerance band of ±10 kPa. Membrane fouling likely.',
+   tracking:{before:'20 kPa', after:'38 kPa', change:'+18 kPa', tolerance:'±10 kPa'}},
+
+  {type:'before-after', sev:'critical',
+   title:'Differential Pressure Rising', unit:'RO-1', time:'45 min ago', param:'Differential Pressure',
+   desc:'Differential pressure rose +0.3 bar across the last cycle, exceeding the configured tolerance of ±0.25 bar. CIP may be required if trend continues.',
+   tracking:{before:'2.5 bar', after:'2.8 bar', change:'+0.3 bar', tolerance:'±0.25 bar'}},
+
+  {type:'before-after', sev:'warning',
+   title:'Inlet Pressure Drift', unit:'PSF-1', time:'2 hr ago', param:'Inlet Pressure',
+   desc:'Inlet pressure shifted +0.21 bar within a single service cycle, approaching the ±0.3 bar tolerance limit.',
+   tracking:{before:'1.46 bar', after:'1.67 bar', change:'+0.21 bar', tolerance:'±0.3 bar'}},
+
+  // ── Threshold Band (out of range)
+  {type:'threshold', sev:'emergency',
+   title:'TMP Out of Band', unit:'UF-2', time:'11 min ago', param:'Trans-Membrane Pressure',
+   desc:'TMP reading of 38 kPa has exceeded the upper threshold of 35 kPa for UF Filtration. Unit has been flagged for immediate review.',
+   tracking:{current:'38 kPa', lower:'15 kPa', upper:'35 kPa', status:'Above upper limit'}},
+
+  {type:'threshold', sev:'critical',
+   title:'Backwash Frequency Out of Band', unit:'UF-2', time:'25 min ago', param:'Backwash Frequency',
+   desc:'Backwash frequency of 5.0/hr has exceeded the normal operating band of 1–3 cycles/hr. Elevated fouling rate suspected.',
+   tracking:{current:'5.0 /hr', lower:'1.0 /hr', upper:'3.0 /hr', status:'Above upper limit'}},
+
+  {type:'threshold', sev:'warning',
+   title:'Chemical Concentration Out of Band', unit:'UF-2', time:'1 hr ago', param:'NaOCl Concentration',
+   desc:'NaOCl dosing concentration of 118 ppm is approaching the upper safe operating band of 120 ppm.',
+   tracking:{current:'118 ppm', lower:'80 ppm', upper:'120 ppm', status:'Near upper limit'}},
+
+  // ── Efficiency Target (below %)
+  {type:'efficiency', sev:'critical',
+   title:'Uptime Below Target', unit:'MBR-2', time:'45 min ago', param:'Running-Hour Uptime',
+   desc:'Unit uptime has dropped to 84.5%, falling below the operational efficiency target of 90%. Downtime events have increased over the last 7 days.',
+   tracking:{current:'84.5%', target:'90%', gap:'−5.5%', period:'Last 7 days'}},
+
+  {type:'efficiency', sev:'warning',
+   title:'TMP Recovery Below Target', unit:'MBR-2', time:'1.5 hr ago', param:'Air Scour TMP Recovery',
+   desc:'Post-relaxation TMP recovery efficiency of 57% is below the configured target of 80%. Aeration may need adjustment.',
+   tracking:{current:'57%', target:'80%', gap:'−23%', period:'Last 3 cycles'}},
+
+  {type:'efficiency', sev:'warning',
+   title:'Permeate Recovery Below Target', unit:'RO-2', time:'2 hr ago', param:'Permeate Recovery Rate',
+   desc:'Recovery rate of 72% has fallen below the efficiency target of 75%. Check for increased reject flow or membrane scaling.',
+   tracking:{current:'72%', target:'75%', gap:'−3%', period:'Last 7 days'}},
 ];
 
 const sparkData = {
@@ -1079,9 +1117,9 @@ function mkParamChart(dataStr, isWarn, thr, before, after, u) {
     <circle cx="${bx}" cy="${bY}" r="3" fill="white" stroke="#8A9BB0" stroke-width="1.5"/>
     <circle cx="${ax}" cy="${aY}" r="4" fill="${color}" stroke="white" stroke-width="1.5"/>`;
 
-  // X axis labels (before / now)
-  const xLabels = `<text x="${bx}" y="${H-3}" text-anchor="middle" font-size="8.5" fill="#8A9BB0">start</text>
-    <text x="${ax}" y="${H-3}" text-anchor="middle" font-size="8.5" fill="${color}" font-weight="600">now</text>`;
+  // X axis labels (before / after)
+  const xLabels = `<text x="${bx}" y="${H-3}" text-anchor="middle" font-size="9.5" fill="#52637A" font-weight="600">before</text>
+    <text x="${ax}" y="${H-3}" text-anchor="middle" font-size="9.5" fill="${color}" font-weight="700">after</text>`;
 
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:90px;display:block">
     <defs><linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1">
@@ -1226,52 +1264,31 @@ function setModalIcon(color, svgInner) {
 // ── UNIT MODAL ──
 function showUnitModal(key) {
   const u = unitData[key]; if (!u) return;
-  modalTitle.textContent = u.name + ' — ' + u.cycleType;
-  modalSubtitle.textContent = '';
-  // inject Running pill into header right after title
-  setTimeout(() => {
-    const hLeft = document.querySelector('.modal-header-left');
-    if (hLeft && !hLeft.querySelector('.running-pill')) {
-      const pill = document.createElement('div');
-      pill.className = 'running-pill';
-      pill.style.cssText = 'padding:4px 12px;font-size:0.75rem;margin-left:8px';
-      pill.innerHTML = '<span class="pulse"></span>Running';
-      hLeft.appendChild(pill);
-    }
-  }, 0);
+  modalTitle.textContent = u.name;
+  modalSubtitle.textContent = u.cycleType + '  ·  Running';
   const iconColors = {green:'green',blue:'blue',amber:'amber',orange:'amber',teal:'teal',red:'red'};
   setModalIcon(iconColors[u.modeColor]||'blue', '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>');
+  modalIcon.style.display = 'none';
 
   modalTabs.innerHTML = ['Parameters','Equipment','Cycle Steps'].map((t,i)=>`<div class="modal-tab ${i===0?'active':''}" data-tab="${t}">${t}</div>`).join('');
 
   function renderTab(tab) {
     if (tab === 'Parameters') {
       let h = '';
-      // KPI strip — cleanings / alerts only (no colour on numbers)
-      h += `<div style="display:flex;gap:24px;padding:14px 18px;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:10px;margin-bottom:16px">
-        <div><div style="font-size:1.15rem;font-weight:700;color:var(--brand-900)">${u.cleanings}</div><div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-top:2px">Cleanings</div></div>
-        <div style="width:0.5px;background:var(--border-light)"></div>
-        <div><div style="font-size:1.15rem;font-weight:700;color:var(--brand-900)">${u.onTarget}%</div><div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-top:2px">On Target</div></div>
-        <div style="width:0.5px;background:var(--border-light)"></div>
-        <div><div style="font-size:1.15rem;font-weight:700;color:${u.alertsToReview>0?'var(--red)':'var(--brand-900)'}">${u.alertsToReview}</div><div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-top:2px">Alerts</div></div>
-      </div>`;
-      // Timestamp strip — clear visual hierarchy
+      // Mode change strip — table-header style, clean and airy
       if (u.ts) {
-        const metaItem = (label, val, mono=false) => `<div style="display:flex;flex-direction:column;gap:3px;padding:12px 16px;border-right:0.5px solid var(--border-light)">
-          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--brand-800)">${label}</div>
-          <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary)${mono?';font-family:var(--font-mono)':''}">${val}</div>
+        const mcol = (label, val, mono=false) => `<div style="flex:1;padding:14px 20px;border-right:0.5px solid var(--border-light)">
+          <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--brand-800);margin-bottom:5px">${label}</div>
+          <div style="font-size:0.88rem;font-weight:600;color:var(--brand-900)${mono?';font-family:var(--font-mono)':''}">${val}</div>
         </div>`;
         h += `<div style="display:flex;align-items:stretch;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:10px;margin-bottom:20px;overflow:hidden">
-          <div style="padding:12px 16px;display:flex;align-items:center;border-right:0.5px solid var(--border-light);background:var(--brand-800)">
-            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.85);white-space:nowrap">Mode<br>Change</div>
-          </div>
-          ${metaItem('Started', u.ts.startTime, true)}
-          ${metaItem('Duration', u.ts.duration, true)}
-          ${metaItem('Trigger', u.ts.trigger)}
-          ${metaItem('Cycle', '#'+u.ts.cycle, true)}
-          <div style="display:flex;flex-direction:column;gap:3px;padding:12px 16px">
-            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--brand-800)">Event</div>
-            <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);font-family:var(--font-mono)">${u.ts.eventId}</div>
+          ${mcol('Started', u.ts.startTime, true)}
+          ${mcol('Duration', u.ts.duration, true)}
+          ${mcol('Trigger', u.ts.trigger)}
+          ${mcol('Cycle', '#'+u.ts.cycle, true)}
+          <div style="flex:1;padding:14px 20px">
+            <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--brand-800);margin-bottom:5px">Event</div>
+            <div style="font-size:0.88rem;font-weight:600;color:var(--brand-900);font-family:var(--font-mono)">${u.ts.eventId}</div>
           </div>
         </div>`;
       }
@@ -1293,8 +1310,8 @@ function showUnitModal(key) {
             </div>
             <div class="param-chart-col" style="padding:14px 18px 10px">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-                <div style="font-size:0.72rem;color:var(--text-tertiary)">Last ${p.n} cycles</div>
-                <div style="font-size:0.72rem;color:var(--text-tertiary)">Started at <span style="font-weight:600;color:var(--text-secondary);font-family:var(--font-mono)">${p.b} ${p.u}</span></div>
+                <div style="font-size:0.72rem;color:var(--text-secondary);font-weight:500">Last ${p.n} cycles</div>
+                <div style="font-size:0.72rem;color:var(--text-secondary)">Before: <span style="font-weight:700;color:var(--brand-800);font-family:var(--font-mono)">${p.b} ${p.u}</span></div>
               </div>
               ${mkParamChart(p.spark, isWarn, p.thr, p.b, p.a, p.u)}
             </div>
@@ -1359,13 +1376,13 @@ function showUnitModal(key) {
         const barFill   = isCurrent ? '#fff' : isPast ? 'var(--brand-300)' : 'var(--border)';
 
         h += `<div class="vtl-row ${rowCls}">
-          <div class="vtl-connector" style="padding-top:16px">
+          <div class="vtl-connector">
             <div class="vtl-line-top" style="${i===0?'visibility:hidden':''}"></div>
             <div class="vtl-num">${i+1}</div>
             <div class="vtl-line-bot" style="${isLast?'visibility:hidden':''}"></div>
           </div>
-          <div class="vtl-content" style="padding-bottom:${isLast?'4px':'10px'}">
-            <div style="background:${cardBg};border:1px solid ${cardBorder};border-radius:12px;padding:14px 18px;${isFuture?'opacity:0.45':''}">
+          <div class="vtl-content" style="padding-top:14px;padding-bottom:${isLast?'4px':'10px'}">
+            <div style="background:${cardBg};border:1px solid ${cardBorder};border-radius:12px;padding:14px 18px;${isFuture?'opacity:0.72':''}">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${isCurrent?'10px':'6px'}">
                 <div style="font-size:0.95rem;font-weight:700;color:${nameColor}">${s.name}</div>
                 <div style="font-size:0.78rem;font-weight:500;color:${metaColor};font-family:var(--font-mono)">${durLabel}</div>
@@ -1416,28 +1433,95 @@ function showUnitModal(key) {
   openModal();
 }
 
+// ── ALERT HELPERS ──
+const alertSevConfig = {
+  emergency: { label:'Emergency', bg:'#FF5555', text:'#fff',  border:'#FF5555', dotBg:'#FF5555' },
+  critical:  { label:'Critical',  bg:'#FFF0E6', text:'#CC4400', border:'#FFBA80', dotBg:'#FF6200' },
+  warning:   { label:'Warning',   bg:'var(--amber-bg)', text:'var(--amber)', border:'var(--amber-border)', dotBg:'var(--amber-solid)' },
+};
+const alertTypeConfig = {
+  'before-after': { label:'Before vs After',     icon:'⇅', color:'var(--brand-800)',  bg:'var(--brand-50)' },
+  'threshold':    { label:'Threshold Band',       icon:'⊘', color:'#CC4400',           bg:'#FFF0E6' },
+  'efficiency':   { label:'Efficiency Target',    icon:'%',  color:'var(--amber)',       bg:'var(--amber-bg)' },
+};
+
+function mkTrackingTiles(a) {
+  const tile = (label, val, accent=false) =>
+    `<div style="padding:9px 14px;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:8px;min-width:90px;flex:1">
+      <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-bottom:4px">${label}</div>
+      <div style="font-size:0.85rem;font-weight:700;color:${accent?'var(--brand-800)':'var(--brand-900)'};font-family:var(--font-mono)">${val}</div>
+    </div>`;
+  if (a.type === 'before-after') {
+    return [tile('Before',a.tracking.before), tile('After',a.tracking.after,true), tile('Change',a.tracking.change,true), tile('Tolerance',a.tracking.tolerance)].join('');
+  } else if (a.type === 'threshold') {
+    return [tile('Current',a.tracking.current,true), tile('Lower Band',a.tracking.lower), tile('Upper Band',a.tracking.upper), tile('Status',a.tracking.status)].join('');
+  } else {
+    return [tile('Current',a.tracking.current,true), tile('Target',a.tracking.target), tile('Gap',a.tracking.gap), tile('Period',a.tracking.period)].join('');
+  }
+}
+
+function mkAlertCard(a) {
+  const sc  = alertSevConfig[a.sev]  || alertSevConfig.warning;
+  const tc  = alertTypeConfig[a.type] || {label:a.type, color:'var(--text-secondary)', bg:'var(--surface-secondary)'};
+  const sevPillStyle = a.sev === 'emergency'
+    ? `background:#FF5555;color:#fff;border:none`
+    : `background:${sc.bg};color:${sc.text};border:0.5px solid ${sc.border}`;
+  return `<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:10px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:0.71rem;font-weight:700;letter-spacing:0.03em;${sevPillStyle}">
+          <span style="width:6px;height:6px;border-radius:50%;background:${a.sev==='emergency'?'#fff':sc.dotBg};display:inline-block;flex-shrink:0"></span>
+          ${sc.label}
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:0.71rem;font-weight:600;background:${tc.bg};color:${tc.color};border:0.5px solid currentColor;opacity:0.85">${tc.icon} ${tc.label}</span>
+      </div>
+      <span style="font-size:0.72rem;color:var(--text-tertiary);white-space:nowrap;flex-shrink:0;margin-top:3px">${a.time}</span>
+    </div>
+    <div style="margin-bottom:4px;display:flex;align-items:baseline;gap:10px">
+      <span style="font-size:0.92rem;font-weight:700;color:var(--brand-900)">${a.title}</span>
+      <span style="font-size:0.78rem;font-weight:600;color:var(--brand-700)">${a.unit}</span>
+    </div>
+    <div style="font-size:0.72rem;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">${a.param}</div>
+    <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.55;margin-bottom:14px">${a.desc}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${mkTrackingTiles(a)}</div>
+  </div>`;
+}
+
 // ── ALERT MODAL ──
 function showAlertModal(i) {
   const a = alertData[i]; if (!a) return;
-  modalTitle.textContent = a.title;
+  modalTitle.textContent = 'Alert Detail';
   modalSubtitle.textContent = a.unit + ' · ' + a.time;
-  const sevColors = {critical:'red',warning:'amber',info:'blue'};
-  setModalIcon(sevColors[a.sev], '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>');
+  modalIcon.style.display = '';
+  setModalIcon('red', '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>');
   modalTabs.innerHTML = '';
-  const params = Object.entries(a.params).map(([k,v])=>`<div class="ap"><span class="ap-label">${k}:</span> <span class="ap-value">${v}</span></div>`).join('');
-  modalBody.innerHTML = `<div style="margin-bottom:16px"><div class="section-label">Description</div><div class="alert-detail-desc">${a.desc}</div></div><div><div class="section-label">Parameters at Alert Time</div><div class="alert-detail-params">${params}</div></div>`;
+  modalBody.innerHTML = mkAlertCard(a);
   openModal();
 }
 
 function showAllAlertsModal() {
-  modalTitle.textContent = 'All Alerts';
-  modalSubtitle.textContent = '7 active alerts';
+  const emergency = alertData.filter(a => a.sev==='emergency');
+  const critical  = alertData.filter(a => a.sev==='critical');
+  const warning   = alertData.filter(a => a.sev==='warning');
+  modalTitle.textContent = 'Active Alerts';
+  modalSubtitle.textContent = `${alertData.length} alerts  ·  ${emergency.length} emergency  ·  ${critical.length} critical  ·  ${warning.length} warning`;
+  modalIcon.style.display = '';
   setModalIcon('red', '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>');
   modalTabs.innerHTML = '';
-  modalBody.innerHTML = alertData.map((a,i) => {
-    const params = Object.entries(a.params).map(([k,v])=>`<div class="ap"><span class="ap-label">${k}:</span> <span class="ap-value">${v}</span></div>`).join('');
-    return `<div class="alert-detail-item"><div class="alert-detail-header"><div class="alert-detail-sev" style="background:var(--${a.sev==='critical'?'red':a.sev==='warning'?'amber':'blue'})"></div><div class="alert-detail-title">${a.title}</div><div class="alert-detail-time">${a.time}</div></div><div class="alert-detail-desc">${a.desc}</div><div class="alert-detail-params">${params}</div></div>`;
-  }).join('');
+  let h = '';
+  if (emergency.length) {
+    h += `<div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#CC0000;margin:0 0 10px">${emergency.length} Emergency</div>`;
+    h += emergency.map(mkAlertCard).join('');
+  }
+  if (critical.length) {
+    h += `<div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#CC4400;margin:${emergency.length?'18px':'0'} 0 10px">${critical.length} Critical</div>`;
+    h += critical.map(mkAlertCard).join('');
+  }
+  if (warning.length) {
+    h += `<div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--amber);margin:${(emergency.length||critical.length)?'18px':'0'} 0 10px">${warning.length} Warning</div>`;
+    h += warning.map(mkAlertCard).join('');
+  }
+  modalBody.innerHTML = h;
   openModal();
 }
 
