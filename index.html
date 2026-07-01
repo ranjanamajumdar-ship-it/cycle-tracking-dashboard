@@ -376,21 +376,13 @@ body {
 }
 .modal-header-left { display: flex; align-items: center; gap: 12px; }
 .modal-icon {
-  width: 42px; height: 42px; border-radius: 12px;
+  width: 40px; height: 40px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  border: 0.5px solid;
+  background: var(--brand-50); border: 0.5px solid var(--brand-100);
 }
-.modal-icon svg { width: 20px; height: 20px; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.modal-icon.blue   { background: var(--brand-50);  border-color: var(--brand-100); }
-.modal-icon.blue   svg { stroke: var(--brand-700); }
-.modal-icon.green  { background: var(--green-bg);  border-color: var(--green-border); }
-.modal-icon.green  svg { stroke: var(--green); }
-.modal-icon.amber  { background: var(--amber-bg);  border-color: var(--amber-border); }
-.modal-icon.amber  svg { stroke: var(--amber); }
-.modal-icon.red    { background: var(--red-bg);    border-color: var(--red-border); }
-.modal-icon.red    svg { stroke: var(--red); }
-.modal-icon.teal   { background: var(--teal-bg);   border-color: var(--teal-border); }
-.modal-icon.teal   svg { stroke: var(--teal); }
+.modal-icon svg { width: 18px; height: 18px; stroke-width: 1.8; fill: none; stroke: var(--brand-700); stroke-linecap: round; stroke-linejoin: round; }
+.modal-icon.blue,.modal-icon.green,.modal-icon.amber,.modal-icon.red,.modal-icon.teal,.modal-icon.orange { background: var(--brand-50); border-color: var(--brand-100); }
+.modal-icon svg { stroke: var(--brand-700); }
 
 .modal-header h2 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; color: var(--brand-900); }
 .modal-subtitle { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
@@ -487,25 +479,25 @@ body {
 /* Left col hidden — timings shown inside each step card */
 .vtl-left { display: none; }
 .vtl-time { display: none; }
-/* Number badge left of connector */
+/* Number badge */
 .vtl-num {
-  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 700; position: relative; z-index: 1; margin-top: 0;
+  font-size: 0.72rem; font-weight: 700; position: relative; z-index: 1;
 }
 .vtl-row.past    .vtl-num { background: var(--brand-800); color: #fff; }
-.vtl-row.current .vtl-num { background: var(--brand-800); color: #fff; box-shadow: 0 0 0 3px var(--brand-50), 0 0 0 5px var(--brand-800); }
-.vtl-row.future  .vtl-num { background: var(--surface); color: var(--text-tertiary); border: 1.5px solid var(--border); }
-/* Connector line */
+.vtl-row.current .vtl-num { background: var(--brand-800); color: #fff; box-shadow: 0 0 0 4px var(--brand-50), 0 0 0 6px var(--brand-800); }
+.vtl-row.future  .vtl-num { background: var(--surface); color: var(--text-tertiary); border: 1.5px solid var(--border-light); }
+/* Connector line — solid, centred on the number column */
 .vtl-connector {
-  width: 22px; flex-shrink: 0; display: flex; flex-direction: column;
+  width: 28px; flex-shrink: 0; display: flex; flex-direction: column;
   align-items: center; position: relative;
 }
-.vtl-line-top { width: 1.5px; border-left: 1.5px dashed var(--border); flex: 0 0 8px; }
-.vtl-line-bot { width: 1.5px; border-left: 1.5px dashed var(--border); flex: 1; min-height: 20px; }
-.vtl-row.past  .vtl-line-top, .vtl-row.past  .vtl-line-bot { border-color: var(--brand-300); }
-.vtl-row.current .vtl-line-top { border-color: var(--brand-300); }
-.vtl-row.current .vtl-line-bot { border-color: var(--border); }
+.vtl-line-top { width: 2px; background: var(--brand-200); flex: 0 0 0px; }
+.vtl-line-bot { width: 2px; background: var(--brand-200); flex: 1; min-height: 12px; }
+.vtl-row.future  .vtl-line-top,
+.vtl-row.future  .vtl-line-bot { background: var(--border-light); }
+.vtl-row.current .vtl-line-bot { background: var(--border-light); }
 /* Right col: step content */
 .vtl-content { flex: 1; min-width: 0; padding: 0 0 24px 14px; }
 .vtl-row.past  .vtl-content { padding-top: 0; }
@@ -599,8 +591,8 @@ body {
   letter-spacing: 0.1em; padding: 6px 16px 5px;
   border-bottom: 0.5px solid var(--border-light);
 }
-.unit-row.has-critical { border-left: 3px solid var(--red); }
-.unit-row.has-warning  { border-left: 3px solid var(--amber-solid); }
+.unit-row.has-critical { }
+.unit-row.has-warning  { }
 
 /* ── Timestamp hover box ── */
 .ts-wrap { position: relative; display: inline-flex; align-items: center; gap: 5px; cursor: default; }
@@ -630,8 +622,8 @@ body {
 .ts-tt-val.mono { font-family: var(--font-mono); font-size: 0.74rem; }
 .ts-tt-sep { grid-column: 1 / -1; height: 0.5px; background: rgba(255,255,255,0.12); margin: 4px 0; }
 .ts-tt-trigger { display: inline-flex; align-items: center; gap: 4px; }
-.ts-tt-auto { color: #6EE7B7; } /* green tint */
-.ts-tt-manual { color: #FCD34D; } /* amber tint */
+.ts-tt-auto { color: #AAE69B; }
+.ts-tt-manual { color: #FFD359; }
 .mode-cell-wrap { display: flex; flex-direction: column; gap: 3px; }
 .mode-cell-sub { font-size: 0.72rem; color: var(--text-tertiary); }
 .remaining-pill { display: inline-flex; align-items: center; font-size: 0.75rem; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
@@ -1053,7 +1045,7 @@ function mkParamChart(dataStr, isWarn, thr, before, after, u) {
   const pw = W-PL-PR, ph = H-PT-PB;
   const toX = i => PL + (i/(pts.length-1))*pw;
   const toY = v => PT + ph - ((v-yMin)/range)*ph;
-  const color = isWarn ? '#FF6200' : '#19368E';
+  const color = isWarn ? 'var(--amber-solid)' : '#19368E';
   const uid = 'cg' + Math.abs(dataStr.charCodeAt(0)*31+dataStr.length);
 
   // Y axis ticks (3 levels)
@@ -1283,38 +1275,27 @@ function showUnitModal(key) {
           </div>
         </div>`;
       }
-      h += `<div class="section-label" style="margin-bottom:8px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Tracked Parameters
-        <span class="right">${u.params.length} parameters · ${u.n||u.params[0]?.n||'--'} readings today</span>
-      </div>`;
+      h += `<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><span style="font-size:0.72rem;color:var(--text-tertiary)">${u.params.length} parameter${u.params.length!==1?'s':''} · ${u.n||u.params[0]?.n||'--'} readings today</span></div>`;
       u.params.forEach(p => {
         const isWarn = p.h !== 'healthy';
         const deltaWarn = 'flat';
         const footerColor = isWarn ? 'var(--text-secondary)' : 'var(--text-secondary)';
-        h += `<div class="param-card ${p.h}">
-          <div class="param-card-header-bar">
-            <div class="param-name">${p.name}</div>
-            <div class="param-context">${p.ctx}</div>
-            <div class="param-latest">${u.n||p.n} readings</div>
-          </div>
-          <div class="param-card-body">
-            <div class="param-stats-col">
-              <div class="param-kv">
-                <div class="param-kv-label">Current</div>
-                <div class="param-kv-value">${p.a}<span class="unit">${p.u}</span></div>
-                <div class="param-delta ${deltaWarn}">${p.c} ${p.u} from start</div>
+        h += `<div class="param-card ${p.h}" style="margin-bottom:12px">
+          <div class="param-card-body" style="grid-template-columns:160px 1fr">
+            <div class="param-stats-col" style="padding:16px 18px;gap:8px">
+              <div style="font-size:0.95rem;font-weight:700;color:var(--brand-900);margin-bottom:2px">${p.name}</div>
+              <div>
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-bottom:3px">Current</div>
+                <div style="font-size:1.35rem;font-weight:700;font-family:var(--font-mono);color:var(--brand-900);line-height:1">${p.a}<span style="font-size:0.8rem;font-weight:400;color:var(--text-secondary);margin-left:3px">${p.u}</span></div>
+                <div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:4px">${p.c} ${p.u} from start</div>
               </div>
-              <div style="display:flex;gap:12px">
-                <div class="param-kv" style="flex:1">
-                  <div class="param-kv-label">Start</div>
-                  <div style="font-size:0.85rem;font-weight:600;font-family:var(--font-mono)">${p.b}<span style="font-size:0.72rem;font-weight:400;color:var(--text-secondary);margin-left:2px">${p.u}</span></div>
-                </div>
-              </div>
-              <div class="param-footer-note" style="color:${footerColor}">${p.ft}</div>
+              <div style="font-size:0.75rem;color:${p.h==='healthy'?'var(--green)':'var(--amber)'};font-weight:600;margin-top:auto">${p.h === 'healthy' ? '✓ healthy' : '⚠ watch'}</div>
             </div>
-            <div class="param-chart-col">
-              <div class="param-chart-label-row"><span>Trend · last ${p.n} cycles</span><span style="color:${p.h==='healthy'?'var(--green)':'var(--amber)'};font-weight:600">${p.h === 'healthy' ? '✓ healthy' : '⚠ watch'}</span></div>
+            <div class="param-chart-col" style="padding:14px 18px 10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <div style="font-size:0.72rem;color:var(--text-tertiary)">Last ${p.n} cycles</div>
+                <div style="font-size:0.72rem;color:var(--text-tertiary)">Started at <span style="font-weight:600;color:var(--text-secondary);font-family:var(--font-mono)">${p.b} ${p.u}</span></div>
+              </div>
               ${mkParamChart(p.spark, isWarn, p.thr, p.b, p.a, p.u)}
             </div>
           </div>
@@ -1323,7 +1304,7 @@ function showUnitModal(key) {
       // Key parameters
       if (u.keyParams) {
         const trendIcon = {normal:'<span style="color:var(--border)">●</span>',watch:'<span style="color:var(--amber-solid)">●</span>',alert:'<span style="color:var(--red)">●</span>','on-track':'<span style="color:var(--border)">●</span>'};
-        h += `<div class="section-label" style="margin-top:4px">${u.keyParams.label} <span class="right">Tracked across cycles</span></div>`;
+        h += `<div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px"><span style="font-size:0.75rem;font-weight:600;color:var(--text-secondary)">Key Parameters</span><span style="font-size:0.72rem;color:var(--text-tertiary)">Tracked across cycles</span></div>`;
         h += `<div style="border:0.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px">`;
         u.keyParams.items.forEach((item, i) => {
           const bg = i%2===0 ? 'var(--surface)' : 'var(--surface-secondary)';
@@ -1378,22 +1359,40 @@ function showUnitModal(key) {
         const barFill   = isCurrent ? '#fff' : isPast ? 'var(--brand-300)' : 'var(--border)';
 
         h += `<div class="vtl-row ${rowCls}">
-          <div class="vtl-connector" style="padding-top:18px">
-            <div class="vtl-line-top" style="${i===0?'opacity:0':''}"></div>
+          <div class="vtl-connector" style="padding-top:16px">
+            <div class="vtl-line-top" style="${i===0?'visibility:hidden':''}"></div>
             <div class="vtl-num">${i+1}</div>
-            <div class="vtl-line-bot" style="${isLast?'opacity:0':''}"></div>
+            <div class="vtl-line-bot" style="${isLast?'visibility:hidden':''}"></div>
           </div>
-          <div class="vtl-content" style="padding-bottom:${isLast?'4px':'14px'}">
-            <div style="background:${cardBg};border:1px solid ${cardBorder};border-radius:10px;padding:14px 16px;${isFuture?'opacity:0.5':''}">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-                <div style="font-size:0.92rem;font-weight:700;color:${nameColor}">${s.name}</div>
-                <div style="font-size:0.75rem;font-weight:500;color:${metaColor}">${durLabel}</div>
+          <div class="vtl-content" style="padding-bottom:${isLast?'4px':'10px'}">
+            <div style="background:${cardBg};border:1px solid ${cardBorder};border-radius:12px;padding:14px 18px;${isFuture?'opacity:0.45':''}">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${isCurrent?'10px':'6px'}">
+                <div style="font-size:0.95rem;font-weight:700;color:${nameColor}">${s.name}</div>
+                <div style="font-size:0.78rem;font-weight:500;color:${metaColor};font-family:var(--font-mono)">${durLabel}</div>
               </div>
-              <div style="font-size:0.75rem;color:${metaColor};margin-bottom:10px">Target: ${fmtDur(s.tgt)}${isPast?' · completed':isCurrent?' · in progress':''}</div>
-              <div style="height:4px;background:${barTrack};border-radius:999px;overflow:hidden">
-                <div style="height:100%;width:${pct}%;background:${barFill};border-radius:999px;transition:width 0.4s"></div>
+              ${!isCurrent ? `<div style="font-size:0.78rem;color:${metaColor};margin-bottom:8px">Target: ${fmtDur(s.tgt)}${isPast?' · completed':''}</div>` : ''}
+              <div style="height:5px;background:${barTrack};border-radius:999px;overflow:hidden;margin-bottom:6px">
+                <div style="height:100%;width:${pct}%;background:${barFill};border-radius:999px;transition:width 0.6s ease"></div>
               </div>
-              ${isCurrent ? `<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:0.72rem;color:rgba(255,255,255,0.6)">${pct}% complete</span><span style="font-size:0.72rem;color:rgba(255,255,255,0.6)">${100-pct}% left</span></div>` : `<div style="font-size:0.72rem;color:${metaColor};margin-top:6px;text-align:right">${pct > 0 ? pct+'%' : ''}</div>`}
+              ${isCurrent ? `
+                <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+                  <span style="font-size:0.75rem;color:rgba(255,255,255,0.65)">${pct}% complete</span>
+                  <span style="font-size:0.75rem;color:rgba(255,255,255,0.65)">${100-pct}% remaining of ${fmtDur(s.tgt)}</span>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                  <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px">
+                    <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.55);margin-bottom:4px">Elapsed</div>
+                    <div style="font-size:0.9rem;font-weight:700;color:#fff;font-family:var(--font-mono)">${fmtDur(s.act)}</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px">
+                    <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.55);margin-bottom:4px">Hist. Runs</div>
+                    <div style="font-size:0.9rem;font-weight:700;color:#fff;font-family:var(--font-mono)">${u.sd.r}</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px">
+                    <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.55);margin-bottom:4px">On Time</div>
+                    <div style="font-size:0.9rem;font-weight:700;color:#fff;font-family:var(--font-mono)">${u.sd.w}</div>
+                  </div>
+                </div>` : `<div style="font-size:0.75rem;color:${metaColor};text-align:right">${pct>0?pct+'%':''}</div>`}
             </div>
           </div></div>`;
       });
