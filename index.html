@@ -1796,18 +1796,18 @@ function renderModeDistTable() {
   if (!el) return;
 
   const segs = [
-    { key:'service',  label:'Service',  bar:'#C6F6BA', txt:'#299700' },
-    { key:'cleaning', label:'Cleaning', bar:'#9CDCFF', txt:'#1A6FAD' },
-    { key:'standby',  label:'Standby',  bar:'#FFD359', txt:'#8A6500' },
-    { key:'trip',     label:'Trip',     bar:'#FF424C', txt:'#CC0000' },
+    { key:'service',  label:'Service',  bar:'#C8F0BC', txt:'#2D8A2D' },
+    { key:'cleaning', label:'Cleaning', bar:'#B8E4FF', txt:'#1A6FAD' },
+    { key:'standby',  label:'Standby',  bar:'#FFE899', txt:'#8A6500' },
+    { key:'trip',     label:'Trip',     bar:'#FFBFC2', txt:'#CC2020' },
   ];
 
   function effPill(d) {
     const prod = d.service + d.cleaning;
-    const cls = prod >= 80 ? {bg:'var(--green-bg)',txt:'var(--green)',border:'var(--green-border)',label:'High'}
-              : prod >= 65 ? {bg:'var(--amber-bg)',txt:'var(--amber)',border:'var(--amber-border)',label:'Moderate'}
-              :              {bg:'var(--red-bg)',  txt:'var(--red)',  border:'var(--red-border)',  label:'Low'};
-    return `<span style="padding:3px 10px;border-radius:999px;font-size:0.71rem;font-weight:700;background:${cls.bg};color:${cls.txt};border:0.5px solid ${cls.border};white-space:nowrap">
+    const cls = prod >= 80 ? {txt:'var(--green)',  border:'var(--green-border)', label:'High'}
+              : prod >= 65 ? {txt:'var(--amber)',  border:'var(--amber-border)', label:'Moderate'}
+              :              {txt:'var(--red)',    border:'var(--red-border)',   label:'Low'};
+    return `<span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:transparent;color:${cls.txt};border:1px solid ${cls.border};white-space:nowrap">
       ${cls.label} · ${prod}%
     </span>`;
   }
@@ -1850,18 +1850,8 @@ function renderModeDistTable() {
         const r = `<rect x="${xOff}" y="0" width="${w}" height="${barH}" fill="${s.bar}"/>`;
         xOff += w; return r;
       }).join('');
-      // label text color: dark for light bars, white for dark bars
-      const labels = segs.map(s => {
-        const pct = Math.round((d[s.key]/total)*100);
-        return pct >= 9
-          ? `<div style="flex:${d[s.key]};display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:${s.txt}">${pct}%</div>`
-          : `<div style="flex:${d[s.key]}"></div>`;
-      }).join('');
       midCells = `<td style="padding:10px 12px">
-        <div style="position:relative">
-          <svg viewBox="0 0 ${barW} ${barH}" style="width:100%;height:${barH}px;display:block;border-radius:5px;overflow:hidden">${rects}</svg>
-          <div style="position:absolute;inset:0;display:flex;pointer-events:none">${labels}</div>
-        </div>
+        <svg viewBox="0 0 ${barW} ${barH}" style="width:100%;height:${barH}px;display:block;border-radius:6px;overflow:hidden">${rects}</svg>
       </td>`;
     } else {
       midCells = segs.map(s=>`<td style="text-align:right;padding:12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((d[s.key]/total)*100)}%</td>`).join('');
