@@ -148,18 +148,16 @@ body {
 /* ── Inline Filter Bar ── */
 .filter-bar {
   display: flex; align-items: center;
-  background: var(--surface); border: 0.5px solid var(--border);
-  border-radius: var(--radius); padding: 8px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 18px;
   margin-bottom: 20px; gap: 0; overflow-x: auto;
-  box-shadow: var(--elev-1);
+  box-shadow: 0 2px 8px rgba(14,31,54,0.08);
 }
-.fb-group { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-/* Visual hierarchy: label is a small pill showing group name */
+.fb-group { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .fb-label {
-  font-size: 0.65rem; font-weight: 700; color: var(--text-tertiary);
-  text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap;
-  background: var(--surface-secondary); border: 0.5px solid var(--border-light);
-  padding: 3px 9px; border-radius: var(--radius-pill);
+  font-size: 0.62rem; font-weight: 700; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.09em; white-space: nowrap;
+  padding-right: 4px;
 }
 .fb-chips { display: flex; gap: 3px; }
 /* Unit type chips — primary tier, slightly heavier */
@@ -746,9 +744,9 @@ body {
     </div>
     <div class="fb-sep"></div>
     <div class="fb-group">
-      <button id="fbAlertBtn" style="display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--red);background:var(--red-bg);color:var(--red);font-size:0.78rem;font-weight:600;cursor:pointer;line-height:1">
+      <button id="fbAlertBtn" style="display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;border:1px solid var(--red);background:var(--red-bg);color:var(--red);font-size:0.78rem;font-weight:600;cursor:pointer;line-height:1">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        7 Alerts
+        8 Predictive Alerts
       </button>
     </div>
   </div>
@@ -835,6 +833,17 @@ body {
     </table>
   </div>
 
+  <!-- 4. Mode Distribution Analytics -->
+  <div class="card full-width-card" id="modeDistCard">
+    <div class="card-header">
+      <div class="card-title">Mode Distribution Analytics <span class="badge">This Week</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button id="viewModeReportBtn" style="font-size:0.78rem;font-weight:600;color:var(--brand-800);background:none;border:none;cursor:pointer;padding:0">View Gantt &rarr;</button>
+      </div>
+    </div>
+    <div id="modeDistTable"></div>
+  </div>
+
 </main>
 
 <!-- Modal -->
@@ -896,53 +905,64 @@ const unitData = {
 };
 
 const alertData = [
-  // ── Before vs After (tolerance exceeded)
-  {type:'before-after', sev:'emergency',
-   title:'TMP Tolerance Exceeded', unit:'UF-2', time:'11 min ago', param:'Trans-Membrane Pressure',
-   desc:'TMP increased by +18 kPa from start to end of the filtration cycle, crossing the configured tolerance band of ±10 kPa. Membrane fouling likely.',
-   tracking:{before:'20 kPa', after:'38 kPa', change:'+18 kPa', tolerance:'±10 kPa'}},
+  // ── Emergency
+  {type:'trend-rising', sev:'emergency',
+   title:'UF-2 backwash frequency increased by 18% in the last 7 days.',
+   unit:'UF-2', time:'11 min ago', param:'Backwash Frequency',
+   desc:'Backwash cycles are triggering more frequently — 5.0/hr vs a 7-day baseline of 4.2/hr. This is a leading indicator of membrane fouling. If the trend continues unchecked, a CEB will be required within the next 2 filtration cycles.',
+   prediction:'CEB required within ~2 cycles if trend holds.',
+   tracking:{trend:'+18% vs baseline', period:'Last 7 days', current:'5.0 /hr', baseline:'4.2 /hr'}},
 
-  {type:'before-after', sev:'critical',
-   title:'Differential Pressure Rising', unit:'RO-1', time:'45 min ago', param:'Differential Pressure',
-   desc:'Differential pressure rose +0.3 bar across the last cycle, exceeding the configured tolerance of ±0.25 bar. CIP may be required if trend continues.',
-   tracking:{before:'2.5 bar', after:'2.8 bar', change:'+0.3 bar', tolerance:'±0.25 bar'}},
+  {type:'recovery-drop', sev:'emergency',
+   title:'MBR-2 relaxation period insufficient — TMP not resetting.',
+   unit:'MBR-2', time:'25 min ago', param:'Trans-Membrane Pressure',
+   desc:'TMP is not returning to baseline after each relaxation step. Each filtration cycle begins 3–4 kPa higher than the last, indicating incomplete membrane recovery. Continued operation risks irreversible fouling.',
+   prediction:'TMP will exceed 45 kPa within 3 cycles at current rate.',
+   tracking:{trend:'+3–4 kPa/cycle', period:'Last 12 cycles', current:'38 kPa', baseline:'20 kPa'}},
 
-  {type:'before-after', sev:'warning',
-   title:'Inlet Pressure Drift', unit:'PSF-1', time:'2 hr ago', param:'Inlet Pressure',
-   desc:'Inlet pressure shifted +0.21 bar within a single service cycle, approaching the ±0.3 bar tolerance limit.',
-   tracking:{before:'1.46 bar', after:'1.67 bar', change:'+0.21 bar', tolerance:'±0.3 bar'}},
+  // ── Critical
+  {type:'rate-increase', sev:'critical',
+   title:'RO-1 differential pressure increases 5% per cycle.',
+   unit:'RO-1', time:'45 min ago', param:'Differential Pressure',
+   desc:'RO-1 differential pressure is rising at a consistent rate of approximately 5% per service cycle. At this trajectory, the upper operating limit of 3.0 bar will be reached within 4–6 cycles. CIP planning is advised.',
+   prediction:'Upper band breached in ~4–6 cycles. CIP advised.',
+   tracking:{trend:'+5% per cycle', period:'Last 8 cycles', current:'2.8 bar', target:'< 3.0 bar'}},
 
-  // ── Threshold Band (out of range)
-  {type:'threshold', sev:'emergency',
-   title:'TMP Out of Band', unit:'UF-2', time:'11 min ago', param:'Trans-Membrane Pressure',
-   desc:'TMP reading of 38 kPa has exceeded the upper threshold of 35 kPa for UF Filtration. Unit has been flagged for immediate review.',
-   tracking:{current:'38 kPa', lower:'15 kPa', upper:'35 kPa', status:'Above upper limit'}},
+  {type:'recovery-drop', sev:'critical',
+   title:'MBR-2 air scour effectiveness declining — TMP recovery at 57%.',
+   unit:'MBR-2', time:'45 min ago', param:'Air Scour TMP Recovery',
+   desc:'Post-relaxation TMP recovery has dropped from 80% to 57% over the last 3 cycles. The aeration blower is running at reduced output (34.8 Hz vs 50 Hz setpoint). Without intervention, recovery will fall below 50% within 5 cycles.',
+   prediction:'Recovery will fall below 50% within 5 cycles.',
+   tracking:{trend:'−23% over 3 cycles', period:'Last 3 cycles', current:'57%', target:'≥ 80%'}},
 
-  {type:'threshold', sev:'critical',
-   title:'Backwash Frequency Out of Band', unit:'UF-2', time:'25 min ago', param:'Backwash Frequency',
-   desc:'Backwash frequency of 5.0/hr has exceeded the normal operating band of 1–3 cycles/hr. Elevated fouling rate suspected.',
-   tracking:{current:'5.0 /hr', lower:'1.0 /hr', upper:'3.0 /hr', status:'Above upper limit'}},
+  // ── Warning
+  {type:'trend-rising', sev:'warning',
+   title:'PSF-1 inlet pressure drifting +0.07 bar per cycle.',
+   unit:'PSF-1', time:'2 hr ago', param:'Inlet Pressure',
+   desc:'Inlet pressure has increased by +0.21 bar over the last 3 cycles, averaging +0.07 bar per cycle. This gradual drift may indicate a partial restriction at inlet valve V-101 or early media clogging.',
+   prediction:'May exceed ±0.3 bar tolerance in the next 2–3 cycles.',
+   tracking:{trend:'+0.07 bar/cycle', period:'Last 3 cycles', current:'1.67 bar', baseline:'1.46 bar'}},
 
-  {type:'threshold', sev:'warning',
-   title:'Chemical Concentration Out of Band', unit:'UF-2', time:'1 hr ago', param:'NaOCl Concentration',
-   desc:'NaOCl dosing concentration of 118 ppm is approaching the upper safe operating band of 120 ppm.',
-   tracking:{current:'118 ppm', lower:'80 ppm', upper:'120 ppm', status:'Near upper limit'}},
+  {type:'frequency-change', sev:'warning',
+   title:'UF-2 NaOCl dosing consistently near upper safe limit.',
+   unit:'UF-2', time:'1 hr ago', param:'NaOCl Concentration',
+   desc:'Chemical dosing concentration has been tracking at 118 ppm — 2 ppm below the upper operating limit of 120 ppm — for the last 4 CEB cycles. A minor overdose event would exceed the safe band.',
+   prediction:'One overdose event would exceed the 120 ppm limit.',
+   tracking:{trend:'Stable at ~118 ppm', period:'Last 4 cycles', current:'118 ppm', target:'80–120 ppm'}},
 
-  // ── Efficiency Target (below %)
-  {type:'efficiency', sev:'critical',
-   title:'Uptime Below Target', unit:'MBR-2', time:'45 min ago', param:'Running-Hour Uptime',
-   desc:'Unit uptime has dropped to 84.5%, falling below the operational efficiency target of 90%. Downtime events have increased over the last 7 days.',
-   tracking:{current:'84.5%', target:'90%', gap:'−5.5%', period:'Last 7 days'}},
+  {type:'recovery-drop', sev:'warning',
+   title:'RO-2 permeate recovery declining — down 3% in 7 days.',
+   unit:'RO-2', time:'2 hr ago', param:'Permeate Recovery Rate',
+   desc:'Recovery rate has slipped from 75% to 72% over the past 7 days. Possible early membrane scaling or increased reject flow. At this rate, the 70% minimum threshold will be approached within 2 weeks.',
+   prediction:'Will approach 70% threshold within ~2 weeks.',
+   tracking:{trend:'−3% over 7 days', period:'Last 7 days', current:'72%', target:'≥ 75%'}},
 
-  {type:'efficiency', sev:'warning',
-   title:'TMP Recovery Below Target', unit:'MBR-2', time:'1.5 hr ago', param:'Air Scour TMP Recovery',
-   desc:'Post-relaxation TMP recovery efficiency of 57% is below the configured target of 80%. Aeration may need adjustment.',
-   tracking:{current:'57%', target:'80%', gap:'−23%', period:'Last 3 cycles'}},
-
-  {type:'efficiency', sev:'warning',
-   title:'Permeate Recovery Below Target', unit:'RO-2', time:'2 hr ago', param:'Permeate Recovery Rate',
-   desc:'Recovery rate of 72% has fallen below the efficiency target of 75%. Check for increased reject flow or membrane scaling.',
-   tracking:{current:'72%', target:'75%', gap:'−3%', period:'Last 7 days'}},
+  {type:'frequency-change', sev:'warning',
+   title:'MBR-2 uptime running 5.5% below operational target.',
+   unit:'MBR-2', time:'3 hr ago', param:'Running-Hour Uptime',
+   desc:'MBR-2 has been operating at 84.5% uptime for the past 7 days against a 90% target. Extended relaxation periods are the primary contributor. Weekly efficiency target is not recoverable without relaxation time adjustment.',
+   prediction:'Weekly target unrecoverable without relaxation adjustment.',
+   tracking:{trend:'−5.5% vs target', period:'Last 7 days', current:'84.5%', target:'≥ 90%'}},
 ];
 
 const sparkData = {
@@ -1440,9 +1460,10 @@ const alertSevConfig = {
   warning:   { label:'Warning',   bg:'var(--amber-bg)', text:'var(--amber)', border:'var(--amber-border)', dotBg:'var(--amber-solid)' },
 };
 const alertTypeConfig = {
-  'before-after': { label:'Before vs After',     icon:'⇅', color:'var(--brand-800)',  bg:'var(--brand-50)' },
-  'threshold':    { label:'Threshold Band',       icon:'⊘', color:'#CC4400',           bg:'#FFF0E6' },
-  'efficiency':   { label:'Efficiency Target',    icon:'%',  color:'var(--amber)',       bg:'var(--amber-bg)' },
+  'trend-rising':     { label:'Trend Rising',        icon:'↗', color:'var(--brand-800)', bg:'var(--brand-50)' },
+  'rate-increase':    { label:'Rate Increasing',      icon:'⬆', color:'#CC4400',         bg:'#FFF0E6' },
+  'recovery-drop':    { label:'Recovery Declining',   icon:'↘', color:'var(--amber)',     bg:'var(--amber-bg)' },
+  'frequency-change': { label:'Frequency Change',     icon:'∿', color:'var(--teal)',      bg:'var(--teal-bg)' },
 };
 
 function mkTrackingTiles(a) {
@@ -1451,13 +1472,13 @@ function mkTrackingTiles(a) {
       <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-bottom:4px">${label}</div>
       <div style="font-size:0.85rem;font-weight:700;color:${accent?'var(--brand-800)':'var(--brand-900)'};font-family:var(--font-mono)">${val}</div>
     </div>`;
-  if (a.type === 'before-after') {
-    return [tile('Before',a.tracking.before), tile('After',a.tracking.after,true), tile('Change',a.tracking.change,true), tile('Tolerance',a.tracking.tolerance)].join('');
-  } else if (a.type === 'threshold') {
-    return [tile('Current',a.tracking.current,true), tile('Lower Band',a.tracking.lower), tile('Upper Band',a.tracking.upper), tile('Status',a.tracking.status)].join('');
-  } else {
-    return [tile('Current',a.tracking.current,true), tile('Target',a.tracking.target), tile('Gap',a.tracking.gap), tile('Period',a.tracking.period)].join('');
-  }
+  const t = a.tracking;
+  return [
+    tile('Trend', t.trend, true),
+    tile('Period', t.period),
+    tile('Current', t.current, true),
+    tile(t.baseline !== undefined ? 'Baseline' : 'Target', t.baseline !== undefined ? t.baseline : t.target),
+  ].join('');
 }
 
 function mkAlertCard(a) {
@@ -1482,7 +1503,11 @@ function mkAlertCard(a) {
       <span style="font-size:0.78rem;font-weight:600;color:var(--brand-700)">${a.unit}</span>
     </div>
     <div style="font-size:0.72rem;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">${a.param}</div>
-    <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.55;margin-bottom:14px">${a.desc}</div>
+    <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.55;margin-bottom:10px">${a.desc}</div>
+    ${a.prediction ? `<div style="display:flex;align-items:flex-start;gap:8px;padding:9px 14px;background:var(--brand-25);border:0.5px solid var(--brand-100);border-radius:8px;margin-bottom:14px">
+      <span style="font-size:0.72rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.05em;flex-shrink:0;margin-top:1px">Prediction</span>
+      <span style="font-size:0.82rem;color:var(--brand-800);font-weight:500;line-height:1.45">${a.prediction}</span>
+    </div>` : ''}
     <div style="display:flex;gap:8px;flex-wrap:wrap">${mkTrackingTiles(a)}</div>
   </div>`;
 }
@@ -1490,7 +1515,7 @@ function mkAlertCard(a) {
 // ── ALERT MODAL ──
 function showAlertModal(i) {
   const a = alertData[i]; if (!a) return;
-  modalTitle.textContent = 'Alert Detail';
+  modalTitle.textContent = 'Predictive Alert';
   modalSubtitle.textContent = a.unit + ' · ' + a.time;
   modalIcon.style.display = '';
   setModalIcon('red', '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>');
@@ -1503,7 +1528,7 @@ function showAllAlertsModal() {
   const emergency = alertData.filter(a => a.sev==='emergency');
   const critical  = alertData.filter(a => a.sev==='critical');
   const warning   = alertData.filter(a => a.sev==='warning');
-  modalTitle.textContent = 'Active Alerts';
+  modalTitle.textContent = 'Predictive Alerts';
   modalSubtitle.textContent = `${alertData.length} alerts  ·  ${emergency.length} emergency  ·  ${critical.length} critical  ·  ${warning.length} warning`;
   modalIcon.style.display = '';
   setModalIcon('red', '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>');
@@ -1747,10 +1772,114 @@ document.querySelectorAll('#dateDropdown .dropdown-option').forEach(o => { o.add
 document.addEventListener('click',()=>document.querySelectorAll('.dropdown-wrap.open,.plant-selector-wrap.open').forEach(el=>el.classList.remove('open')));
 document.querySelectorAll('.dropdown-panel,.plant-dropdown').forEach(p=>p.addEventListener('click',e=>e.stopPropagation()));
 
+// ── MODE DISTRIBUTION TABLE ──
+function renderModeDistTable() {
+  const el = document.getElementById('modeDistTable');
+  if (!el) return;
+
+  const segs = [
+    { key:'service',  label:'Service',  color:'#299700' },
+    { key:'cleaning', label:'Cleaning', color:'#19368E' },
+    { key:'standby',  label:'Standby',  color:'#CC9A00' },
+    { key:'trip',     label:'Trip',     color:'#AC0000' },
+  ];
+
+  // Efficiency pill: productive (service+cleaning) vs non-productive
+  function effPill(d) {
+    const prod = d.service + d.cleaning;
+    const cls = prod >= 80 ? {bg:'var(--green-bg)',txt:'var(--green)',border:'var(--green-border)',label:'High'}
+              : prod >= 65 ? {bg:'var(--amber-bg)',txt:'var(--amber)',border:'var(--amber-border)',label:'Moderate'}
+              : {bg:'var(--red-bg)',txt:'var(--red)',border:'var(--red-border)',label:'Low'};
+    return `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:0.71rem;font-weight:700;background:${cls.bg};color:${cls.txt};border:0.5px solid ${cls.border}">
+      ${cls.label} · ${prod}%
+    </span>`;
+  }
+
+  // Legend
+  let html = `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid var(--border-light)">
+    ${segs.map(s=>`<div style="display:flex;align-items:center;gap:6px">
+      <span style="width:12px;height:12px;border-radius:3px;background:${s.color};display:inline-block;flex-shrink:0"></span>
+      <span style="font-size:0.78rem;color:var(--text-secondary)">${s.label}</span>
+    </div>`).join('')}
+    <div style="margin-left:auto;font-size:0.72rem;color:var(--text-tertiary);display:flex;align-items:center;gap:4px">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block"></span>Efficiency = Service + Cleaning time
+    </div>
+  </div>`;
+
+  // Table header
+  html += `<table style="width:100%;border-collapse:collapse">
+    <thead>
+      <tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:8px 12px 10px 0;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800);width:90px">Unit</th>
+        <th style="text-align:left;padding:8px 12px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Distribution</th>
+        ${segs.map(s=>`<th style="text-align:right;padding:8px 12px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:${s.color};min-width:64px">${s.label}</th>`).join('')}
+        <th style="text-align:right;padding:8px 0 10px 12px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800);min-width:110px">Efficiency</th>
+      </tr>
+    </thead><tbody>`;
+
+  // Dot color per unit (match live status table)
+  const dotColor = {psf1:'green',psf2:'blue',uf1:'blue',uf2:'blue',ro1:'green',ro2:'blue',mbr1:'blue',mbr2:'amber'};
+
+  modeDistData.forEach((d, idx) => {
+    const key = d.unit.toLowerCase().replace('-','');
+    const isEven = idx % 2 === 0;
+    const rowBg = isEven ? 'var(--surface)' : 'var(--surface-secondary)';
+    const total = segs.reduce((s,sg) => s + d[sg.key], 0);
+
+    // Stacked bar SVG
+    const barW = 260, barH = 18;
+    let xOffset = 0;
+    const bars = segs.map(s => {
+      const w = Math.round((d[s.key] / total) * barW);
+      const rect = `<rect x="${xOffset}" y="0" width="${w}" height="${barH}" fill="${s.color}" rx="0"/>`;
+      xOffset += w;
+      return rect;
+    }).join('');
+    const stackedBar = `<div style="position:relative">
+      <svg viewBox="0 0 ${barW} ${barH}" style="width:100%;height:${barH}px;display:block;border-radius:6px;overflow:hidden">${bars}</svg>
+      <div style="display:flex;gap:0;position:absolute;inset:0;pointer-events:none">
+        ${segs.map(s => {
+          const pct = Math.round((d[s.key]/total)*100);
+          return pct >= 8 ? `<div style="flex:${d[s.key]};display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.9)">${pct}%</div>` : `<div style="flex:${d[s.key]}"></div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+    html += `<tr style="background:${rowBg};border-bottom:0.5px solid var(--border-light)">
+      <td style="padding:12px 12px 12px 0;white-space:nowrap">
+        <span style="display:inline-flex;align-items:center;gap:7px;font-size:0.88rem;font-weight:600;color:var(--brand-900)">
+          <span class="status-dot ${dotColor[key]||'blue'}"></span>${d.unit}
+        </span>
+      </td>
+      <td style="padding:12px;min-width:200px">${stackedBar}</td>
+      ${segs.map(s=>`<td style="text-align:right;padding:12px;font-size:0.88rem;font-weight:600;font-family:var(--font-mono);color:${s.color}">${Math.round((d[s.key]/total)*100)}%</td>`).join('')}
+      <td style="text-align:right;padding:12px 0 12px 12px">${effPill(d)}</td>
+    </tr>`;
+  });
+
+  // Summary / average row
+  const avg = key => Math.round(modeDistData.reduce((s,d) => s + d[key], 0) / modeDistData.length);
+  const avgTotal = segs.reduce((s,sg) => s + avg(sg.key), 0);
+  html += `<tr style="background:var(--surface-secondary);border-top:1px solid var(--border)">
+    <td style="padding:12px 12px 12px 0;font-size:0.78rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em">Plant Avg</td>
+    <td style="padding:12px;min-width:200px">
+      <svg viewBox="0 0 260 18" style="width:100%;height:18px;display:block;border-radius:6px;overflow:hidden">
+        ${(() => { let x=0; return segs.map(s=>{const w=Math.round((avg(s.key)/avgTotal)*260);const r=`<rect x="${x}" y="0" width="${w}" height="18" fill="${s.color}" opacity="0.65" rx="0"/>`;x+=w;return r;}).join(''); })()}
+      </svg>
+    </td>
+    ${segs.map(s=>`<td style="text-align:right;padding:12px;font-size:0.85rem;font-weight:700;font-family:var(--font-mono);color:${s.color};opacity:0.8">${Math.round((avg(s.key)/avgTotal)*100)}%</td>`).join('')}
+    <td style="text-align:right;padding:12px 0 12px 12px">${effPill({service:avg('service'),cleaning:avg('cleaning'),standby:avg('standby'),trip:avg('trip')})}</td>
+  </tr>`;
+
+  html += `</tbody></table>`;
+  el.innerHTML = html;
+}
+
 // Init
 renderSparklines();
 renderBarChart();
 renderModeChart();
+renderModeDistTable();
 </script>
 </body>
 </html>
