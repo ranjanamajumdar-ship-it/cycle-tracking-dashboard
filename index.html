@@ -845,7 +845,13 @@ body {
   <!-- 4. Mode Distribution Analytics -->
   <div class="card full-width-card" id="modeDistCard">
     <div class="card-header">
-      <div class="card-title">Mode Distribution Analytics <span class="badge">This Week</span></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="card-title">Mode Distribution Analytics</div>
+        <div style="display:flex;gap:4px">
+          <span class="mdist-period active" data-period="week" onclick="setModeDistPeriod('week')" style="padding:3px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1px solid var(--brand-200);color:var(--brand-800);background:var(--brand-50)">This Week</span>
+          <span class="mdist-period" data-period="today" onclick="setModeDistPeriod('today')" style="padding:3px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text-tertiary);background:transparent">Today</span>
+        </div>
+      </div>
       <div style="display:flex;align-items:center;gap:4px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:8px;padding:3px">
         <button class="mdist-toggle active" data-view="bar" onclick="setModeDistView('bar')">Bar</button>
         <button class="mdist-toggle" data-view="pct" onclick="setModeDistView('pct')">Percentage</button>
@@ -1783,11 +1789,23 @@ document.addEventListener('click',()=>document.querySelectorAll('.dropdown-wrap.
 document.querySelectorAll('.dropdown-panel,.plant-dropdown').forEach(p=>p.addEventListener('click',e=>e.stopPropagation()));
 
 // ── MODE DISTRIBUTION TABLE ──
-let modeDistView = 'bar'; // 'bar' | 'pct'
+let modeDistView = 'bar';
+let modeDistPeriodLabel = 'This Week';
 
 function setModeDistView(v) {
   modeDistView = v;
   document.querySelectorAll('.mdist-toggle').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  renderModeDistTable();
+}
+
+function setModeDistPeriod(p) {
+  modeDistPeriodLabel = p === 'week' ? 'This Week' : 'Today';
+  document.querySelectorAll('.mdist-period').forEach(el => {
+    const isActive = el.dataset.period === p;
+    el.style.background = isActive ? 'var(--brand-50)' : 'transparent';
+    el.style.color = isActive ? 'var(--brand-800)' : 'var(--text-tertiary)';
+    el.style.borderColor = isActive ? 'var(--brand-200)' : 'var(--border)';
+  });
   renderModeDistTable();
 }
 
@@ -1796,20 +1814,40 @@ function renderModeDistTable() {
   if (!el) return;
 
   const segs = [
-    { key:'service',  label:'Service',  bar:'#C8F0BC', txt:'#2D8A2D' },
-    { key:'cleaning', label:'Cleaning', bar:'#B8E4FF', txt:'#1A6FAD' },
-    { key:'standby',  label:'Standby',  bar:'#FFE899', txt:'#8A6500' },
-    { key:'trip',     label:'Trip',     bar:'#FFBFC2', txt:'#CC2020' },
+    { key:'service',  label:'Service',  bar:'#D4F5C8', txt:'#2D8A2D' },
+    { key:'cleaning', label:'Cleaning', bar:'#C2E8FF', txt:'#1A6FAD' },
+    { key:'standby',  label:'Standby',  bar:'#FFEDB0', txt:'#9A6F00' },
+    { key:'trip',     label:'Trip',     bar:'#FFCDD0', txt:'#C02020' },
   ];
 
+  // Efficiency pill — plain border, stronger Moderate colour
   function effPill(d) {
     const prod = d.service + d.cleaning;
-    const cls = prod >= 80 ? {txt:'var(--green)',  border:'var(--green-border)', label:'High'}
-              : prod >= 65 ? {txt:'var(--amber)',  border:'var(--amber-border)', label:'Moderate'}
-              :              {txt:'var(--red)',    border:'var(--red-border)',   label:'Low'};
-    return `<span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:transparent;color:${cls.txt};border:1px solid ${cls.border};white-space:nowrap">
-      ${cls.label} · ${prod}%
-    </span>`;
+    const cls = prod >= 80
+      ? { txt:'#1F8C1F', border:'#7DC87D', label:'High' }
+      : prod >= 65
+      ? { txt:'#B07800', border:'#D4A020', label:'Moderate' }
+      : { txt:'#CC2020', border:'#E07070', label:'Low' };
+    return `<span style="padding:4px 13px;border-radius:999px;font-size:0.75rem;font-weight:700;background:transparent;color:${cls.txt};border:1.5px solid ${cls.border};white-space:nowrap">${cls.label} · ${prod}%</span>`;
+  }
+
+  // SVG stacked bar with clipped % labels inside each segment
+  function mkBar(d, W, H, opacity) {
+    const total = segs.reduce((s,sg) => s + d[sg.key], 0);
+    let xOff = 0;
+    const uid = 'bar' + Math.random().toString(36).slice(2,7);
+    let defs = '', rects = '', labels = '';
+    segs.forEach((s, i) => {
+      const w = Math.round((d[s.key]/total)*W);
+      const pct = Math.round((d[s.key]/total)*100);
+      defs += `<clipPath id="${uid}${i}"><rect x="${xOff}" y="0" width="${w}" height="${H}"/></clipPath>`;
+      rects += `<rect x="${xOff}" y="0" width="${w}" height="${H}" fill="${s.bar}" opacity="${opacity||1}"/>`;
+      if (pct >= 7) {
+        labels += `<text x="${xOff + w/2}" y="${H*0.68}" text-anchor="middle" font-size="${H*0.48}" font-weight="700" fill="${s.txt}" clip-path="url(#${uid}${i})">${pct}%</text>`;
+      }
+      xOff += w;
+    });
+    return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;border-radius:6px;overflow:hidden"><defs>${defs}</defs>${rects}${labels}</svg>`;
   }
 
   const isBar = modeDistView === 'bar';
@@ -1817,82 +1855,57 @@ function renderModeDistTable() {
   // Legend
   let html = `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid var(--border-light)">
     ${segs.map(s=>`<div style="display:flex;align-items:center;gap:6px">
-      <span style="width:12px;height:12px;border-radius:3px;background:${s.bar};border:1px solid ${s.txt}33;display:inline-block;flex-shrink:0"></span>
+      <span style="width:12px;height:12px;border-radius:3px;background:${s.bar};border:1px solid ${s.txt}44;display:inline-block;flex-shrink:0"></span>
       <span style="font-size:0.78rem;color:var(--text-secondary)">${s.label}</span>
     </div>`).join('')}
     <div style="margin-left:auto;font-size:0.72rem;color:var(--text-tertiary)">Efficiency = Service + Cleaning time</div>
   </div>`;
 
-  // Table header — bar view shows only bar + efficiency; pct view shows all % columns
-  html += `<table style="width:100%;border-collapse:collapse">
+  // Header
+  html += `<table style="width:100%;border-collapse:collapse;table-layout:fixed">
+    <colgroup>
+      <col style="width:90px">
+      ${isBar ? `<col>` : segs.map(()=>`<col style="width:100px">`).join('')}
+      <col style="width:130px">
+    </colgroup>
     <thead>
       <tr style="border-bottom:1px solid var(--border)">
-        <th style="text-align:left;padding:8px 12px 10px 0;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800);width:90px">Unit</th>
+        <th style="text-align:left;padding:8px 12px 10px 0;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Unit</th>
         ${isBar
-          ? `<th style="text-align:left;padding:8px 12px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Distribution</th>`
-          : segs.map(s=>`<th style="text-align:right;padding:8px 12px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:${s.txt};min-width:64px">${s.label}</th>`).join('')
+          ? `<th style="text-align:left;padding:8px 16px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Distribution</th>`
+          : segs.map(s=>`<th style="text-align:right;padding:8px 12px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:${s.txt}">${s.label}</th>`).join('')
         }
-        <th style="text-align:right;padding:8px 0 10px 12px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800);min-width:110px">Efficiency</th>
+        <th style="text-align:right;padding:8px 0 10px 12px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Efficiency</th>
       </tr>
     </thead><tbody>`;
 
-  modeDistData.forEach((d, idx) => {
-    const isEven = idx % 2 === 0;
-    const rowBg = isEven ? 'var(--surface)' : 'var(--surface-secondary)';
+  modeDistData.forEach(d => {
     const total = segs.reduce((s,sg) => s + d[sg.key], 0);
+    const midCells = isBar
+      ? `<td style="padding:8px 16px">${mkBar(d, 400, 26, 1)}</td>`
+      : segs.map(s=>`<td style="text-align:right;padding:12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((d[s.key]/total)*100)}%</td>`).join('');
 
-    let midCells = '';
-    if (isBar) {
-      const barW = 260, barH = 22;
-      let xOff = 0;
-      const rects = segs.map(s => {
-        const w = Math.round((d[s.key]/total)*barW);
-        const r = `<rect x="${xOff}" y="0" width="${w}" height="${barH}" fill="${s.bar}"/>`;
-        xOff += w; return r;
-      }).join('');
-      midCells = `<td style="padding:10px 12px">
-        <svg viewBox="0 0 ${barW} ${barH}" style="width:100%;height:${barH}px;display:block;border-radius:6px;overflow:hidden">${rects}</svg>
-      </td>`;
-    } else {
-      midCells = segs.map(s=>`<td style="text-align:right;padding:12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((d[s.key]/total)*100)}%</td>`).join('');
-    }
-
-    html += `<tr style="background:${rowBg};border-bottom:0.5px solid var(--border-light)">
-      <td style="padding:12px 12px 12px 0;font-size:0.88rem;font-weight:600;color:var(--brand-900);white-space:nowrap">${d.unit}</td>
+    html += `<tr style="border-bottom:0.5px solid var(--border-light)">
+      <td style="padding:10px 12px 10px 0;font-size:0.88rem;font-weight:600;color:var(--brand-900)">${d.unit}</td>
       ${midCells}
-      <td style="text-align:right;padding:12px 0 12px 12px">${effPill(d)}</td>
+      <td style="text-align:right;padding:10px 0 10px 12px">${effPill(d)}</td>
     </tr>`;
   });
 
-  // Plant Avg — clear visual break
+  // Plant Avg
   const avg = key => Math.round(modeDistData.reduce((s,d) => s + d[key], 0) / modeDistData.length);
   const avgD = {service:avg('service'),cleaning:avg('cleaning'),standby:avg('standby'),trip:avg('trip')};
-  const avgTotal = segs.reduce((s,sg) => s + avgD[sg.key], 0);
+  const avgMid = isBar
+    ? `<td style="padding:12px 16px">${mkBar(avgD, 400, 26, 0.75)}</td>`
+    : segs.map(s => { const t=Object.values(avgD).reduce((a,b)=>a+b,0); return `<td style="text-align:right;padding:14px 12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((avgD[s.key]/t)*100)}%</td>`; }).join('');
 
-  let avgMidCells = '';
-  if (isBar) {
-    let xOff = 0;
-    const rects = segs.map(s => {
-      const w = Math.round((avgD[s.key]/avgTotal)*260);
-      const r = `<rect x="${xOff}" y="0" width="${w}" height="22" fill="${s.bar}" opacity="0.7"/>`;
-      xOff += w; return r;
-    }).join('');
-    avgMidCells = `<td style="padding:14px 12px">
-      <svg viewBox="0 0 260 22" style="width:100%;height:22px;display:block;border-radius:5px;overflow:hidden">${rects}</svg>
-    </td>`;
-  } else {
-    avgMidCells = segs.map(s=>`<td style="text-align:right;padding:14px 12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((avgD[s.key]/avgTotal)*100)}%</td>`).join('');
-  }
-
-  html += `</tbody>
-    <tfoot>
-      <tr style="background:var(--brand-25);border-top:2px solid var(--brand-200)">
-        <td style="padding:14px 12px 14px 0;font-size:0.75rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.06em">Plant Avg</td>
-        ${avgMidCells}
-        <td style="text-align:right;padding:14px 0 14px 12px">${effPill(avgD)}</td>
-      </tr>
-    </tfoot>
-  </table>`;
+  html += `</tbody><tfoot>
+    <tr style="background:var(--brand-25);border-top:2px solid var(--brand-200)">
+      <td style="padding:12px 12px 12px 0;font-size:0.75rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.06em">Plant Avg</td>
+      ${avgMid}
+      <td style="text-align:right;padding:12px 0 12px 12px">${effPill(avgD)}</td>
+    </tr>
+  </tfoot></table>`;
 
   el.innerHTML = html;
 }
