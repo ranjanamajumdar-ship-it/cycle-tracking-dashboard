@@ -1514,12 +1514,10 @@ function mkAlertCard(a) {
       </div>
       <span style="font-size:0.72rem;color:var(--text-tertiary);white-space:nowrap;flex-shrink:0;margin-top:3px">${a.time}</span>
     </div>
-    <div style="margin-bottom:4px;display:flex;align-items:baseline;gap:10px">
+    <div style="margin-bottom:6px;display:flex;align-items:baseline;gap:10px">
       <span style="font-size:0.92rem;font-weight:700;color:var(--brand-900)">${a.title}</span>
       <span style="font-size:0.78rem;font-weight:600;color:var(--brand-700)">${a.unit}</span>
     </div>
-    <div style="font-size:0.72rem;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">${a.param}</div>
-    <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.55;margin-bottom:10px">${a.desc}</div>
     ${a.prediction ? `<div style="display:flex;align-items:flex-start;gap:8px;padding:9px 14px;background:var(--brand-25);border:0.5px solid var(--brand-100);border-radius:8px;margin-bottom:14px">
       <span style="font-size:0.72rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.05em;flex-shrink:0;margin-top:1px">Prediction</span>
       <span style="font-size:0.82rem;color:var(--brand-800);font-weight:500;line-height:1.45">${a.prediction}</span>
@@ -1828,7 +1826,7 @@ function renderModeDistTable() {
       : prod >= 65
       ? { txt:'#B07800', border:'#D4A020', label:'Moderate' }
       : { txt:'#CC2020', border:'#E07070', label:'Low' };
-    return `<span style="padding:4px 13px;border-radius:999px;font-size:0.75rem;font-weight:700;background:transparent;color:${cls.txt};border:1.5px solid ${cls.border};white-space:nowrap">${cls.label} · ${prod}%</span>`;
+    return `<span style="font-size:0.75rem;font-weight:700;color:${cls.txt};white-space:nowrap">${cls.label} · ${prod}%</span>`;
   }
 
   // SVG stacked bar with clipped % labels inside each segment
@@ -1840,8 +1838,8 @@ function renderModeDistTable() {
     segs.forEach((s, i) => {
       const w = Math.round((d[s.key]/total)*W);
       const pct = Math.round((d[s.key]/total)*100);
-      defs += `<clipPath id="${uid}${i}"><rect x="${xOff}" y="0" width="${w}" height="${H}"/></clipPath>`;
-      rects += `<rect x="${xOff}" y="0" width="${w}" height="${H}" fill="${s.bar}" opacity="${opacity||1}"/>`;
+      defs += `<clipPath id="${uid}${i}"><rect x="${xOff+1}" y="1" width="${Math.max(0,w-2)}" height="${H-2}"/></clipPath>`;
+      rects += `<rect x="${xOff+0.5}" y="0.5" width="${Math.max(0,w-1)}" height="${H-1}" fill="#fff" stroke="${s.txt}" stroke-width="1" rx="3" opacity="${opacity||1}"/>`;
       if (pct >= 7) {
         labels += `<text x="${xOff + w/2}" y="${H*0.68}" text-anchor="middle" font-size="${H*0.48}" font-weight="700" fill="${s.txt}" clip-path="url(#${uid}${i})">${pct}%</text>`;
       }
@@ -1855,7 +1853,7 @@ function renderModeDistTable() {
   // Legend
   let html = `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid var(--border-light)">
     ${segs.map(s=>`<div style="display:flex;align-items:center;gap:6px">
-      <span style="width:12px;height:12px;border-radius:3px;background:${s.bar};border:1px solid ${s.txt}44;display:inline-block;flex-shrink:0"></span>
+      <span style="width:12px;height:12px;border-radius:3px;background:#fff;border:1.5px solid ${s.txt};display:inline-block;flex-shrink:0"></span>
       <span style="font-size:0.78rem;color:var(--text-secondary)">${s.label}</span>
     </div>`).join('')}
     <div style="margin-left:auto;font-size:0.72rem;color:var(--text-tertiary)">Efficiency = Service + Cleaning time</div>
