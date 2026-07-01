@@ -1645,7 +1645,7 @@ function showModeHistoryModal(period) {
 document.querySelectorAll('.unit-row').forEach(r => r.addEventListener('click', () => showUnitModal(r.dataset.unit)));
 document.querySelectorAll('.perf-table tbody tr').forEach(r => r.addEventListener('click', () => showUnitModal(r.dataset.unit)));
 document.querySelectorAll('.alert-item').forEach(r => r.addEventListener('click', () => showAlertModal(+r.dataset.alert)));
-document.getElementById('fbAlertBtn').addEventListener('click', showAllAlertsModal);
+document.getElementById('fbAlertBtn')?.addEventListener('click', showAllAlertsModal);
 document.getElementById('viewModeReportBtn')?.addEventListener('click', e => { e.stopPropagation(); showModeHistoryModal(); });
 document.getElementById('viewAllUnitsBtn').addEventListener('click', () => {
   modalTitle.textContent = 'All Units'; modalSubtitle.textContent = '8 units'; modalTabs.innerHTML = '';
@@ -1739,8 +1739,8 @@ document.addEventListener('click',()=>document.querySelectorAll('.dropdown-wrap.
 document.querySelectorAll('.dropdown-panel,.plant-dropdown').forEach(p=>p.addEventListener('click',e=>e.stopPropagation()));
 
 // ── MODE DISTRIBUTION TABLE ──
-let modeDistView = 'bar';
-let modeDistPeriodLabel = 'This Week';
+var modeDistView = 'bar';
+var modeDistPeriodLabel = 'This Week';
 
 function setModeDistView(v) {
   modeDistView = v;
@@ -1781,88 +1781,101 @@ function renderModeDistTable() {
     return `<span style="font-size:0.75rem;font-weight:700;color:${cls.txt};white-space:nowrap">${cls.label} · ${prod}%</span>`;
   }
 
-  // SVG stacked bar with clipped % labels inside each segment
-  function mkBar(d, W, H, opacity) {
+  // Solid filled SVG bar (no labels in bar mode)
+  function mkBar(d, H) {
     const total = segs.reduce((s,sg) => s + d[sg.key], 0);
-    let xOff = 0;
-    const uid = 'bar' + Math.random().toString(36).slice(2,7);
-    let defs = '', rects = '', labels = '';
+    const W = 1000;
+    let xOff = 0, rects = '';
     segs.forEach((s, i) => {
-      const w = Math.round((d[s.key]/total)*W);
-      const pct = Math.round((d[s.key]/total)*100);
-      defs += `<clipPath id="${uid}${i}"><rect x="${xOff+1}" y="1" width="${Math.max(0,w-2)}" height="${H-2}"/></clipPath>`;
-      rects += `<rect x="${xOff+0.5}" y="0.5" width="${Math.max(0,w-1)}" height="${H-1}" fill="#fff" stroke="${s.txt}" stroke-width="1" rx="3" opacity="${opacity||1}"/>`;
-      if (pct >= 7) {
-        labels += `<text x="${xOff + w/2}" y="${H*0.68}" text-anchor="middle" font-size="${H*0.48}" font-weight="700" fill="${s.txt}" clip-path="url(#${uid}${i})">${pct}%</text>`;
-      }
+      const w = (d[s.key]/total)*W;
+      const rx = i === 0 ? 4 : i === segs.length-1 ? 4 : 0;
+      rects += `<rect x="${xOff}" y="0" width="${w}" height="${H}" fill="${s.bar}" rx="${i===0?4:0}" ry="${i===0?4:0}"/>`;
       xOff += w;
     });
-    return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;border-radius:6px;overflow:hidden"><defs>${defs}</defs>${rects}${labels}</svg>`;
+    // round last rect right corners via clip
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:${H}px;display:block;border-radius:6px;overflow:hidden">${rects}</svg>`;
   }
+
+  // Unit subtitle
+  const unitSubtitle = u => {
+    if (u.startsWith('PSF')) return 'Pressure Sand Filter';
+    if (u.startsWith('UF'))  return 'Ultrafiltration';
+    if (u.startsWith('RO'))  return 'Reverse Osmosis';
+    if (u.startsWith('MBR')) return 'Membrane Bioreactor';
+    return 'Unit';
+  };
+
+  // Efficiency % (service + cleaning)
+  function effPct(d) { return d.service + d.cleaning; }
 
   const isBar = modeDistView === 'bar';
 
   // Legend
-  let html = `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid var(--border-light)">
+  let html = `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px">
     ${segs.map(s=>`<div style="display:flex;align-items:center;gap:6px">
-      <span style="width:12px;height:12px;border-radius:3px;background:#fff;border:1.5px solid ${s.txt};display:inline-block;flex-shrink:0"></span>
+      <span style="width:12px;height:12px;border-radius:3px;background:${s.bar};display:inline-block;flex-shrink:0"></span>
       <span style="font-size:0.78rem;color:var(--text-secondary)">${s.label}</span>
     </div>`).join('')}
-    <div style="margin-left:auto;font-size:0.72rem;color:var(--text-tertiary)">Efficiency = Service + Cleaning time</div>
+    <div style="margin-left:auto;font-size:0.78rem;font-weight:600;color:var(--text-secondary);align-self:center">Efficiency</div>
   </div>`;
 
-  // Header
-  html += `<table style="width:100%;border-collapse:collapse;table-layout:fixed">
-    <colgroup>
-      <col style="width:90px">
-      ${isBar ? `<col>` : segs.map(()=>`<col style="width:100px">`).join('')}
-      <col style="width:130px">
-    </colgroup>
-    <thead>
-      <tr style="border-bottom:1px solid var(--border)">
-        <th style="text-align:left;padding:8px 12px 10px 0;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Unit</th>
-        ${isBar
-          ? `<th style="text-align:left;padding:8px 16px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Distribution</th>`
-          : segs.map(s=>`<th style="text-align:right;padding:8px 12px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:${s.txt}">${s.label}</th>`).join('')
-        }
-        <th style="text-align:right;padding:8px 0 10px 12px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--brand-800)">Efficiency</th>
-      </tr>
-    </thead><tbody>`;
+  // Unit rows
+  if (isBar) {
+    modeDistData.forEach(d => {
+      const pct = effPct(d);
+      html += `<div style="display:flex;align-items:center;gap:16px;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:8px;background:var(--surface)">
+        <div style="min-width:120px">
+          <div style="font-size:0.92rem;font-weight:700;color:var(--brand-800)">${d.unit}</div>
+          <div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:2px">${unitSubtitle(d.unit)}</div>
+        </div>
+        <div style="flex:1">${mkBar(d, 20)}</div>
+        <div style="min-width:64px;text-align:right;font-size:1.05rem;font-weight:700;color:var(--text-primary)">${pct}%</div>
+      </div>`;
+    });
 
-  modeDistData.forEach(d => {
-    const total = segs.reduce((s,sg) => s + d[sg.key], 0);
-    const midCells = isBar
-      ? `<td style="padding:8px 16px">${mkBar(d, 400, 26, 1)}</td>`
-      : segs.map(s=>`<td style="text-align:right;padding:12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((d[s.key]/total)*100)}%</td>`).join('');
-
-    html += `<tr style="border-bottom:0.5px solid var(--border-light)">
-      <td style="padding:10px 12px 10px 0;font-size:0.88rem;font-weight:600;color:var(--brand-900)">${d.unit}</td>
-      ${midCells}
-      <td style="text-align:right;padding:10px 0 10px 12px">${effPill(d)}</td>
-    </tr>`;
-  });
-
-  // Plant Avg
-  const avg = key => Math.round(modeDistData.reduce((s,d) => s + d[key], 0) / modeDistData.length);
-  const avgD = {service:avg('service'),cleaning:avg('cleaning'),standby:avg('standby'),trip:avg('trip')};
-  const avgMid = isBar
-    ? `<td style="padding:12px 16px">${mkBar(avgD, 400, 26, 0.75)}</td>`
-    : segs.map(s => { const t=Object.values(avgD).reduce((a,b)=>a+b,0); return `<td style="text-align:right;padding:14px 12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((avgD[s.key]/t)*100)}%</td>`; }).join('');
-
-  html += `</tbody><tfoot>
-    <tr style="background:var(--brand-25);border-top:2px solid var(--brand-200)">
-      <td style="padding:12px 12px 12px 0;font-size:0.75rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.06em">Plant Avg</td>
-      ${avgMid}
-      <td style="text-align:right;padding:12px 0 12px 12px">${effPill(avgD)}</td>
-    </tr>
-  </tfoot></table>`;
+    // Plant Avg
+    const avg = key => Math.round(modeDistData.reduce((s,d2) => s + d2[key], 0) / modeDistData.length);
+    const avgD = {service:avg('service'),cleaning:avg('cleaning'),standby:avg('standby'),trip:avg('trip')};
+    const avgPct = effPct(avgD);
+    html += `<div style="display:flex;align-items:center;gap:16px;border:2px solid var(--brand-300);border-radius:10px;padding:14px 18px;margin-top:4px;background:var(--brand-25)">
+      <div style="min-width:120px">
+        <div style="font-size:0.75rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.07em">Plant Avg</div>
+      </div>
+      <div style="flex:1">${mkBar(avgD, 20)}</div>
+      <div style="min-width:64px;text-align:right;font-size:1.05rem;font-weight:700;color:var(--brand-800)">${avgPct}%</div>
+    </div>`;
+  } else {
+    // Percentage view — table layout
+    const total = d => segs.reduce((s,sg) => s + d[sg.key], 0);
+    html += `<table style="width:100%;border-collapse:collapse;table-layout:fixed">
+      <colgroup><col style="width:120px">${segs.map(()=>`<col>`).join('')}<col style="width:100px"></colgroup>
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:8px 0 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">Unit</th>
+        ${segs.map(s=>`<th style="text-align:right;padding:8px 12px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:${s.txt}">${s.label}</th>`).join('')}
+        <th style="text-align:right;padding:8px 0 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">Efficiency</th>
+      </tr></thead><tbody>`;
+    modeDistData.forEach(d => {
+      const t = total(d);
+      html += `<tr style="border-bottom:0.5px solid var(--border-light)">
+        <td style="padding:12px 0;font-size:0.88rem;font-weight:600;color:var(--brand-900)">${d.unit}</td>
+        ${segs.map(s=>`<td style="text-align:right;padding:12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((d[s.key]/t)*100)}%</td>`).join('')}
+        <td style="text-align:right;padding:12px 0;font-size:0.9rem;font-weight:700;color:var(--text-primary)">${effPct(d)}%</td>
+      </tr>`;
+    });
+    const avg = key => Math.round(modeDistData.reduce((s,d2) => s + d2[key], 0) / modeDistData.length);
+    const avgD = {service:avg('service'),cleaning:avg('cleaning'),standby:avg('standby'),trip:avg('trip')};
+    const t2 = Object.values(avgD).reduce((a,b)=>a+b,0);
+    html += `</tbody><tfoot><tr style="background:var(--brand-25);border-top:2px solid var(--brand-200)">
+      <td style="padding:12px 0;font-size:0.75rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.06em">Plant Avg</td>
+      ${segs.map(s=>`<td style="text-align:right;padding:14px 12px;font-size:0.9rem;font-weight:700;font-family:var(--font-mono);color:${s.txt}">${Math.round((avgD[s.key]/t2)*100)}%</td>`).join('')}
+      <td style="text-align:right;padding:14px 0;font-size:0.9rem;font-weight:700;color:var(--brand-800)">${effPct(avgD)}%</td>
+    </tr></tfoot></table>`;
+  }
 
   el.innerHTML = html;
 }
 
 // Init
-renderSparklines();
-renderBarChart();
 renderModeChart();
 renderModeDistTable();
 </script>
