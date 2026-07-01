@@ -1448,33 +1448,25 @@ function mkTrackingTiles(a) {
 }
 
 function mkAlertCard(a) {
-  const sc  = alertSevConfig[a.sev]  || alertSevConfig.warning;
-  const tc  = alertTypeConfig[a.type] || {label:a.type, color:'var(--text-secondary)', bg:'var(--surface-secondary)'};
-  const sevPillStyle = a.sev === 'emergency'
-    ? `background:#FF5555;color:#fff;border:none`
-    : `background:${sc.bg};color:${sc.text};border:0.5px solid ${sc.border}`;
-  const leftBorder = a.sev === 'emergency' ? '#E53535' : a.sev === 'critical' ? '#CC4400' : '#D4A020';
-  const cardBg     = a.sev === 'emergency' ? '#FFF8F8' : a.sev === 'critical' ? '#FFF5F0' : 'var(--surface)';
-  return `<div style="background:${cardBg};border:0.5px solid var(--border);border-left:3px solid ${leftBorder};border-radius:12px;padding:18px 20px;margin-bottom:10px">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:0.71rem;font-weight:700;letter-spacing:0.03em;${sevPillStyle}">
-          <span style="width:6px;height:6px;border-radius:50%;background:${a.sev==='emergency'?'#fff':sc.dotBg};display:inline-block;flex-shrink:0"></span>
-          ${sc.label}
-        </span>
-        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:0.71rem;font-weight:600;background:${tc.bg};color:${tc.color};border:0.5px solid currentColor;opacity:0.85">${tc.icon} ${tc.label}</span>
+  const tc = alertTypeConfig[a.type] || {label:a.type, color:'var(--text-secondary)', bg:'var(--surface-secondary)', icon:'•'};
+  const sevBg    = a.sev === 'emergency' ? '#E53535' : a.sev === 'critical' ? '#CC4400' : '#C08000';
+  const iconBg   = a.sev === 'emergency' ? '#FFEAEA' : a.sev === 'critical' ? '#FFF0E6' : '#FFF8E0';
+  const iconClr  = a.sev === 'emergency' ? '#E53535' : a.sev === 'critical' ? '#CC4400' : '#C08000';
+  return `<div style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px">
+    <div style="flex-shrink:0;width:38px;height:38px;border-radius:50%;background:${iconBg};display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${iconClr}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:0.9rem;font-weight:700;color:var(--brand-900);margin-bottom:4px">${a.title}</div>
+      ${a.prediction ? `<div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:6px"><span style="font-weight:700;color:var(--brand-800)">PREDICTION:</span> ${a.prediction}</div>` : ''}
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:6px;font-size:0.72rem;font-weight:600;background:var(--surface-secondary);color:var(--text-secondary);border:1px solid var(--border)">${tc.label} ${tc.icon}</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--text-tertiary)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${a.time}</span>
       </div>
-      <span style="font-size:0.72rem;color:var(--text-tertiary);white-space:nowrap;flex-shrink:0;margin-top:3px">${a.time}</span>
     </div>
-    <div style="margin-bottom:6px;display:flex;align-items:baseline;gap:10px">
-      <span style="font-size:0.92rem;font-weight:700;color:var(--brand-900)">${a.title}</span>
-      <span style="font-size:0.78rem;font-weight:600;color:var(--brand-700)">${a.unit}</span>
+    <div style="flex-shrink:0">
+      <span style="display:inline-block;padding:6px 14px;border-radius:8px;background:${sevBg};color:#fff;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase">${a.sev}</span>
     </div>
-    ${a.prediction ? `<div style="display:flex;align-items:flex-start;gap:8px;padding:9px 14px;background:var(--brand-25);border:0.5px solid var(--brand-100);border-radius:8px;margin-bottom:14px">
-      <span style="font-size:0.72rem;font-weight:700;color:var(--brand-800);text-transform:uppercase;letter-spacing:0.05em;flex-shrink:0;margin-top:1px">Prediction</span>
-      <span style="font-size:0.82rem;color:var(--brand-800);font-weight:500;line-height:1.45">${a.prediction}</span>
-    </div>` : ''}
-    <div style="display:flex;gap:8px;flex-wrap:wrap">${mkTrackingTiles(a)}</div>
   </div>`;
 }
 
