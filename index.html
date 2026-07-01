@@ -484,34 +484,35 @@ body {
 /* ── Vertical Timeline (Cycle Steps) ── */
 .vtl { display: flex; flex-direction: column; }
 .vtl-row { display: flex; gap: 0; align-items: flex-start; position: relative; }
-/* Left col: time label + dot */
+/* Left col: time label */
 .vtl-left {
-  width: 68px; flex-shrink: 0; display: flex; flex-direction: column;
-  align-items: flex-end; padding-right: 16px; padding-top: 2px;
+  width: 80px; flex-shrink: 0; display: flex; flex-direction: column;
+  align-items: flex-end; padding-right: 16px; padding-top: 3px;
 }
-.vtl-time { font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-tertiary); white-space: nowrap; }
-/* Connector line + dot */
+.vtl-time { font-size: 0.71rem; font-family: var(--font-mono); color: var(--text-tertiary); white-space: nowrap; }
+/* Number badge left of connector */
+.vtl-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; position: relative; z-index: 1; margin-top: 0;
+}
+.vtl-row.past    .vtl-num { background: var(--brand-800); color: #fff; }
+.vtl-row.current .vtl-num { background: var(--brand-800); color: #fff; box-shadow: 0 0 0 3px var(--brand-50), 0 0 0 5px var(--brand-800); }
+.vtl-row.future  .vtl-num { background: var(--surface); color: var(--text-tertiary); border: 1.5px solid var(--border); }
+/* Connector line */
 .vtl-connector {
-  width: 20px; flex-shrink: 0; display: flex; flex-direction: column;
+  width: 22px; flex-shrink: 0; display: flex; flex-direction: column;
   align-items: center; position: relative;
 }
-.vtl-line-top { width: 2px; background: var(--border); flex: 0 0 8px; }
-.vtl-line-bot { width: 2px; background: var(--border); flex: 1; min-height: 20px; }
-.vtl-dot {
-  width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; position: relative; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-}
-.vtl-row.past  .vtl-dot { background: #AAE69B; border: 2px solid #6ECC5D; }
-.vtl-row.past  .vtl-dot::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #2C7A14; }
-.vtl-row.current .vtl-dot { background: var(--brand-800); border: 3px solid var(--brand-50); box-shadow: 0 0 0 2px var(--brand-800); width: 16px; height: 16px; }
-.vtl-row.future .vtl-dot { background: var(--surface); border: 2px solid var(--border); }
-.vtl-row.past  .vtl-line-top, .vtl-row.past  .vtl-line-bot { background: #AAE69B; }
-.vtl-row.current .vtl-line-top { background: #AAE69B; }
-.vtl-row.current .vtl-line-bot { background: var(--border); }
+.vtl-line-top { width: 1.5px; border-left: 1.5px dashed var(--border); flex: 0 0 8px; }
+.vtl-line-bot { width: 1.5px; border-left: 1.5px dashed var(--border); flex: 1; min-height: 20px; }
+.vtl-row.past  .vtl-line-top, .vtl-row.past  .vtl-line-bot { border-color: var(--brand-300); }
+.vtl-row.current .vtl-line-top { border-color: var(--brand-300); }
+.vtl-row.current .vtl-line-bot { border-color: var(--border); }
 /* Right col: step content */
-.vtl-content { flex: 1; min-width: 0; padding: 0 0 20px 14px; }
+.vtl-content { flex: 1; min-width: 0; padding: 0 0 24px 14px; }
 .vtl-row.past  .vtl-content { padding-top: 0; }
-.vtl-row.future .vtl-content { opacity: 0.55; }
+.vtl-row.future .vtl-content { opacity: 0.5; }
 .vtl-step-name { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
 .vtl-row.current .vtl-step-name { color: var(--brand-800); }
 .vtl-step-dur { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px; }
@@ -540,7 +541,7 @@ body {
   flex-shrink: 0;
 }
 .cp-dot:hover { transform: scale(1.4); }
-.cp-dot.cp-past    { background: #AAE69B; }
+.cp-dot.cp-past    { background: var(--brand-800); }
 .cp-dot.cp-current { background: var(--brand-800); box-shadow: 0 0 0 3px var(--brand-50); }
 .cp-dot.cp-future  { background: var(--border); }
 .cp-dot-tip {
@@ -567,7 +568,7 @@ body {
   padding: 12px 16px; border-bottom: 0.5px solid var(--border-light);
 }
 /* Health indicator as left border */
-.param-card.healthy { border-left: 3px solid #AAE69B; }
+.param-card.healthy { border-left: 3px solid var(--border); }
 .param-card.warning { border-left: 3px solid var(--amber-solid); }
 .param-card.critical { border-left: 3px solid var(--red); }
 .param-name { font-size: 0.88rem; font-weight: 700; color: var(--brand-900); flex: 1; }
@@ -1249,7 +1250,10 @@ function showUnitModal(key) {
       let h = `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface-secondary);border-radius:8px;margin-bottom:16px;border:0.5px solid var(--border-light)">
         <div style="display:flex;align-items:center;gap:10px">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand-800)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <span style="font-size:0.9rem;font-weight:700;color:var(--brand-900)">${u.cycleType}</span>
+          <div>
+            <div style="font-size:0.9rem;font-weight:700;color:var(--brand-900)">${u.cycleType}</div>
+            <div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:1px">${u.mode}</div>
+          </div>
           <div class="running-pill" style="padding:3px 10px;font-size:0.72rem"><span class="pulse"></span>Running</div>
         </div>
         <div style="display:flex;gap:18px">
@@ -1260,14 +1264,22 @@ function showUnitModal(key) {
       </div>`;
       // Timestamp strip
       if (u.ts) {
-        const trigCls = u.ts.trigger==='Auto' ? 'color:#299700' : 'color:#FF6200';
-        h += `<div style="display:flex;align-items:center;gap:16px;padding:10px 14px;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:8px;margin-bottom:16px;flex-wrap:wrap">
-          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">Mode Change</div>
-          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Start</span><span style="font-size:0.78rem;font-weight:600;font-family:var(--font-mono)">${u.ts.startTime}</span></div>
-          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Duration</span><span style="font-size:0.78rem;font-weight:600;font-family:var(--font-mono)">${u.ts.duration}</span></div>
-          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Trigger</span><span style="font-size:0.78rem;font-weight:600;${trigCls}">${u.ts.trigger}</span></div>
-          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Cycle</span><span style="font-size:0.78rem;font-weight:600;font-family:var(--font-mono)">#${u.ts.cycle}</span></div>
-          <div style="display:flex;align-items:center;gap:5px"><span style="font-size:0.68rem;color:var(--text-tertiary)">Event</span><span style="font-size:0.78rem;font-weight:500;color:var(--brand-800)">${u.ts.eventId}</span></div>
+        const metaItem = (label, val, mono=false) => `<div style="display:flex;flex-direction:column;gap:2px;padding:0 14px;border-right:0.5px solid var(--border-light)">
+          <div style="font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">${label}</div>
+          <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary)${mono?';font-family:var(--font-mono)':''}">${val}</div>
+        </div>`;
+        h += `<div style="display:flex;align-items:stretch;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:10px;margin-bottom:16px;overflow:hidden">
+          <div style="padding:10px 14px;display:flex;flex-direction:column;justify-content:center;gap:2px;border-right:0.5px solid var(--border-light)">
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary)">Mode Change</div>
+          </div>
+          ${metaItem('Started', u.ts.startTime, true)}
+          ${metaItem('Duration', u.ts.duration, true)}
+          ${metaItem('Trigger', u.ts.trigger)}
+          ${metaItem('Cycle', '#'+u.ts.cycle, true)}
+          <div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px">
+            <div style="font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">Event</div>
+            <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);font-family:var(--font-mono)">${u.ts.eventId}</div>
+          </div>
         </div>`;
       }
       h += `<div class="section-label" style="margin-bottom:8px">
@@ -1277,9 +1289,8 @@ function showUnitModal(key) {
       </div>`;
       u.params.forEach(p => {
         const isWarn = p.h !== 'healthy';
-        const deltaSign = p.c.startsWith('+') ? 'pos' : p.c.startsWith('-') ? 'neg' : 'pos';
-        const deltaWarn = isWarn ? 'warn' : deltaSign;
-        const footerColor = isWarn ? 'var(--orange)' : 'var(--green)';
+        const deltaWarn = 'flat';
+        const footerColor = isWarn ? 'var(--text-secondary)' : 'var(--text-secondary)';
         h += `<div class="param-card ${p.h}">
           <div class="param-card-header-bar">
             <div class="param-name">${p.name}</div>
@@ -1302,27 +1313,15 @@ function showUnitModal(key) {
               <div class="param-footer-note" style="color:${footerColor}">${p.ft}</div>
             </div>
             <div class="param-chart-col">
-              <div class="param-chart-label-row"><span>Trend · last ${p.n} cycles</span><span>${p.h === 'healthy' ? '✓ healthy' : '⚠ watch'}</span></div>
+              <div class="param-chart-label-row"><span>Trend · last ${p.n} cycles</span><span style="color:${p.h==='healthy'?'var(--text-tertiary)':'var(--amber)'}">${p.h === 'healthy' ? '✓ healthy' : '⚠ watch'}</span></div>
               ${mkParamChart(p.spark, isWarn, p.thr, p.b, p.a, p.u)}
             </div>
           </div>
         </div>`;
       });
-      // Mode-linked parameter capture
-      if (u.modeCapture) {
-        h += `<div class="section-label" style="margin-top:20px">${u.modeCapture.label} <span class="right">Captured while mode is active</span></div>`;
-        h += `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px">`;
-        u.modeCapture.fields.forEach(f => {
-          h += `<div style="background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:8px;padding:10px 14px">
-            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);margin-bottom:4px">${f.k}</div>
-            <div style="font-size:0.92rem;font-weight:700;font-family:var(--font-mono);color:var(--brand-900)">${f.v}</div>
-          </div>`;
-        });
-        h += `</div>`;
-      }
       // Key parameters
       if (u.keyParams) {
-        const trendIcon = {normal:'<span style="color:var(--green)">●</span>',watch:'<span style="color:var(--amber-solid)">●</span>',alert:'<span style="color:var(--red)">●</span>','on-track':'<span style="color:var(--green)">●</span>'};
+        const trendIcon = {normal:'<span style="color:var(--border)">●</span>',watch:'<span style="color:var(--amber-solid)">●</span>',alert:'<span style="color:var(--red)">●</span>','on-track':'<span style="color:var(--border)">●</span>'};
         h += `<div class="section-label" style="margin-top:4px">${u.keyParams.label} <span class="right">Tracked across cycles</span></div>`;
         h += `<div style="border:0.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px">`;
         u.keyParams.items.forEach((item, i) => {
@@ -1340,7 +1339,13 @@ function showUnitModal(key) {
       modalBody.innerHTML = h;
     } else if (tab === 'Equipment') {
       let h = `<table class="equip-table"><thead><tr><th>ID</th><th>Type</th><th>State</th><th>Since</th><th>Actual</th></tr></thead><tbody>`;
-      u.equipment.forEach(e => { h += `<tr><td>${e.id}</td><td>${e.type}</td><td><span class="state-pill ${e.sc}">${e.state}</span></td><td>${e.since}</td><td>${e.ac}</td></tr>`; });
+      u.equipment.forEach(e => {
+        const isRunning = e.state === 'Running';
+        const stateCell = isRunning
+          ? `<span style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:500;color:var(--text-primary)"><span class="pulse" style="flex-shrink:0"></span>${e.state}</span>`
+          : `<span style="font-size:0.82rem;color:var(--text-secondary)">${e.state}</span>`;
+        h += `<tr><td>${e.id}</td><td>${e.type}</td><td>${stateCell}</td><td>${e.since}</td><td>${e.ac}</td></tr>`;
+      });
       modalBody.innerHTML = h + '</tbody></table>';
     } else {
       // helper: format time string with units e.g. "1:32" → "1 hr 32 min" or "5:00" → "5 min"
@@ -1366,7 +1371,7 @@ function showUnitModal(key) {
           <div class="vtl-left"><span class="vtl-time">${timeLabel}</span></div>
           <div class="vtl-connector">
             <div class="vtl-line-top" style="${i===0?'opacity:0':''}"></div>
-            <div class="vtl-dot"></div>
+            <div class="vtl-num">${i+1}</div>
             <div class="vtl-line-bot" style="${isLast?'opacity:0':''}"></div>
           </div>
           <div class="vtl-content">
@@ -1376,7 +1381,7 @@ function showUnitModal(key) {
         if (isPast) {
           h += `<div class="vtl-past-row">
             <span class="vtl-past-stat"><span class="vtl-past-key">Actual</span><span class="vtl-past-val">${fmtDur(s.act)}</span></span>
-            <span class="vtl-past-stat"><span class="vtl-past-key">vs target</span><span class="vtl-past-val" style="color:var(--green)">On time</span></span>
+            <span class="vtl-past-stat"><span class="vtl-past-key">vs target</span><span class="vtl-past-val" style="color:var(--text-secondary)">On time</span></span>
           </div>`;
         }
         if (isCurrent) {
