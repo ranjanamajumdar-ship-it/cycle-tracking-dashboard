@@ -70,7 +70,7 @@
   --elev-3: 0 10px 32px rgba(14,31,54,0.13);
 }
 
-html { font-size: 13px; }
+html { font-size: 14px; }
 body {
   font-family: var(--font-sans);
   background: var(--bg); color: var(--text-primary);
@@ -222,7 +222,7 @@ body {
 .status-dot.green  { background: #AAE69B; }   /* service */
 .status-dot.blue   { background: #9CDCFF; }   /* cleaning/filtration */
 .status-dot.amber  { background: var(--amber-solid); }
-.status-dot.red    { background: var(--red); }
+.status-dot.red    { background: #FF5555; }
 .status-dot.orange { background: var(--orange); }
 .status-dot.teal   { background: var(--teal); }
 
@@ -418,7 +418,7 @@ body {
 .modal-body { flex: 1; overflow-y: auto; padding: 22px 26px 26px; }
 
 /* ── Modal inner styles ── */
-.section-label { font-size: 0.68rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.section-label { font-size: 0.7rem; font-weight: 700; color: var(--brand-800); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
 .section-label .right { font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.72rem; }
 
 .cycle-banner {
@@ -484,12 +484,9 @@ body {
 /* ── Vertical Timeline (Cycle Steps) ── */
 .vtl { display: flex; flex-direction: column; }
 .vtl-row { display: flex; gap: 0; align-items: flex-start; position: relative; }
-/* Left col: time label */
-.vtl-left {
-  width: 80px; flex-shrink: 0; display: flex; flex-direction: column;
-  align-items: flex-end; padding-right: 16px; padding-top: 3px;
-}
-.vtl-time { font-size: 0.71rem; font-family: var(--font-mono); color: var(--text-tertiary); white-space: nowrap; }
+/* Left col hidden — timings shown inside each step card */
+.vtl-left { display: none; }
+.vtl-time { display: none; }
 /* Number badge left of connector */
 .vtl-num {
   width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
@@ -578,7 +575,7 @@ body {
 .param-card-body { display: grid; grid-template-columns: 180px 1fr; }
 .param-stats-col { padding: 14px 16px; border-right: 0.5px solid var(--border-light); display: flex; flex-direction: column; gap: 12px; }
 .param-kv { display: flex; flex-direction: column; }
-.param-kv-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 2px; }
+.param-kv-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--brand-800); margin-bottom: 2px; }
 .param-kv-value { font-size: 1.2rem; font-weight: 700; font-family: var(--font-mono); color: var(--brand-900); }
 .param-kv-value .unit { font-size: 0.75rem; font-weight: 400; color: var(--text-secondary); margin-left: 2px; font-family: var(--font-sans); }
 .param-delta { display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 600; padding: 2px 7px; border-radius: 999px; border: 0.5px solid; margin-top: 4px; width: fit-content; }
@@ -1237,8 +1234,19 @@ function setModalIcon(color, svgInner) {
 // ── UNIT MODAL ──
 function showUnitModal(key) {
   const u = unitData[key]; if (!u) return;
-  modalTitle.textContent = u.name;
-  modalSubtitle.textContent = u.mode;
+  modalTitle.textContent = u.name + ' — ' + u.cycleType;
+  modalSubtitle.textContent = '';
+  // inject Running pill into header right after title
+  setTimeout(() => {
+    const hLeft = document.querySelector('.modal-header-left');
+    if (hLeft && !hLeft.querySelector('.running-pill')) {
+      const pill = document.createElement('div');
+      pill.className = 'running-pill';
+      pill.style.cssText = 'padding:4px 12px;font-size:0.75rem;margin-left:8px';
+      pill.innerHTML = '<span class="pulse"></span>Running';
+      hLeft.appendChild(pill);
+    }
+  }, 0);
   const iconColors = {green:'green',blue:'blue',amber:'amber',orange:'amber',teal:'teal',red:'red'};
   setModalIcon(iconColors[u.modeColor]||'blue', '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>');
 
@@ -1246,39 +1254,32 @@ function showUnitModal(key) {
 
   function renderTab(tab) {
     if (tab === 'Parameters') {
-      // Compact header strip instead of heavy banner
-      let h = `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface-secondary);border-radius:8px;margin-bottom:16px;border:0.5px solid var(--border-light)">
-        <div style="display:flex;align-items:center;gap:10px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand-800)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <div>
-            <div style="font-size:0.9rem;font-weight:700;color:var(--brand-900)">${u.cycleType}</div>
-            <div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:1px">${u.mode}</div>
-          </div>
-          <div class="running-pill" style="padding:3px 10px;font-size:0.72rem"><span class="pulse"></span>Running</div>
-        </div>
-        <div style="display:flex;gap:18px">
-          <div style="text-align:center"><div style="font-size:1rem;font-weight:700;color:var(--brand-900)">${u.cleanings}</div><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary)">Cleanings</div></div>
-          <div style="text-align:center"><div style="font-size:1rem;font-weight:700;color:var(--green)">${u.onTarget}%</div><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary)">On Target</div></div>
-          <div style="text-align:center"><div style="font-size:1rem;font-weight:700;color:${u.alertsToReview>0?'var(--red)':'var(--text-primary)'}">${u.alertsToReview}</div><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary)">Alerts</div></div>
-        </div>
+      let h = '';
+      // KPI strip — cleanings / alerts only (no colour on numbers)
+      h += `<div style="display:flex;gap:24px;padding:14px 18px;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:10px;margin-bottom:16px">
+        <div><div style="font-size:1.15rem;font-weight:700;color:var(--brand-900)">${u.cleanings}</div><div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-top:2px">Cleanings</div></div>
+        <div style="width:0.5px;background:var(--border-light)"></div>
+        <div><div style="font-size:1.15rem;font-weight:700;color:var(--brand-900)">${u.onTarget}%</div><div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-top:2px">On Target</div></div>
+        <div style="width:0.5px;background:var(--border-light)"></div>
+        <div><div style="font-size:1.15rem;font-weight:700;color:${u.alertsToReview>0?'var(--red)':'var(--brand-900)'}">${u.alertsToReview}</div><div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-top:2px">Alerts</div></div>
       </div>`;
-      // Timestamp strip
+      // Timestamp strip — clear visual hierarchy
       if (u.ts) {
-        const metaItem = (label, val, mono=false) => `<div style="display:flex;flex-direction:column;gap:2px;padding:0 14px;border-right:0.5px solid var(--border-light)">
-          <div style="font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">${label}</div>
-          <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary)${mono?';font-family:var(--font-mono)':''}">${val}</div>
+        const metaItem = (label, val, mono=false) => `<div style="display:flex;flex-direction:column;gap:3px;padding:12px 16px;border-right:0.5px solid var(--border-light)">
+          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--brand-800)">${label}</div>
+          <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary)${mono?';font-family:var(--font-mono)':''}">${val}</div>
         </div>`;
-        h += `<div style="display:flex;align-items:stretch;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:10px;margin-bottom:16px;overflow:hidden">
-          <div style="padding:10px 14px;display:flex;flex-direction:column;justify-content:center;gap:2px;border-right:0.5px solid var(--border-light)">
-            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary)">Mode Change</div>
+        h += `<div style="display:flex;align-items:stretch;background:var(--surface-secondary);border:0.5px solid var(--border-light);border-radius:10px;margin-bottom:20px;overflow:hidden">
+          <div style="padding:12px 16px;display:flex;align-items:center;border-right:0.5px solid var(--border-light);background:var(--brand-800)">
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.85);white-space:nowrap">Mode<br>Change</div>
           </div>
           ${metaItem('Started', u.ts.startTime, true)}
           ${metaItem('Duration', u.ts.duration, true)}
           ${metaItem('Trigger', u.ts.trigger)}
           ${metaItem('Cycle', '#'+u.ts.cycle, true)}
-          <div style="display:flex;flex-direction:column;gap:2px;padding:10px 14px">
-            <div style="font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary)">Event</div>
-            <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);font-family:var(--font-mono)">${u.ts.eventId}</div>
+          <div style="display:flex;flex-direction:column;gap:3px;padding:12px 16px">
+            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--brand-800)">Event</div>
+            <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);font-family:var(--font-mono)">${u.ts.eventId}</div>
           </div>
         </div>`;
       }
@@ -1313,7 +1314,7 @@ function showUnitModal(key) {
               <div class="param-footer-note" style="color:${footerColor}">${p.ft}</div>
             </div>
             <div class="param-chart-col">
-              <div class="param-chart-label-row"><span>Trend · last ${p.n} cycles</span><span style="color:${p.h==='healthy'?'var(--text-tertiary)':'var(--amber)'}">${p.h === 'healthy' ? '✓ healthy' : '⚠ watch'}</span></div>
+              <div class="param-chart-label-row"><span>Trend · last ${p.n} cycles</span><span style="color:${p.h==='healthy'?'var(--green)':'var(--amber)'};font-weight:600">${p.h === 'healthy' ? '✓ healthy' : '⚠ watch'}</span></div>
               ${mkParamChart(p.spark, isWarn, p.thr, p.b, p.a, p.u)}
             </div>
           </div>
@@ -1342,8 +1343,8 @@ function showUnitModal(key) {
       u.equipment.forEach(e => {
         const isRunning = e.state === 'Running';
         const stateCell = isRunning
-          ? `<span style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:500;color:var(--text-primary)"><span class="pulse" style="flex-shrink:0"></span>${e.state}</span>`
-          : `<span style="font-size:0.82rem;color:var(--text-secondary)">${e.state}</span>`;
+          ? `<span style="display:inline-flex;align-items:center;gap:8px;font-size:0.85rem;font-weight:600;color:var(--text-primary)"><span style="width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block;flex-shrink:0;animation:pulse 1.8s infinite;box-shadow:0 0 0 0 rgba(41,151,0,0.4)"></span>${e.state}</span>`
+          : `<span style="font-size:0.85rem;color:var(--text-secondary)">${e.state}</span>`;
         h += `<tr><td>${e.id}</td><td>${e.type}</td><td>${stateCell}</td><td>${e.since}</td><td>${e.ac}</td></tr>`;
       });
       modalBody.innerHTML = h + '</tbody></table>';
@@ -1365,36 +1366,36 @@ function showUnitModal(key) {
         const isFuture  = i > u.aStep;
         const rowCls    = isPast ? 'past' : isCurrent ? 'current' : 'future';
         const isLast    = i === u.steps.length - 1;
-        const timeLabel = isPast ? fmtDur(s.act) : isCurrent ? fmtDur(s.act)+' elapsed' : fmtDur(s.tgt)+' est.';
+        const pct       = isPast ? 100 : isCurrent ? s.p : 0;
+        const durLabel  = isPast ? fmtDur(s.act) : isCurrent ? `${fmtDur(s.act)} elapsed` : fmtDur(s.tgt);
+
+        // Step card colours
+        const cardBg    = isCurrent ? 'var(--brand-800)' : isPast ? 'var(--surface-secondary)' : 'var(--surface)';
+        const cardBorder= isCurrent ? 'var(--brand-700)' : 'var(--border-light)';
+        const nameColor = isCurrent ? '#fff' : isPast ? 'var(--text-primary)' : 'var(--text-tertiary)';
+        const metaColor = isCurrent ? 'rgba(255,255,255,0.65)' : 'var(--text-tertiary)';
+        const barTrack  = isCurrent ? 'rgba(255,255,255,0.2)' : 'var(--border-light)';
+        const barFill   = isCurrent ? '#fff' : isPast ? 'var(--brand-300)' : 'var(--border)';
 
         h += `<div class="vtl-row ${rowCls}">
-          <div class="vtl-left"><span class="vtl-time">${timeLabel}</span></div>
-          <div class="vtl-connector">
+          <div class="vtl-connector" style="padding-top:18px">
             <div class="vtl-line-top" style="${i===0?'opacity:0':''}"></div>
             <div class="vtl-num">${i+1}</div>
             <div class="vtl-line-bot" style="${isLast?'opacity:0':''}"></div>
           </div>
-          <div class="vtl-content">
-            <div class="vtl-step-name">${s.name}</div>
-            <div class="vtl-step-dur">Target: ${fmtDur(s.tgt)}${isPast?' · completed on time':isCurrent?' · in progress':''}</div>`;
-
-        if (isPast) {
-          h += `<div class="vtl-past-row">
-            <span class="vtl-past-stat"><span class="vtl-past-key">Actual</span><span class="vtl-past-val">${fmtDur(s.act)}</span></span>
-            <span class="vtl-past-stat"><span class="vtl-past-key">vs target</span><span class="vtl-past-val" style="color:var(--text-secondary)">On time</span></span>
-          </div>`;
-        }
-        if (isCurrent) {
-          h += `<div class="vtl-current-card">
-            <div class="vtl-analytics">
-              <div class="vtl-abox"><div class="vtl-abox-label">Elapsed</div><div class="vtl-abox-val">${fmtDur(s.act)}</div><div class="vtl-abox-sub">of ${fmtDur(s.tgt)}</div></div>
-              <div class="vtl-abox"><div class="vtl-abox-label">Progress</div><div class="vtl-abox-val">${s.p}%</div><div class="vtl-abox-sub">${100-s.p}% left</div></div>
-              <div class="vtl-abox"><div class="vtl-abox-label">Hist. runs</div><div class="vtl-abox-val">${u.sd.r}</div><div class="vtl-abox-sub">${u.sd.w} on time</div></div>
+          <div class="vtl-content" style="padding-bottom:${isLast?'4px':'14px'}">
+            <div style="background:${cardBg};border:1px solid ${cardBorder};border-radius:10px;padding:14px 16px;${isFuture?'opacity:0.5':''}">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+                <div style="font-size:0.92rem;font-weight:700;color:${nameColor}">${s.name}</div>
+                <div style="font-size:0.75rem;font-weight:500;color:${metaColor}">${durLabel}</div>
+              </div>
+              <div style="font-size:0.75rem;color:${metaColor};margin-bottom:10px">Target: ${fmtDur(s.tgt)}${isPast?' · completed':isCurrent?' · in progress':''}</div>
+              <div style="height:4px;background:${barTrack};border-radius:999px;overflow:hidden">
+                <div style="height:100%;width:${pct}%;background:${barFill};border-radius:999px;transition:width 0.4s"></div>
+              </div>
+              ${isCurrent ? `<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:0.72rem;color:rgba(255,255,255,0.6)">${pct}% complete</span><span style="font-size:0.72rem;color:rgba(255,255,255,0.6)">${100-pct}% left</span></div>` : `<div style="font-size:0.72rem;color:${metaColor};margin-top:6px;text-align:right">${pct > 0 ? pct+'%' : ''}</div>`}
             </div>
-          </div>`;
-        }
-
-        h += `</div></div>`;
+          </div></div>`;
       });
       h += `</div>`;
 
